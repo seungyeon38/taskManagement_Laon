@@ -91,7 +91,10 @@
                 <div style="margin-bottom: 50px;">{{taskInfo.end_date}}</div>
             </div>
             <div class="label_title">업무 내용</div>
-            <div style="border: 1px solid #a9b7ca; color: #757575; width: 100%; min-height: 100px;"><div style="padding: 10px;">{{taskInfo.explanation}}</div></div>
+            <div style="border: 1px solid #a9b7ca; color: #757575; width: 100%; min-height: 100px;">
+                <div v-if="taskInfo.explanation" style="padding: 10px;">{{taskInfo.explanation}}</div>
+                <div v-else style="padding: 10px;">(업무 내용이 없습니다.)</div>
+            </div>
             <div style="margin-top: 40px;"></div>
             <div class="label_title">관리자</div>
             <div class="task_content">

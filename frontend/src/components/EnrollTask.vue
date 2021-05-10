@@ -85,12 +85,16 @@
                                 <el-button type="success" class="labelColor" circle></el-button>
                                 <el-button type="primary" class="labelColor" circle></el-button>
                                 <el-button type="info" class="labelColor" circle></el-button> -->
-                                <button type="button" @click="label_color='#F56C6C'" class="labelColor" style="background-color: #F56C6C"></button>
+                                <!-- <button type="button" @click="label_color='#F56C6C'" class="labelColor" style="background-color: #F56C6C"></button>
                                 <button type="button" @click="label_color='#E6A23C'" class="labelColor" style="background-color: #E6A23C"></button>
                                 <button type="button" @click="label_color='#67C23A'" class="labelColor" style="background-color: #67C23A"></button>
                                 <button type="button" @click="label_color='#409EFF'" class="labelColor" style="background-color: #409EFF"></button>
-                                <button type="button" @click="label_color='#909399'" class="labelColor" style="background-color: #909399"></button>
-
+                                <button type="button" @click="label_color='#909399'" class="labelColor" style="background-color: #909399"></button> -->
+                                <input type="radio" class="labelColor" name="label_color" v-model="label_color" value="#F56C6C" style="background-color: #F56C6C">
+                                <input type="radio" class="labelColor" name="label_color" v-model="label_color" value="#E6A23C" style="background-color: #E6A23C">
+                                <input type="radio" class="labelColor" name="label_color" v-model="label_color" value="#67C23A" style="background-color: #67C23A">
+                                <input type="radio" class="labelColor" name="label_color" v-model="label_color" value="#409EFF" style="background-color: #409EFF">
+                                <input type="radio" class="labelColor" name="label_color" v-model="label_color" value="#909399" style="background-color: #909399" checked>
                                 <!-- <el-color-picker v-model="label_color" :predefine="predefineColors" /> -->
                             </div>
                         </el-form-item>
@@ -114,14 +118,12 @@
                                             <div style="margin-left: 30px; width: 370px">
                                                 <!-- <textarea v-model="managerTask" v-if="manager" id="content" placeholder="해당 관리자의 역할을 적어주세요.(최대 100자)"></textarea>
                                                 <textarea v-model="managerTask" v-else id="content_disabled" placeholder="우선 관리자를 선택해주세요." disabled></textarea> -->
-                                                <el-input type="textarea" v-model="managerRole" v-if="manager" id="content" :rows="3" @change="enrollPersonalRole" placeholder="해당 관리자의 역할을 적어주세요.(최대 100자)" maxlength= "100" show-word-limit></el-input>
+                                                <el-input type="textarea" v-model="managerRole" v-if="manager" id="content" :rows="3" placeholder="해당 관리자의 역할을 적어주세요.(최대 100자)" maxlength= "100" show-word-limit></el-input>
                                                 <el-input type="textarea" v-model="managerRole" v-else :rows="3" id="content_disabled" placeholder="우선 관리자를 선택해주세요." disabled></el-input>
                                             </div>
                                         </td>
                                     </tr>
                                 </table>
-                            
-
                         </el-form-item>
                     </div>
                     <div>
@@ -131,10 +133,10 @@
                                         <td valign="top">
                                             <el-select v-if="manager" v-model="selected_workerNum" multiple placeholder="선택해주세요." style="width: 220px;">
                                                 <el-option
-                                                v-for="user in users_notManager"
-                                                :key="user.user_num" 
-                                                :label="`${user.name} (${user.id})`" 
-                                                :value="user.user_num"
+                                                    v-for="user in users_notManager"
+                                                    :key="user.user_num" 
+                                                    :label="`${user.name} (${user.id})`" 
+                                                    :value="user.user_num"
                                                 >
                                                 </el-option>
                                             </el-select>
@@ -191,13 +193,6 @@ export default {
             end_date: '',
             register_date: '',
             label_color: '#909399',
-            // predefineColors: [
-            //     '#F56C6C',   // 진분홍
-            //     '#E6A23C', // 연노랑
-            //     '#67C23A', // 연두
-            //     '#409EFF', // 파랑
-            //     'rgb(159, 111, 204)'  // 보라
-            // ],
             manager: '',
             managerRole: '',
             users: [],
@@ -293,16 +288,21 @@ export default {
             console.log("selectWorkers this.selected_workers: " + JSON.stringify(this.selected_workers));
         },
         enrollPersonalRole(personalRole){
-            console.log("parent");
-            // console.log("personalTask: " + JSON.stringify(personalTask));
+            console.log("enrollPersonalRole personalRole: " + JSON.stringify(personalRole));
+
             const findIndex = this.selected_workers.findIndex(function(item){
                 return item.user_num == personalRole.worker_num;
             })
             console.log(findIndex);
             // console.log("findItem: " + JSON.stringify(findIndex));
-            this.selected_workers[findIndex].personalRole = personalRole.content; // 유지 안됨 
+            this.selected_workers[findIndex].personalRole = personalRole.content;
             console.log("enrollPersonalRole this.selected_workers: " + JSON.stringify(this.selected_workers));
         },
+        // enrollManagerRole(){
+        //     console.log("enrollManagerRole");
+        //     // this.selected_workers.push({user_num: this.manager, personalRole: this.managerRole});
+        //     console.log("this.selected_workers: " + JSON.stringify(this.selected_workers));
+        // },
         async enrollTask(){
             // await this.enrollPersonalTask;
 
@@ -325,9 +325,13 @@ export default {
 
             this.register_date = this.$moment().format();
 
-            // const now = this.$moment().format();
+            // const selected_workers_manager = {};
 
-            // if(this.end_date)
+            // selected_workers_manager.push(this.selected_workers);
+            // selected_workers_manager.push({user_num: this.manager, personalRole: this.managerRole});
+            // console.log("this.selected_workers: " + JSON.stringify(selected_workers_manager));
+            
+            
             this.$axios.post('http://localhost:3000/addTask', {
                 task_name: this.task_name,
                 explanation: this.explanation,
@@ -341,7 +345,6 @@ export default {
                 manager_role: this.managerRole,
                 selected_workers_list: this.selected_workers,
                 complete: false,
-                // closed: 
             }).then(res => {
                 console.log("업무 등록 성공!")
                 alert("업무가 등록되었습니다.")
@@ -406,6 +409,12 @@ export default {
         border-image: initial; */
     }
 
+    input[type="radio"] {
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        appearance: none;
+    }
+
     .labelColor{
         border: 1px solid #a8a8a8;
         width: 33px;
@@ -416,8 +425,10 @@ export default {
     }
 
     .labelColor:focus{
-        /* background-color: SteelBlue; */
-        /* opacity: 0.7; */
+        border-color: #686868 !important;
+    }
+
+    .labelColor:checked{
         border-color: #686868;
     }
 

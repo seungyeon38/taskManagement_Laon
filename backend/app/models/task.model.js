@@ -8,21 +8,21 @@ const Task = function(task){
     this.start_date = task.start_date;
     this.end_date = task.end_date;
     this.manager = task.manager;
-    this.importance = task.importance;
     this.complete = task.complete;
     this.register_date = task.register_date;
     this.complete_date = task.complete_date
     this.label_color = task.label_color;
-    this.manager_role = task.manager_role;
 };
 
 // async
 Task.create = (newTask, result) => {
     console.log("task.model.js Task.create");
+
+    console.log("newTask: " + JSON.stringify(newTask))
     // newTask[0]: task객체, newTask[1]: task에 등록된 worker_num배열
     let task_num;
-    console.log("newTask[0]: " + JSON.stringify(newTask[0]))
-    sql.query("INSERT INTO task SET ?", newTask[0], (err, res) => {
+    // console.log("newTask[0]: " + JSON.stringify(newTask[0]))
+    sql.query("INSERT INTO task SET ?", newTask.task, (err, res) => {
         if(err){
             console.log("create_error1: ", err);
             result(err, null);
@@ -33,11 +33,11 @@ Task.create = (newTask, result) => {
         // console.log("task_num");
         // console.log(task_num);
 
-        console.log("created task: ", {...newTask[0]});
-        result(null, {...newTask[0]});
+        console.log("created task: ", {...newTask.task});
+        result(null, {...newTask.task});
 
         //
-        sql.query(`SELECT task_num FROM task WHERE task_name = '${newTask[0].task_name}'`,(err, res) => {
+        sql.query(`SELECT task_num FROM task WHERE task_name = '${newTask.task.task_name}'`,(err, res) => {
             if(err){
                 console.log("create_error2: ", err)
                 result(err, null);
@@ -49,18 +49,27 @@ Task.create = (newTask, result) => {
             // console.log("newTask[1]: " + newTask[1])
             // console.log("typeof(newTask[1]): " + typeof(newTask[1]))
             // 
-            for(let worker of newTask[1]){
-                sql.query(`INSERT INTO task_worker VALUES('${task_num}', '${worker.user_num}', '${worker.personalRole}')`,(err, res) => {
+            for(let worker of newTask.selected_workers_list){
+                sql.query(`INSERT INTO task_worker VALUES('${task_num}', '${worker.user_num}', '${worker.personalRole}', false)`,(err, res) => {
                     if(err){
                         console.log("create_error3: ", err);
                         result(err, null);
                         return;
                     }
             
-                    console.log("created task_worker: ", {id:task_num, "worker_num":worker.user_num});
-                    // result(null, {id: task_num, "worker_num":worker});
+                    console.log("created task_worker: ", {taskNum:task_num, "worker_num":worker.user_num});
                 });
             }
+
+            sql.query(`INSERT INTO task_worker VALUES('${task_num}', '${newTask.manager}', '${newTask.manager_role}', false)`,(err, res) => {
+                if(err){
+                    console.log("create_error3: ", err);
+                    result(err, null);
+                    return;
+                }
+        
+                console.log("created task_worker: ", {taskNum:task_num, "worker_num":newTask.manager});
+            });
             // console.log("res[0].task_num: " + res[0].task_num);
             // console.log("typeof(res.task_num): " + typeof(res.task_num));
             // console.log("JSON.stringify(res): "+ JSON.stringify(res))
@@ -72,16 +81,64 @@ Task.create = (newTask, result) => {
 // 원래 userId로 하면 안되고 세션으로 해야됨. id는 겹칠 수 있음. (?)
 // 자신이 worker, manager로 있는 업무의 리스트를 반환.
 
+// Task.findTasksbyUserId = (user, result) => {
+//     let tasks_worker = {};
+//     let tasks_manager = {};
+
+//     sql.query(`SELECT 
+//     t.task_num, t.task_name, t.explanation, t.start_date, t.end_date, t.manager, t.importance, t.complete, t.register_date, t.complete_date, t.label_color 
+//     FROM task_worker as tw
+//     LEFT JOIN task as t
+//     ON tw.task_num = t.task_num
+//     LEFT JOIN user as u
+//     ON tw.worker_num = u.user_num   
+//     WHERE u.id = '${user.id}'`, (err1, res1) => {
+//         if(err1){
+//             console.log("error(worker): ", err1);
+//             result(err1, null);
+//             return;
+//         }
+//         if(res1.length){
+//             console.log("task of worker res: " + JSON.stringify(res1));
+//             console.log("num of task worker: " + res1.length);
+//             tasks_worker = res1;
+//         }
+//     });
+
+//     sql.query(`SELECT 
+//     t.task_num, t.task_name, t.explanation, t.start_date, t.end_date, t.manager, t.importance, t.complete, t.register_date, t.complete_date, t.label_color
+//     FROM user AS u
+//     RIGHT OUTER JOIN task AS t
+//     ON u.user_num = t.manager
+//     WHERE u.id = '${user.id}'`, (err2, res2) => {
+//         if(err2){
+//             console.log("error(manager): ", err2);
+//             result(err2, null);
+//             return;
+//         }
+//         if(res2.length){
+//             console.log("task of manager res: " + JSON.stringify(res2));
+//             console.log("num of task manager: " + res2.length);
+//             tasks_manager = res2;
+//         }
+
+//         console.log("tasks_worker_num: " + tasks_worker.length);
+//         console.log("tasks_manager_num: " + tasks_manager.length);
+//         console.log("user.user_num: " + user.user_num);
+//         result(null, {"tasks_worker":tasks_worker, "tasks_manager":tasks_manager, "userNum":user.user_num});
+//     }); 
+// };
+
 Task.findTasksbyUserId = (user, result) => {
     let tasks_worker = {};
     let tasks_manager = {};
 
     sql.query(`SELECT 
-    t.task_num, t.task_name, t.explanation, t.start_date, t.end_date, t.manager, t.importance, t.complete, t.register_date, t.complete_date, t.label_color 
+    t.task_num, t.task_name, t.explanation, t.start_date, t.end_date, t.manager, tw.importance, t.complete, t.register_date, t.complete_date, t.label_color 
     FROM task_worker as tw
-    LEFT JOIN task as t
-    ON tw.task_num = t.task_num
-    LEFT JOIN user as u
+    RIGHT JOIN task as t
+    ON tw.task_num = t.task_num AND tw.worker_num != t.manager
+    LEFT JOIN user AS u
     ON tw.worker_num = u.user_num   
     WHERE u.id = '${user.id}'`, (err1, res1) => {
         if(err1){
@@ -96,11 +153,12 @@ Task.findTasksbyUserId = (user, result) => {
         }
     });
 
-    sql.query(`SELECT 
-    t.task_num, t.task_name, t.explanation, t.start_date, t.end_date, t.manager, t.importance, t.complete, t.register_date, t.complete_date, t.label_color
-    FROM user AS u
-    RIGHT OUTER JOIN task AS t
-    ON u.user_num = t.manager
+    sql.query(`SELECT t.task_num, t.task_name, t.explanation, t.start_date, t.end_date, t.manager, tw.importance, t.complete, t.register_date, t.complete_date, t.label_color
+    FROM task as t
+    LEFT JOIN user AS u
+    ON t.manager = u.user_num
+    LEFT JOIN task_worker AS tw
+    ON tw.task_num = t.task_num AND tw.worker_num = t.manager
     WHERE u.id = '${user.id}'`, (err2, res2) => {
         if(err2){
             console.log("error(manager): ", err2);
@@ -187,10 +245,10 @@ Task.updateComplete = (task, result) => {
     })
 }
 
-Task.updateImportance = (task, result) => {
-    sql.query(`UPDATE task 
-    SET importance = ${task.importance} 
-    WHERE task_num = ${task.task_num}`, (err, res) => {
+Task.updateImportance = (taskInfo, result) => {
+    sql.query(`UPDATE task_worker 
+    SET importance = ${taskInfo.importance} 
+    WHERE task_num = ${taskInfo.task_num} AND worker_num = ${taskInfo.worker_num}`, (err, res) => {
         if(err){
             console.log("error(task.model.js updateImportance): ", err);
             result(err, null);
@@ -214,7 +272,7 @@ Task.getDetailTasksbyTaskNum = (taskNum, result) => {
                 return;
             }
             resolve(result(null, res));
-            console.log("task.model.js getDetailTasksbyTaskNum 끝")
+            console.log("task.model.js getDetailTasksbyTaskNum 끝");
             return;
         })
     })
@@ -224,8 +282,10 @@ Task.getWorkersbyTaskNum = (taskNum, result) => {
     return new Promise(function(resolve, reject){
         sql.query(`SELECT tw.worker_num, tw.personal_role, u.name, u.id, u.email, u.profile_img
         FROM task_worker AS tw
-        LEFT OUTER JOIN user AS u
-        ON u.user_num = tw.worker_num
+        RIGHT JOIN task as t
+        ON tw.task_num = t.task_num AND tw.worker_num != t.manager
+        LEFT JOIN user AS u
+        ON u.user_num = tw.worker_num 
         WHERE tw.task_num = ${taskNum}`, (err, res) => {
             if(err){
                 resolve(result(err, null));
@@ -241,10 +301,12 @@ Task.getWorkersbyTaskNum = (taskNum, result) => {
 
 Task.getManagerbyTaskNum = (taskNum, result) => {
     return new Promise(function(resolve, reject){
-        sql.query(`SELECT t.manager, t.manager_role, u.name, u.id, u.email, u.profile_img
+        sql.query(`SELECT t.manager, tw.personal_role, u.name, u.id, u.email, u.profile_img
         FROM task AS t
-        LEFT OUTER JOIN user AS u
-        ON u.user_num = t.manager
+        LEFT JOIN user AS u
+        ON t.manager = u.user_num
+        LEFT JOIN task_worker AS tw
+        ON tw.task_num = t.task_num AND tw.worker_num = t.manager
         WHERE t.task_num = ${taskNum}`, (err, res) => {
             if(err){
                 resolve(result(err, null));

@@ -1,7 +1,7 @@
 <template>
     <div id="personalTask">
         <div id="name">
-            {{worker_name}}
+            <span>{{worker_name}}</span><span style="font-size: 0.9em; color: gray;"> ({{worker_id}})</span>
         </div>
         <div>
             <el-input type="textarea" v-model="content" :rows="3" id="content" @change="enrollPersonalRole" placeholder="해당 실무담당자의 역할을 적어주세요.(최대 100자)" maxlength= "100" show-word-limit></el-input>
