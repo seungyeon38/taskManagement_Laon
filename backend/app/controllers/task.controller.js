@@ -17,20 +17,32 @@ exports.create = (req, res) => {
         start_date: req.body.start_date,
         end_date: req.body.end_date,
         manager: req.body.manager,
-        importance: req.body.importance,
         complete: req.body.complete,
         register_date: req.body.register_date,
         complete_date: req.body.complete_date,
         label_color: req.body.label_color,
-        manager_role: req.body.manager_role,
     });
 
-    // console.log(task)
-    const selected_workers_list = req.body.selected_workers_list;
+    console.log("create: " + JSON.stringify(req.body.selected_workers_list))
+
+    // const selected_workers_list = req.body.selected_workers_list;
+
+    // console.log(typeof(req.body.selected_workers_list))
+
+    // var selected_workers_list = [];
+    // selected_workers_list.push(req.body.selected_workers_list);
+    // console.log(typeof(selected_workers_list));
+    // console.log("selected_workers_list: " + JSON.stringify(selected_workers_list)); 
+    // selected_workers_list.push({"user_num": req.body.manager,"personalRole": req.body.manager_role});
+    // console.log(typeof(selected_workers_list))
+    // console.log("selected_workers_list: " + JSON.stringify(selected_workers_list)); 
+    // [{"user_num":5,"name":"스타다","id":"starstar","personalRole":"ㅁㄴㅇㅁㄴㅇ"},{"user_num":2,"personalRole":"ㄴㅁㅇㅁㄴㅇㅁㄴ"}]
+
 
     // console.log("JSON.stringify(worker_num_list): " + JSON.stringify(worker_num_list))
     // console.log("typeof(worker_num_list): " + typeof(worker_num_list))
-    Task.create([task, selected_workers_list], (err, data) => {
+
+    Task.create({"task": task, "selected_workers_list": req.body.selected_workers_list, "manager": req.body.manager, "manager_role": req.body.manager_role}, (err, data) => {
         if(err)
             res.status(500).send({
                 message:
@@ -101,11 +113,13 @@ exports.taskComplete = (req, res) => {
 exports.taskImportance = (req, res) => {
     console.log("task.controller.js taskImportance 함수 들어옴")
     console.log("req: " + JSON.stringify(req.body));
-    Task.updateImportance(req.body, (err, data) => {
+    console.log("req.user.user_num: " + JSON.stringify(req.user.user_num));
+    const taskInfo = {task_num: req.body.task_num, importance: req.body.importance, worker_num: req.user.user_num};
+    Task.updateImportance(taskInfo, (err, data) => {
         if(err){
             console.log("err: " + err);
             res.status(500).send({
-                message: `Error retrieving Task with task_num ${req.body.task_num}`
+                message: `Error retrieving Task with task_num ${taskInfo.task_num}`
             });
         }
         console.log("task.controller.js taskImportance update 끝")
