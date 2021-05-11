@@ -140,6 +140,7 @@ User.findByUserNum = (userNum, result) => {
 };
 
 User.getAllUser = result => {
+    console.log("getAllUser")
     sql.query("SELECT user_num, name, id, email FROM user", (err, res) => {
         if(err){
             console.log("error: ", err);

@@ -5,6 +5,7 @@ import LogIn from '@/components/LogIn'
 import Main from '@/components/Main'
 import EnrollTask from '@/components/EnrollTask'
 import ShowDetail from '@/components/ShowDetail'
+const auth = require('../main.js') 
 
 Vue.use(Router);
 
@@ -12,32 +13,36 @@ export default new Router({
   mode: "history",
   routes: [
     {
-      path: '/signUp',
+      path: '/signup',
       name: 'signUp',
       component: SignUp
     },
     {
-      path: '/logIn',
-      name: 'login',
+      path: '/login',
+      name: 'logIn',
       component: LogIn
     },
     {
       path: '/main',
       name: 'main',
-      component: Main
+      component: Main,
+      beforeEnter: auth.requireAuth
+      // beforeEnter: requireAuth()
     },
     {
-      path: '/enrollTask',
+      path: '/enrolltask',
       name: 'enrollTask',
-      component: EnrollTask
+      component: EnrollTask,
+      beforeEnter: auth.requireAuth
+      // beforeEnter: requireAuth()
     },
     {
-      path: '/showDetail/:taskNum',
+      path: '/showdetail/:taskNum',
+      // path: '/showdetail',
       name: 'showDetail',
-      component: ShowDetail
+      component: ShowDetail,
+      beforeEnter: auth.requireAuth
+      // beforeEnter: requireAuth()
     },
-    
-    
-  
   ]
 })

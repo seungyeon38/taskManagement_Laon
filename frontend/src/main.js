@@ -10,7 +10,7 @@ import vueMoment from 'vue-moment'
 
 
 Vue.prototype.$axios = axios;
-Vue.config.productionTip = false
+Vue.config.productionTip = false;
 
 
 Vue.use(Element);
@@ -24,4 +24,29 @@ new Vue({
   components: { App },
   template: '<App/>'
 })
+
+export function requireAuth(to, from, next) {
+  axios({ 
+    url: `http://localhost:3000/session`,
+    method: 'get',
+    withCredentials: true,
+    headers: {
+        'Content-Type': 'application/json',
+    },
+    credentials: "same-origin"    
+  }).then(res => {
+      console.log("requireAuth res.data: " + JSON.stringify(res.data))
+      if(res.data.auth){
+        console.log("requireAuth if")
+        return next();
+      }
+      else{
+        console.log("requireAuth else")
+        alert("로그인해주세요!")
+        next('/login');
+      }
+  }).catch((ex) => {
+      console.log("ERROR!!!: ", ex)
+  })
+}
 

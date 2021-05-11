@@ -154,7 +154,7 @@
                                         console.log("signUp")
                                         // this.result = response.data
                                         alert("회원가입을 축하드립니다. 로그인 후 사용해주세요.")
-                                        this.$router.push({name: 'login'})
+                                        this.$router.push({name: 'logIn'})
                                     }).catch((ex) => {
                                         console.log("ERROR!!!: ", ex)
                                     })

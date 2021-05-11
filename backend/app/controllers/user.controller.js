@@ -51,7 +51,10 @@ exports.getAllUser = (req, res) => {
                 message: 
                     err.message || "Some error occurred while retrieving users."
             });
-        else res.send(data);
+        else {
+            console.log("controller getAllUser")
+            res.send(data)
+        };
     });
 };
 
@@ -148,7 +151,10 @@ exports.getAllManager = (req, res) => {
 }
 
 exports.login = (req, res) => {
+    console.log("login req.session: " + JSON.stringify(req.session));
+
     const fmsg = req.flash();
+    
     if(fmsg.error){
         res.send({error: fmsg.error[0]});
     }

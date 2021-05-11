@@ -184,7 +184,10 @@ export default {
                     console.log("세부업무 등록 성공!")
                     alert("세부업무가 등록되었습니다.")
                     this.dialogFormVisible = false;
+                    // this.$router.push({name: 'logIn'})
+                    // console.log("this.$router.go()")
                     this.$router.go()
+                    // this.$router.push({name: 'showDetail'})
                 }).catch(err => {
                     console.log("세부업무 등록 ERROR!!: ", err)
                 })      
@@ -222,7 +225,6 @@ export default {
         console.log("created");
         // console.log("created this.$route.params.taskNum: " + this.$route.params.taskNum)
         this.taskNum = this.$route.params.taskNum;
-        // console.log("this.taskNum: " + this.taskNum)
 
         // 전체 users가 아니라 업무에 해당하는 workers를 받아오면 됨 
         // worker의 id, name, 해당 업무에서 하는 일(역할) 
@@ -267,11 +269,10 @@ export default {
 
             console.log("this.taskClosed: " + this.taskClosed);
             console.log("this.taskInfo: " + JSON.stringify(this.taskInfo));
+
             this.taskInfo.start_date = this.$moment(res.data.info[0].start_date).format('YYYY/MM/DD h:mm A');
             this.taskInfo.end_date = this.$moment(res.data.info[0].end_date).format('YYYY/MM/DD h:mm A');
             
-
-
             // this.start_date = res.data.info[0].start_date;
             // this.end_date = res.data.info[0].end_date;
             this.manager = res.data.manager[0];

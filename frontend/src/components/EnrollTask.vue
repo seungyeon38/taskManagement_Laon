@@ -206,8 +206,15 @@ export default {
         PersonalRole
     },
     created(){
-        this.$axios.get('http://localhost:3000/users'
-        ).then(res => {
+         this.$axios({
+            url: `http://localhost:3000/users`,
+            method: 'get',
+            withCredentials: true,
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            credentials: "same-origin"    
+        }).then(res => {
             for(var i=0; i<res.data.length; i++){
                 // console.log("res.data[i]: " + JSON.stringify(res.data[i]))
                 this.users.push(res.data[i])
@@ -330,9 +337,26 @@ export default {
             // selected_workers_manager.push(this.selected_workers);
             // selected_workers_manager.push({user_num: this.manager, personalRole: this.managerRole});
             // console.log("this.selected_workers: " + JSON.stringify(selected_workers_manager));
-            
-            
-            this.$axios.post('http://localhost:3000/addTask', {
+
+            // this.$axios.post('http://localhost:3000/addTask', {
+            //     task_name: this.task_name,
+            //     explanation: this.explanation,
+            //     start_date: this.start_date,
+            //     end_date: this.end_date,
+            //     manager: this.manager,
+            //     importance: false,
+            //     register_date: this.register_date,
+            //     complete_time: null,
+            //     label_color: this.label_color,
+            //     manager_role: this.managerRole,
+            //     selected_workers_list: this.selected_workers,
+            //     complete: false,
+            // }).
+
+            this.$axios({
+                url: `http://localhost:3000/addTask`,
+                method: 'post',
+                data: {
                 task_name: this.task_name,
                 explanation: this.explanation,
                 start_date: this.start_date,
@@ -345,6 +369,12 @@ export default {
                 manager_role: this.managerRole,
                 selected_workers_list: this.selected_workers,
                 complete: false,
+                },
+                withCredentials: true,
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                credentials: "same-origin"    
             }).then(res => {
                 console.log("업무 등록 성공!")
                 alert("업무가 등록되었습니다.")

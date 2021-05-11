@@ -52,13 +52,12 @@ module.exports = () => {
         function(id, pw, done) {
             // 여기에서밖에 안 쓰임 
             User.findById(id, async function(err, user){
-                if(err) { 
+                if(err){ 
                     if(err.kind === "not_found"){
                         console.log("local2")
                         // 첫번째 인자: DB조회 같은 때 발생하는 서버 에러를 넣는 곳, 무조건 실패하는 경우에만 사용(성공했을 시 null) 
                         // 두번째 인자: 성공했을 때 return할 값을 넣는 곳 
                         // 세번째 인자: 사용자가 임의로 실패를 만들고 싶을 때 사용 
-
                         return done(null, false, {message: '존재하지 않는 회원입니다.'});
                     }
                     else{
@@ -77,10 +76,13 @@ module.exports = () => {
             });
         }
     ));
-
-    const isAuthenticated = function (req, res, next) {
-        if (req.isAuthenticated())
-            return next();  
-        res.redirect('/login');
-    };
 }
+
+// exports.isAuthenticated = function(req, res, next) {
+//     if (req.isAuthenticated()){
+//         console.log("session 있음")
+//         return next();
+//     }
+//     console.log("session 없음")
+//     res.redirect('/');
+// };

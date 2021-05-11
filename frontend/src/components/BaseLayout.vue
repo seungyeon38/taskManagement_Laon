@@ -162,8 +162,7 @@
                     if(res.data.logout == true){
                         console.log("baselayout logOut then");
                         console.log("res.data: " + JSON.stringify(res.data));
-                        this.$router.push({name: 'login'})
-                        console.log("아?")
+                        this.$router.push({name: 'logIn'})
                     }
                 }).catch(err => {
                     console.log("baselayout logOut catch");

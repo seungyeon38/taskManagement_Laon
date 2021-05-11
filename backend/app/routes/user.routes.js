@@ -1,4 +1,5 @@
 const passport = require('passport');
+// const isAuthenticated = require('isAuthenticated');
 var multer  = require('multer');
 var _storage = multer.diskStorage({
     // 사용자가 전송한 파일을 어느 디렉토리에 저장할 것인가. 
@@ -21,6 +22,17 @@ var upload = multer({ storage: _storage }); // 사용자가 업로드한 파일�
 
 module.exports = app => {
     const user = require("../controllers/user.controller.js");
+    // const isAuthenticated = require("../models/passport.js");
+
+    // function isAuthenticated(req, res, next) {
+    //     console.log("req.session: " + JSON.stringify(req.session))
+    //     if (req.isAuthenticated()){
+    //         console.log("session 있음");
+    //         return next();
+    //     }
+    //     console.log("session 없음");
+    //     res.redirect('/');
+    // };
 
     app.get("/signUp/checkId/:userId", user.isExistWithId);
   
@@ -40,7 +52,6 @@ module.exports = app => {
 
     // app.get("/main", );
     
-
     app.get("/base", user.base);
 
     // 로그인을 할 때 전송받는 부분을 passport의 체계로 바꿔야 한다. 
@@ -52,7 +63,12 @@ module.exports = app => {
             successRedirect: '/login',  // home으로 
             failureRedirect: '/login',
             failureFlash: true
-        })
+        }), 
+        // (req, res) => {
+        //     req.session.save(() => {
+        //         res.redirect('/login')
+        //     })
+        // }
     );
 
     app.get("/login", user.login);
@@ -66,6 +82,7 @@ module.exports = app => {
             res.send({logout: true}); // session을 잃은 후 다시 돌아갈 페이지 redirect
         })
     });
+
 
     // 기존의 라우팅인 app.post("경로", callback) 형태와 동일.
     // 대신 callback 자리에 passport가 제공하는 authenticate라는 함수가 대입됨.
@@ -82,6 +99,4 @@ module.exports = app => {
     //     // failureFlash : true
     //     })
     // );
-
-
 }
