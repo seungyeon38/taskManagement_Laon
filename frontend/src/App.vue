@@ -48,7 +48,20 @@ input:focus, textarea:focus {
 
 html { overflow-y:scroll; }
 
+#taskName {
+  padding-left: 15px;
+  padding-right: 15px; 
+  font-weight: bolder; 
+  height: 50px;
+  width: 170px; 
+}
 
+.text-overflow{
+  display:inline-block; 
+  text-overflow: ellipsis; 
+  overflow: hidden; 
+  white-space: nowrap;
+}
 
 /* .el-container{
   justify-content: center;
