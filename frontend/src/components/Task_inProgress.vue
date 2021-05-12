@@ -3,16 +3,18 @@
         <template slot="card_header">
             <tr>
                 <td align="right">
-                    <button type="button" style="border: none; padding: 0px; margin-top: 5px; margin-right: 5px; background: none;" @click.stop="changeStar">
-                        <img :src="star" style=" width: 30px; height: 30px;" />
-                    </button>
+                    <div style="margin-top: 5px;">
+                    </div>
+                    <button type="button" id="star_btn" v-bind:style="star_style" class="el-icon-star-off" style="border: none; padding: 0px; background: none; font-size:1.7em; margin-right: 5px;" @click.stop="changeStar"></button>
+                    <!-- <button type="button" style="border: none; padding: 0px; margin-top: 5px; margin-right: 5px; background: none;" @click.stop="changeStar">
+                        <img :src="star" style="width: 25px; height: 25px;" />
+                    </button> -->
                 </td>
             </tr>
             <tr>
-                <td class="text-overflow-twoLine"  style="padding-left: 15px; padding-right: 15px; font-weight: bolder;">
-                        {{task_name}}
+                <td id="taskName" class="text-overflow">
+                    {{task_name}}
                 </td>
-                <div style="margin-bottom: 10px;"></div>
             </tr> 
         </template>
     </task>
@@ -21,10 +23,16 @@
 <script>
 import Task from './Task.vue'
 
+const onColor = '#f8da2d';
+const offColor = '#636363';
+
 export default{
     data(){
         return{
-            star: ''
+            // star: ''
+            star_style: {
+                color: ''
+            }
         }
     },
     components: {
@@ -37,24 +45,35 @@ export default{
             this.$emit('clickTask', taskNum);
         },
         changeStar(){
-            if(this.star == require('../img/star.png')){
-                this.star = require('../img/star_color.png');
-            }
-            else if(this.star == require('../img/star_color.png')){
-                this.star = require('../img/star.png');
-            }
+            // if(this.star == require('../img/star.png')){
+            //     this.star = require('../img/star_color.png');
+            // }
+            // else if(this.star == require('../img/star_color.png')){
+            //     this.star = require('../img/star.png');
+            // }
             // alert("눌렀습니다.")
             this.$emit('changeImportance', this.task_num);
-        }   
+            
+            setTimeout(function() {
+                 if(this.star_style.color == offColor){
+                    this.star_style.color = onColor;
+                }
+                else if(this.star_style.color == onColor){
+                    this.star_style.color = offColor;
+                }
+            }, 5);
+        }
     },
     created(){
         if(this.importance == true){
             console.log("Task_inProgress importance true")
-            this.star = require('../img/star_color.png');
+            // this.star = require('../img/star_color.png');
+            this.star_style.color = onColor
         }
         else if(this.importance == false){
             console.log("Task_inProgress importance false")
-            this.star = require('../img/star.png');
+            // this.star = require('../img/star.png');
+            this.star_style.color = offColor
         }
         
     }
@@ -62,13 +81,4 @@ export default{
 </script>
 
 <style scoped>
-    .text-overflow-twoLine{
-        display: -webkit-box;
-        overflow: hidden;
-        height: 40px;
-        text-overflow: ellipsis; 
-        -webkit-line-clamp: 2;
-        -webkit-box-orient: vertical;
-        word-break:break-all;
-    }
 </style>

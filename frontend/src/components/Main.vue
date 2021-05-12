@@ -5,6 +5,13 @@
                 <tr>
                     <td colspan="2" align="right">
                         <el-button id="enroll-task" class="custom-icon" @click.native="enrollTask" icon="el-icon-plus" type="info"></el-button>
+                        <el-dialog title="업무 삭제" :visible.sync="dialogVisible" width="30%" style="text-align: left; font-weight: bolder;">
+                            <span>해당 업무('{{deleteTaskName}}')를 삭제하시겠습니까?</span>
+                            <span slot="footer" class="dialog-footer">
+                                <el-button @click="dialogVisible = false">Cancel</el-button>
+                                <el-button type="primary" @click.native="deleteConfirm">Confirm</el-button>
+                            </span>
+                        </el-dialog>
                         <!-- <button id="enroll-task" @click="enrollTask" style="width: 150px; height: 40px; font-size:0.95em;">업무 등록하기<img src="../img/arrow.png" style="width:18px"></button> -->
                         <!-- <el-button id="enroll-task" class="custom-icon" @click="dialogFormVisible = true" icon="el-icon-plus" type="info"></el-button> -->
                         <!-- <el-dialog title="업무 등록" :visible.sync="dialogFormVisible" style="text-align: left;" @closed="cancelEnroll">
@@ -129,7 +136,7 @@
                     </td>
                 </tr>
                 <tr v-if="taskManagerImportant_list.length || taskImportant_list.length">
-                    <task-manager v-for="task in taskManagerImportant_list" :key="task.task_num" v-on:complete="complete" v-on:clickTask="clickTask" v-on:changeImportance="changeImportanceFalse" :task_name="task.task_name" :task_num="task.task_num" :manager="task.manager" :start_date="task.start_date" :end_date="task.end_date" :label_color="task.label_color" :importance="task.importance"></task-manager>
+                    <task-manager v-for="task in taskManagerImportant_list" :key="task.task_num" v-on:complete="complete" v-on:clickTask="clickTask" v-on:changeImportance="changeImportanceFalse" v-on:deleteTask="deleteTask" :task_name="task.task_name" :task_num="task.task_num" :manager="task.manager" :start_date="task.start_date" :end_date="task.end_date" :label_color="task.label_color" :importance="task.importance"></task-manager>
                     <task-in-progress v-for="task in taskImportant_list" :key="task.task_num" v-on:clickTask="clickTask" v-on:changeImportance="changeImportanceFalse" :task_name="task.task_name" :task_num="task.task_num" :manager="task.manager" :start_date="task.start_date" :end_date="task.end_date" :label_color="task.label_color" :importance="task.importance"></task-in-progress>
                 </tr>
                 <tr v-else>
@@ -142,7 +149,7 @@
                    
                 </tr>
                 <tr v-if="taskManagerInProgress_list.length || taskInProgress_list.length">
-                    <task-manager v-for="task in taskManagerInProgress_list" :key="task.task_num" v-on:complete="complete" v-on:clickTask="clickTask" v-on:changeImportance="changeImportanceTrue" :task_name="task.task_name" :task_num="task.task_num" :manager="task.manager" :start_date="task.start_date" :end_date="task.end_date" :label_color="task.label_color" :importance="task.importance"></task-manager>
+                    <task-manager v-for="task in taskManagerInProgress_list" :key="task.task_num" v-on:complete="complete" v-on:clickTask="clickTask" v-on:changeImportance="changeImportanceTrue" v-on:deleteTask="deleteTask" :task_name="task.task_name" :task_num="task.task_num" :manager="task.manager" :start_date="task.start_date" :end_date="task.end_date" :label_color="task.label_color" :importance="task.importance"></task-manager>
                     <task-in-progress v-for="task in taskInProgress_list" :key="task.task_num" v-on:clickTask="clickTask" v-on:changeImportance="changeImportanceTrue" :task_name="task.task_name" :task_num="task.task_num" :manager="task.manager" :start_date="task.start_date" :end_date="task.end_date" :label_color="task.label_color" :importance="task.importance"></task-in-progress>
                 </tr>
                 <tr v-else>
@@ -245,8 +252,10 @@ export default {
             // users: [],
             // users_notManager: [],
             // selected_workers: [],
-            formLabelWidth: '200px'
-
+            formLabelWidth: '200px',
+            dialogVisible: false,
+            deleteTaskName: '',
+            deleteTaskNum: null
             // now: ''
             // task: {
             //     task_num: 0,
@@ -466,8 +475,12 @@ export default {
                 },
                 credentials: "same-origin"
             }).then(res => {
-                console.log("main complete then");
-                this.$router.go();
+                // console.log("main complete then");
+                // this.$router.go();
+                if(res.data.update){
+                    console.log("main complete then");
+                    this.$router.go();
+                }
                 // const taskToFind = this.taskManagerImportant_list.find(function(item){return item.task_num === taskNum});
                 // console.log("taskToFind: " + taskToFind);
                 // const indexToDelete = this.taskManagerImportant_list.indexOf(taskToFind);
@@ -669,6 +682,52 @@ export default {
                 console.log("main changeImportanceImportant catch");
             });  
         },
+        deleteTask(taskNum, taskName){
+            console.log("main deleteTask")
+            this.deleteTaskName = taskName;
+            this.deleteTaskNum = taskNum;
+            this.dialogVisible = true;
+        },
+        deleteConfirm(){
+            this.$axios({
+                url: 'http://localhost:3000/deleteTask',
+                method: 'post',
+                data: {
+                    task_num: this.deleteTaskNum, 
+                },
+                withCredentials: true,
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                credentials: "same-origin"
+            }).then(res => {
+                if(res.data.result){
+                    console.log("main deleteConfirm then");
+                    this.dialogVisible = false;
+                    this.$router.go();
+                }
+              
+                // const taskToFind = this.taskManagerInProgress_list.find(function(item){return item.task_num === taskNum});
+                // console.log("taskToFind: " + taskToFind);
+                // const indexToDelete = this.taskManagerInProgress_list.indexOf(taskToFind);
+                // this.taskManagerInProgress_list.splice(indexToDelete,1);
+                // taskToFind.complete_date = complete_date;
+                // this.taskComplete_list.push(taskToFind);
+            // taskManagerImportant_list: [],  // task_manager
+            // taskManagerInProgress_list: [], // task_manager
+            // taskComplete_list: [],          // task_complete
+            }).catch(err => {
+                console.log("main deleteConfirm catch");
+            });  
+            
+        }
+        // handleClose(done) {
+        //     this.$confirm('Are you sure to close this dialog?')
+        //     .then(_ => {
+        //         done();
+        //     })
+        //     .catch(_ => {});
+        // }   
         // changeImportanceManagerImportant(taskNum){
         //     this.importance = false;
 

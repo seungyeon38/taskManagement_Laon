@@ -6,10 +6,11 @@
         <!-- 중요(별), 설정 -->
         <slot name="card_header">
             <tr>
-                <td class="text-overflow-twoLine"  style="padding-top: 35px; padding-left: 15px; padding-right: 15px; font-weight: bolder;">
-                        {{task_name}}
+                <!-- 마감이나 완료된 업무 -->
+                <td id="taskName" class="text-overflow" style="padding-top: 35px;">
+                    {{task_name}}
                 </td>
-                <div style="margin-bottom: 10px;"></div>
+                <!-- <div style="margin-bottom: 10px;"></div> -->
             </tr> 
         </slot>
         <tr>
@@ -17,7 +18,7 @@
                 <table id="info_table" style="text-align: center;">
                     <tr class="border-bottom" style="height: 28px">
                         <td class="border_right bold">관리자</td>
-                        <td class="text-overflow" style="width: 95%; line-height:20px;">{{manager}}</td>
+                        <td class="text-overflow" style="width: 95%; line-height:20px; margin: 2px;">{{manager}}</td>
                     </tr>
                     <tr class="border-bottom">
                         <td class="border_right bold">시작일</td>
@@ -36,7 +37,7 @@
                     <slot name="complete_date">
                     </slot>
                 </table> 
-                <slot name="complete_btn">
+                <slot name="btn">
                 </slot>
                 <div style="margin-bottom: 5px;">
                 </div>
@@ -128,16 +129,16 @@ export default{
         width: 180px;
         /* height: 200px; */
     }
-
+/* 
     .text-overflow{
         display: block; 
         text-overflow: ellipsis; 
         overflow: hidden; 
         white-space: nowrap;
         margin: 2px;
-    } 
+    }  */
 
-    .text-overflow-twoLine{
+    /* .text-overflow-twoLine{
         display: -webkit-box;
         overflow: hidden;
         height: 40px;
@@ -145,7 +146,7 @@ export default{
         -webkit-line-clamp: 2;
         -webkit-box-orient: vertical;
         word-break:break-all;
-    }
+    } */
 
     #info_table{
         width: 90%;

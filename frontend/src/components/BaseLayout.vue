@@ -12,7 +12,7 @@
                 <el-dropdown-item>Delete</el-dropdown-item>
                 </el-dropdown-menu>
             </el-dropdown> -->
-            <span style="margin-left: 30px; margin-right: 20px">{{user.name}} 님</span>
+            <span class="text-overflow" style="margin-left: 30px; max-width: 100px">{{user.name}}</span><span style=" margin-right: 20px;"> 님</span>
             <el-avatar v-if="user.profile_img" :size="50" style="border: 1px solid #a4a7ad">
                 <!-- <img :src="require(user.profile_img)"> -->
                 <img :src="require('../../../backend/uploads/' + user.profile_img)" />

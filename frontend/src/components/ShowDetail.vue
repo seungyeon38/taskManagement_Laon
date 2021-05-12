@@ -105,11 +105,11 @@
                     <el-avatar v-else icon="el-icon-user-solid" :size="45" style="font-size: 1.5rem;"></el-avatar>
                     <!-- <el-avatar v-else icon="el-icon-user-solid"></el-avatar> -->
                     <div style="margin-right: 20px"></div>
-                    <span style="font-weight: bolder">{{manager.name}} </span><span>님</span>
+                    <span style="font-weight: bolder; max-width: 200px;" class="text-overflow">{{manager.name}} </span><span>님</span>
                 </div>
-                <div v-if="manager.manager_role != 'undefined'" style="margin-left: 65px">{{manager.manager_role}}</div>
+                <div v-if="manager.personal_role != 'undefined'" style="margin-left: 65px">{{manager.personal_role}}</div>
             </div>
-            <div class="label_title" style="margin-top:40px;">실무담당자</div>
+            <div v-if="workers.length" class="label_title" style="margin-top:40px;">실무담당자</div>
             <div v-for="worker in workers" :key="worker.worker_num" class="task_content"> 
                 <div style="font-size: 1.1em; margin-bottom: 15px; display:flex; align-items: center;">
                     <el-avatar v-if="worker.profile_img" :size="45" style="border: 1px solid rgb(207, 211, 211);">
@@ -117,7 +117,7 @@
                     </el-avatar>
                     <el-avatar v-else icon="el-icon-user-solid" :size="45" style="font-size: 1.5rem;"></el-avatar>
                     <div style="margin-right: 20px"></div>
-                    <span style="font-weight: bolder">{{worker.name}} </span><span>님</span>
+                    <span style="font-weight: bolder; max-width: 200px;" class="text-overflow">{{worker.name}} </span><span>님</span>
                 </div>
                 <div v-if="worker.personal_role != 'undefined'" style="margin-left: 65px">{{worker.personal_role}}</div>                
             </div>
