@@ -376,9 +376,16 @@ export default {
                 },
                 credentials: "same-origin"    
             }).then(res => {
-                console.log("업무 등록 성공!")
-                alert("업무가 등록되었습니다.")
-                this.$router.go(-1)
+                if(res.data.result == "duplicate"){
+                    alert("해당 업무명을 가진 업무가 존재합니다. 업무명을 변경해주세요.")
+                }
+                else if(res.data.result == true){
+                    console.log("업무 등록 성공!")
+                    alert("업무가 등록되었습니다.")
+                    this.$router.go(-1)
+                }
+                // else()
+                
             }).catch(err => {
                 console.log("업무 등록 ERROR!!: ", err)
             })           

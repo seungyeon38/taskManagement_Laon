@@ -32,14 +32,16 @@ Task.insertTaskWorker = (taskNum, workerNum, personalRole, importance) => {
 
 Task.selectTaskNumbyTaskName = (taskName) => {
     return new Promise(resolve => {
-        sql.query(`SELECT task_num FROM task WHERE task_name = '${newTask.task.task_name}'`, (err, res) => {
+        sql.query(`SELECT task_num FROM task WHERE task_name = '${taskName}'`, (err, res) => {
             if(err){
-                console.log("create_error2: ", err)
                 resolve({err: err, data: null});
                 return;
             }
             if(res.length){
-                resolve({err: err, data: res[0].task_num});
+                // console.log("res[0]: " + JSON.stringify(res[0]));
+                // console.log("res[0].task_num: " + res[0].task_num);
+                resolve({err: null, data: res[0].task_num});
+                return;
             }
             
             resolve({err: "not_found", data: res});
@@ -51,7 +53,6 @@ Task.insertTask = (newTask) =>{
     return new Promise(resolve => {
         sql.query("INSERT INTO task SET ?", newTask, (err) => {
             if(err){
-                console.log("create_error1: ", err);
                 resolve({err: err});
                 return;
             }
@@ -326,6 +327,7 @@ Task.selectTasksofWorkers = (userId) => {
                 console.log("task of worker res: " + JSON.stringify(res));
                 console.log("num of task worker: " + res.length);
                 resolve({err: null, data: res});
+                return;
             }
             // select된 task가 없을 경우 
             resolve({err: "not_found", data: res})
@@ -487,12 +489,12 @@ Task.selectTasksofManager = (userId) => {
 
 // task: task_num, complete_date
 // task_num에 해당하는 task의 complete에 true대입, complete_date에 complete_date대입 
-Task.updateComplete = (task) => { 
+Task.updateComplete = (taskInfo) => { 
     return new Promise(resolve => {
         sql.query(`UPDATE task 
         SET complete = true, 
-        complete_date = '${task.complete_date}' 
-        WHERE task_num = ${task.task_num}`, (err) => {
+        complete_date = '${taskInfo.complete_date}' 
+        WHERE task_num = ${taskInfo.task_num}`, (err) => {
             if(err){
                 console.log("error(task.model.js taskComplete): ", err);
                 resolve({err: err});

@@ -24,28 +24,54 @@ exports.create = async (req, res) => {
         complete_date: req.body.complete_date,
         label_color: req.body.label_color,
     });
-
     
     var task_num;
     var promise;
 
+    // 해당 이름을 가진 task가 존재하는지 확인 
+    promise = await Task.selectTaskNumbyTaskName(req.body.task_name);
+
+    if(promise.err != "not_found"){
+        console.log("task.controller.js not_found")
+        res.send({result: "duplicate"});
+        return;
+    }
+
+    // if(promise.err){
+    //     if(promise.err === "not_found"){
+    //         console.log("task.controller.js not_found")
+    //         res.send({result: true});
+    //         return;
+    //     }
+    //     else {
+    //         res.status(500).send({
+    //             message:
+    //             promise.err.message || "Some error occurred while creating the task."
+    //         });
+    //         return;
+    //     }    
+    // }
+    
+    // 존재하지 않으면 insert 
     promise = await Task.insertTask(task);
+    
     if(promise.err){
-        console.log("create_error1: ", err);
+        console.log("create_error1: ", promise.err);
         res.status(500).send({
             message:
-                err.message || "Some error occurred while creating the task."
+                promise.err.message || "Some error occurred while creating the task."
         });
         return;
     }
     
     promise = await Task.selectTaskNumbyTaskName(req.body.task_name);
 
+    // 못 찾아도 오류임 
     if(promise.err){
-        console.log("create_error2: ", err)
+        console.log("create_error selectTaskNumbyTaskName: ", promise.err);
         res.status(500).send({
             message:
-                err.message || "Some error occurred while creating the task."
+                promise.err.message || "Some error occurred while creating the task."
         });
         return;
     }
@@ -63,19 +89,19 @@ exports.create = async (req, res) => {
             console.log("err있음1")
             res.status(500).send({
                 message:
-                    err.message || "Some error occurred while creating the task."
+                    promise.err.message || "Some error occurred while creating the task."
             });
             return;
         }
     }
 
-    promise = await Task.insertTaskWorker(task_num, newTask.manager, newTask.manager_role, false);
+    promise = await Task.insertTaskWorker(task_num, req.body.manager, req.body.manager_role, false);
 
-    if(promise){
+    if(promise.err){
         console.log("err있음2")
         res.status(500).send({
             message:
-                err.message || "Some error occurred while creating the task."
+                promise.err.message || "Some error occurred while creating the task."
         });
         return;
     }
@@ -88,7 +114,7 @@ exports.deleteTask = async (req, res) => {
     console.log("model delete");
     var promise;
 
-    promise = await Task.deleteTaskbyTaskNum(req.body.task_num);
+    promise = await Task.deleteTask(req.body.task_num);
 
     if(promise.err){
         console.log("err있음")
@@ -98,7 +124,7 @@ exports.deleteTask = async (req, res) => {
         return;
     }
 
-    promise = await Task.deleteTaskWorkerbyTaskNum(req.body.task_num);
+    promise = await Task.deleteTaskWorker(req.body.task_num);
     if(promise.err){
         console.log("err있음")
         res.status(500).send({
@@ -107,7 +133,7 @@ exports.deleteTask = async (req, res) => {
         return;
     }
 
-    promise = await Task.deleteDetailTasksbyTaskNum(req.body.task_num);
+    promise = await Task.deleteDetailTasks(req.body.task_num);
     if(promise.err){
         console.log("err있음")
         res.status(500).send({
@@ -127,24 +153,28 @@ exports.findTasksbyUserId = async (req, res) => {
     const promise1 = await Task.selectTasksofWorkers(req.user.id);
 
     if(promise1.err){
-        // result(err, null);
-        res.status(500).send({
-            message: `Error retrieving Task with id ${req.user.id}`
-        });
-        return;
+        if(promise1.err != "not_found"){
+            // result(err, null);
+            res.status(500).send({
+                message: `Error retrieving Task with id ${req.user.id}`
+            });
+            return;
+        }
     }
 
     const promise2 = await Task.selectTasksofManager(req.user.id);
 
     if(promise2.err){
-        // result(err, null);
-        res.status(500).send({
-            message: `Error retrieving Task with id ${req.user.id}`
-        });
-        return;
+        if(promise2.err != "not_found"){
+            // result(err, null);
+            res.status(500).send({
+                message: `Error retrieving Task with id ${req.user.id}`
+            });
+            return;
+        }
     }
 
-    res.send({"tasks_worker": promise1.data, "tasks_manager": promise2.data, "userNum": req.user.user_num});
+    res.send({tasks_worker: promise1.data, tasks_manager: promise2.data, userNum: req.user.user_num});
 };
 
 exports.taskComplete = async (req, res) => {
@@ -155,7 +185,7 @@ exports.taskComplete = async (req, res) => {
     // task_num: taskNum, 
     // complete_date: this.$moment().format()
 
-    var promise = await Task.updateComplete({task_num: req.body.task_num, complete_date: req.body.complete_date});
+    var promise = await Task.updateComplete(req.body);
     
     if(promise.err){
         console.log("promise.err: " + promise.err);
@@ -189,12 +219,12 @@ exports.taskImportance = async (req, res) => {
     console.log("req: " + JSON.stringify(req.body));
     console.log("req.user.user_num: " + JSON.stringify(req.user.user_num));
     // const taskInfo = {task_num: req.body.task_num, importance: req.body.importance, worker_num: req.user.user_num};
-    var promise = await Task.updateImportance({task_num: req.body.task_num, complete_date: req.body.complete_date, worker_num: req.user.user_num});
+    var promise = await Task.updateImportance({task_num: req.body.task_num, importance: req.body.importance, worker_num: req.user.user_num});
 
     if(promise.err){
         console.log("err: " + promise.err);
         res.status(500).send({
-            message: `Error retrieving Task with task_num ${taskInfo.task_num}`
+            message: `Error retrieving Task with task_num ${req.body.task_num}`
         });
         return; 
     }
@@ -221,41 +251,67 @@ exports.showDetailbyTaskNum = async (req, res) => {
     var promise1;
     var promise2;
     var promise3;
+    var promise4;
     
     // var detailData = {};
 
-    
     promise1 = await Task.getDetailTasksbyTaskNum(req.params.taskNum);
 
     if(promise1.err){
-        console.log("promise1.err: " + promise1.err);
-        res.status(500).send({
-            message: `Error retrieving Worker with task_num ${req.body.task_num}`
-        });
-        return; 
+        if(promise1.err != "not_found"){
+            console.log("promise1.err: " + promise1.err);
+            res.status(500).send({
+                message: `Error retrieving Worker with task_num ${req.body.task_num}`
+            });
+            return; 
+        }
     }
 
     promise2 = await Task.getManagerbyTaskNum(req.params.taskNum);
 
     if(promise2.err){
-        console.log("promise2.err: " + promise2.err);
-        res.status(500).send({
-            message: `Error retrieving Worker with task_num ${req.body.task_num}`
-        });
-        return; 
+        if(promise2.err != "not_found"){
+            console.log("promise2.err: " + promise2.err);
+            res.status(500).send({
+                message: `Error retrieving Worker with task_num ${req.body.task_num}`
+            });
+            return; 
+        }
     }
 
     promise3 = await Task.getTaskInfobyTaskNum(req.params.taskNum);
 
     if(promise3.err){
-        console.log("promise2.err: " + promise3.err);
-        res.status(500).send({
-            message: `Error retrieving Worker with task_num ${req.body.task_num}`
-        });
-        return; 
+        if(promise3.err != "not_found"){
+            console.log("promise3.err: " + promise3.err);
+            res.status(500).send({
+                message: `Error retrieving Worker with task_num ${req.body.task_num}`
+            });
+            return; 
+        }
     }
 
-    res.send({"workers": promise1.data, "manager": promise2.data, "info": promise3.data});
+    promise4 = await Task.getWorkersbyTaskNum(req.params.taskNum);
+
+    if(promise4.err){
+        if(promise4.err != "not_found"){
+            console.log("promise4.err: " + promise4.err);
+            res.status(500).send({
+                message: `Error retrieving Worker with task_num ${req.body.task_num}`
+            });
+            return; 
+        }
+    }
+
+
+    console.log("detail tasks: " + JSON.stringify(promise1.data))
+    console.log("manager: " + JSON.stringify(promise2.data))
+    console.log("info: " + JSON.stringify(promise3.data))    
+    console.log("worker: " + JSON.stringify(promise4.data))
+
+    
+
+    res.send({detailTasks: promise1.data, manager: promise2.data, info: promise3.data, workers: promise4.data});
 
 
 

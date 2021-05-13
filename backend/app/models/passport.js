@@ -36,10 +36,13 @@ module.exports = () => {
     // userNum은 req.session.passport.user에 저장된 값. 
     passport.deserializeUser(async function(userNum, done) {
         console.log('deserializeUser', userNum);
-
+       
         const promise = await User.findByUserNum(userNum);
-        done(promise.err, promise.data);
 
+        // console.log("deserializeUser promise.data: " + JSON.stringify(promise.data));
+
+        done(promise.err, promise.data);
+        
         // await User.findByUserNum(userNum, function(err, user) {
         //     // deserializeUser의 callback함수가 호출될 때 done의 두번째 인자로 주입한 data가 request의 user라고하는 객체로 전달되도록 약속되어있다.
         //     // passport를 사용하지 않으면 request는 user라는 객체를 가지고 있지 않는다. 
@@ -56,7 +59,6 @@ module.exports = () => {
         async function(id, pw, done) {
             // 여기에서밖에 안 쓰임 
             const promise = await User.findById(id);
-                
             if(promise.err){ 
                 if(promise.err === "not_found"){
                     console.log("local2")
@@ -71,13 +73,15 @@ module.exports = () => {
                     return done(err); 
                 }
             }  
-            if(!await bcrypt.compare(pw, user.password)){
+            if(!await bcrypt.compare(pw, promise.data.password)){
                 console.log("local3")
                 return done(null, false, { message: '비밀번호를 확인해주세요.' });
             }
             console.log("local4")
             // 로그인에 성공시 serializeUser의 callback 함수의 첫번째 인자로 주입해주도록 약속되어있다. 
+            // console.log("promise.data: " + JSON.stringify(promise.data));
             return done(null, promise.data);
+            // return done(null, user);
         }
     ));
 }

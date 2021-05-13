@@ -44,7 +44,6 @@ exports.create = async (req, res) => {
     }
 
     res.send({result: true});
-
     // User.create(user, (err, data) => {
     //     if(err)
     //         res.status(500).send({
@@ -56,13 +55,17 @@ exports.create = async (req, res) => {
 };
 
 exports.getAllUser = async (req, res) => {
+
     const promise = await User.getAllUser();
+
     if(promise.err){
-        res.status(500).send({
-            message: 
-                err.message || "Some error occurred while retrieving users."
-        });
-        return; 
+        if(promise.err != "not_found"){
+            res.status(500).send({
+                message: 
+                    err.message || "Some error occurred while retrieving users."
+            });
+            return; 
+        }
     }
 
     res.send(promise.data);
@@ -93,6 +96,7 @@ exports.getAllUser = async (req, res) => {
 
 exports.getUserInfo = async (req, res) => {
     const promise = await User.findById(req.user.id);
+    // 못 찾아도 오류 
     if(promise.err){
         res.status(500).send({
             message: 
@@ -127,17 +131,18 @@ exports.isExistWithId = async (req, res) => {
     // console.log(req.params)
     const promise = await User.findById(req.params.userId);
     
-    if(promise.err === "not_found"){
-        console.log("user.controller.js not_found")
-        res.send({result: true});
-        return;
-    }
-
-    else if(promise.err){
-        res.status(500).send({
-            message: `Error retrieving User with id ${req.params.id}`
-        });
-        return;
+    if(promise.err){
+        if(promise.err === "not_found"){
+            console.log("user.controller.js not_found")
+            res.send({result: true});
+            return;
+        }
+        else {
+            res.status(500).send({
+                message: `Error retrieving User with id ${req.params.id}`
+            });
+            return;
+        }    
     }
 
     else res.send({result: false});
@@ -195,13 +200,17 @@ exports.isExistWithId = async (req, res) => {
 
 exports.getAllManager = async (req, res) => {
     const promise = await User.getAllManager();
+
     if(promise.err){
-        res.status(500).send({
-            message: 
-                err.message || "Some error occurred while retrieving managers."
-        });
-        return;
+        if(promise.err != "not_found"){
+            res.status(500).send({
+                message: 
+                    err.message || "Some error occurred while retrieving managers."
+            });
+            return;
+        }
     }
+    
     res.send(promise.data);
 
 
@@ -216,15 +225,21 @@ exports.getAllManager = async (req, res) => {
     // });
 }
 
-exports.login = (req, res) => {
+exports.loginResult = (req, res) => {
     console.log("login req.session: " + JSON.stringify(req.session));
+    
+    console.log(1)
 
     const fmsg = req.flash();
 
+    console.log(2)
+
     if(fmsg.error){
+        console.log(3)
         res.send({error: fmsg.error[0]});
     }
     else {
+        console.log(4)
         res.send({error: null})
     }
 }

@@ -255,12 +255,18 @@ export default {
             credentials: "same-origin"    
         }).then(res => {
             console.log("showDetail created then");
-            console.log("res.data: " + JSON.stringify(res.data));
-
+            console.log("showDetail res.data: " + JSON.stringify(res.data));
+            // {"workers":[{"detail_task_num":5,"task_num":11,"worker":2,"detail_task_name":"이거 지워지나","content":"ㄹㅇㅎㅇㅀㅇㅀ","report_date":"2021-05-13T04:59:54.000Z"},{"detail_task_num":6,"task_num":11,"worker":2,"detail_task_name":"이거 지워지나2","content":"ㄴㅇㄹㄴㄻㄴㅇ","report_date":"2021-05-13T05:00:17.000Z"}],
+            // "manager":[{"manager":2,"personal_role":null,"name":"이승연ㄴㄴㄴㄴㄴㄴㄴㄴㄴㅇㅇㅇㄴㄴ","id":"seongyeon38","email":"seongyeon38@naver.com","profile_img":"1620276782681_4(1).jpg"}],
+            // "info":[{"task_num":11,"task_name":"ㅇ","explanation":"ㄴㅇㅁㄴ","start_date":"2021-05-03T04:29:00.000Z","end_date":"2021-05-28T04:29:00.000Z","manager":2,"register_date":"2021-05-13T04:29:34.000Z","complete_date":null,"label_color":"#F56C6C","complete":0}]}
             this.workers = res.data.workers;
-
             this.taskInfo = res.data.info[0];
+            this.manager = res.data.manager[0];
             
+            console.log("this.workers: " + JSON.stringify(this.workers))
+            console.log("this.taskInfo: " + JSON.stringify(this.taskInfo));
+            console.log("this.manager: " + JSON.stringify(this.manager))
+
             const now = this.$moment().format();
 
             if(this.taskInfo.end_date < now){
@@ -268,20 +274,18 @@ export default {
             }
 
             console.log("this.taskClosed: " + this.taskClosed);
-            console.log("this.taskInfo: " + JSON.stringify(this.taskInfo));
 
             this.taskInfo.start_date = this.$moment(res.data.info[0].start_date).format('YYYY/MM/DD h:mm A');
             this.taskInfo.end_date = this.$moment(res.data.info[0].end_date).format('YYYY/MM/DD h:mm A');
             
             // this.start_date = res.data.info[0].start_date;
             // this.end_date = res.data.info[0].end_date;
-            this.manager = res.data.manager[0];
 
-            console.log("this.workers: " + JSON.stringify(this.workers))
+
             console.log("this.taskInfo.start_date: " + this.taskInfo.start_date)
             console.log("this.taskInfo.end_date: " + this.taskInfo.end_date)
-            console.log("this.manager: " + JSON.stringify(this.manager))
 
+            
             for(var i=0; i< res.data.detailTasks.length; i++){
                 if(res.data.detailTasks[i].worker == this.manager.manager){
                     console.log("여기")

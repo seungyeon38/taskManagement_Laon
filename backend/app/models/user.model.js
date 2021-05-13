@@ -17,7 +17,7 @@ User.create = (newUser) => {
                 resolve({err: err});
                 return;
             }
-            console.log("created user: ", {id: res.insertId, ...newUser});
+            // console.log("created user: ", {id: res.insertId, ...newUser});
             resolve({err: null});
         });
         // console.log("newUser");
@@ -78,7 +78,7 @@ User.findById = (userId) => {
             }
             if(res.length){
                 console.log("task of worker res: " + JSON.stringify(res));
-                resolve({err: null, data: res});
+                resolve({err: null, data: res[0]});
                 return;
             }
             // select된 user가 없을 경우 
@@ -126,7 +126,6 @@ User.findByUserNum = (userNum) => {
         console.log("user.model.js findByUserNum");
 
         sql.query(`SELECT user_num, name, id, email, profile_img FROM user WHERE user_num = '${userNum}'`, (err, res) => {
-            console.log("res.length: " + res.length)
             if(err){
                 console.log("error: ", err);
                 resolve({err: err, data: null});
@@ -137,7 +136,7 @@ User.findByUserNum = (userNum) => {
                 resolve({err: null, data: res[0]});
                 return;
             }
-            resolve({err: "not_found", data: res[0]});
+            resolve({err: "not_found", data: res});
             // resolve(result({ kind: "not_found" }, null));
         });
     });

@@ -128,13 +128,13 @@
                 credentials: "same-origin"
             }).then(res => {
                 console.log("BaseLayout")
-                console.log("res.data: " + JSON.stringify(res.data));
-                console.log("then");
+                // console.log("res.data: " + JSON.stringify(res.data));
+                // console.log("then");
                 this.user = res.data;
                 // this.user.profile_img = res.data.profile_img;
                 // this.profile_img = createElement('img', {attrs: {src: require(`../../../backend/uploads/${res.data.profile_img}`)}})
                 // this.profile_img = '../../../backend/uploads/' + res.data.profile_img;
-                console.log("this.user.profile_img: " + this.user.profile_img);
+                // console.log("this.user.profile_img: " + this.user.profile_img);
                 // console.log("typeof(this.user.profile_img): " + typeof(this.user.profile_img));
 
             }).catch(err => {
@@ -161,7 +161,7 @@
                 }).then(res => {
                     if(res.data.logout == true){
                         console.log("baselayout logOut then");
-                        console.log("res.data: " + JSON.stringify(res.data));
+                        // console.log("res.data: " + JSON.stringify(res.data));
                         this.$router.push({name: 'logIn'})
                     }
                 }).catch(err => {

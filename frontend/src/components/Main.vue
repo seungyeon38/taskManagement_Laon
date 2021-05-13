@@ -308,7 +308,7 @@ export default {
             },
             credentials: "same-origin"    
         }).then(res => {
-            console.log("manager res: " + JSON.stringify(res.data));
+            console.log("main manager res: " + JSON.stringify(res.data));
             this.managers = res.data;
 
             this.$axios({
@@ -320,9 +320,9 @@ export default {
                 },
                 credentials: "same-origin"
             }).then(res => {
-                console.log("res.data: " + JSON.stringify(res.data));
-                console.log("res.data.userNum: " + JSON.stringify(res.data.userNum));
-                console.log("then");
+                console.log("main res.data: " + JSON.stringify(res.data));
+                // console.log("res.data.userNum: " + JSON.stringify(res.data.userNum));
+                // console.log("then");
                 console.log(1)
                 const now = this.$moment().format();
 
@@ -477,7 +477,7 @@ export default {
             }).then(res => {
                 // console.log("main complete then");
                 // this.$router.go();
-                if(res.data.update){
+                if(res.data.result){
                     console.log("main complete then");
                     this.$router.go();
                 }

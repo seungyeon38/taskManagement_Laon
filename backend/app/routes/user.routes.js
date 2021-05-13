@@ -60,8 +60,8 @@ module.exports = app => {
     app.post("/login", 
     // 앞(local)은 전략
         passport.authenticate('local', {
-            successRedirect: '/login',  // home으로 
-            failureRedirect: '/login',
+            successRedirect: '/loginResult',  // home으로 
+            failureRedirect: '/loginResult',
             failureFlash: true
         }), 
         // (req, res) => {
@@ -71,7 +71,7 @@ module.exports = app => {
         // }
     );
 
-    app.get("/login", user.login);
+    app.get("/loginResult", user.loginResult);
 
     app.get("/logout", function(req, res){
         req.logout();   // request.user(req.user)라는 데이터를 삭제하고, session store에 있는 passport데이터를 삭제한다.

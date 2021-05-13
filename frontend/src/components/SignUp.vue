@@ -126,8 +126,8 @@
                                     let formData = new FormData();
                                     if(this.files.length){
                                         console.log("SignUp.vue files.length!=0")
-                                        this.files[0].id = this.id;
-                                        console.log("this.files[0].id: " + this.files[0].id)
+                                        // this.files[0].id = this.id;
+                                        // console.log("this.files[0].id: " + this.files[0].id)
                                         console.log("this.files[0]: " + this.files[0])
                                         formData.append('profile_img', this.files[0]);
                                         formData.append('name', this.name);
