@@ -52,7 +52,7 @@ module.exports = app => {
 
     // app.get("/main", );
     
-    app.get("/base", user.base);
+    app.get("/getUserInfo", user.getUserInfo);
 
     // 로그인을 할 때 전송받는 부분을 passport의 체계로 바꿔야 한다. 
     // '/login'으로 인증정보를 보냈을 때. 데이터가 들어오면 데이터를 처리하는 callback을 passport에서 제공하는 API로 

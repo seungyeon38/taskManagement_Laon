@@ -13,7 +13,9 @@ module.exports = app => {
 
     app.post("/addTask", task.create);
 
-    app.get("/tasks", task.findTasksByUserId);
+    app.post("/deleteTask", task.deleteTask);
+
+    app.get("/tasks", task.findTasksbyUserId);
 
     app.post("/taskComplete", task.taskComplete);
 

@@ -36,11 +36,15 @@ module.exports = () => {
     // userNum은 req.session.passport.user에 저장된 값. 
     passport.deserializeUser(async function(userNum, done) {
         console.log('deserializeUser', userNum);
-        await User.findByUserNum(userNum, function(err, user) {
-            // deserializeUser의 callback함수가 호출될 때 done의 두번째 인자로 주입한 data가 request의 user라고하는 객체로 전달되도록 약속되어있다.
-            // passport를 사용하지 않으면 request는 user라는 객체를 가지고 있지 않는다. 
-            done(err, user); // 여기의 user가 req.user가 됨
-        });
+
+        const promise = await User.findByUserNum(userNum);
+        done(promise.err, promise.data);
+
+        // await User.findByUserNum(userNum, function(err, user) {
+        //     // deserializeUser의 callback함수가 호출될 때 done의 두번째 인자로 주입한 data가 request의 user라고하는 객체로 전달되도록 약속되어있다.
+        //     // passport를 사용하지 않으면 request는 user라는 객체를 가지고 있지 않는다. 
+        //     done(err, user); // 여기의 user가 req.user가 됨
+        // });
         // console.log('끝 deserializeUser');
     });
 
@@ -49,31 +53,31 @@ module.exports = () => {
         passwordField: 'pw'
         },
         // done이라는 함수를 어떻게 호출하느냐에 따라서 로그인의 성공, 실패를 passport에게 알려줄 수 있다. 
-        function(id, pw, done) {
+        async function(id, pw, done) {
             // 여기에서밖에 안 쓰임 
-            User.findById(id, async function(err, user){
-                if(err){ 
-                    if(err.kind === "not_found"){
-                        console.log("local2")
-                        // 첫번째 인자: DB조회 같은 때 발생하는 서버 에러를 넣는 곳, 무조건 실패하는 경우에만 사용(성공했을 시 null) 
-                        // 두번째 인자: 성공했을 때 return할 값을 넣는 곳 
-                        // 세번째 인자: 사용자가 임의로 실패를 만들고 싶을 때 사용 
-                        return done(null, false, {message: '존재하지 않는 회원입니다.'});
-                    }
-                    else{
-                        console.log("local1")
-                        console.log(err)
-                        return done(err); 
-                    }
-                }  
-                if(!await bcrypt.compare(pw, user.password)){
-                    console.log("local3")
-                    return done(null, false, { message: '비밀번호를 확인해주세요.' });
+            const promise = await User.findById(id);
+                
+            if(promise.err){ 
+                if(promise.err === "not_found"){
+                    console.log("local2")
+                    // 첫번째 인자: DB조회 같은 때 발생하는 서버 에러를 넣는 곳, 무조건 실패하는 경우에만 사용(성공했을 시 null) 
+                    // 두번째 인자: 성공했을 때 return할 값을 넣는 곳 
+                    // 세번째 인자: 사용자가 임의로 실패를 만들고 싶을 때 사용 
+                    return done(null, false, {message: '존재하지 않는 회원입니다.'});
                 }
-                console.log("local4")
-                // 로그인에 성공시 serializeUser의 callback 함수의 첫번째 인자로 주입해주도록 약속되어있다. 
-                return done(null, user);
-            });
+                else{
+                    console.log("local1")
+                    console.log(err)
+                    return done(err); 
+                }
+            }  
+            if(!await bcrypt.compare(pw, user.password)){
+                console.log("local3")
+                return done(null, false, { message: '비밀번호를 확인해주세요.' });
+            }
+            console.log("local4")
+            // 로그인에 성공시 serializeUser의 callback 함수의 첫번째 인자로 주입해주도록 약속되어있다. 
+            return done(null, promise.data);
         }
     ));
 }

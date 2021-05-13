@@ -38,7 +38,11 @@ Task.selectTaskNumbyTaskName = (taskName) => {
                 resolve({err: err, data: null});
                 return;
             }
-            resolve({err: err, data: res[0].task_num});
+            if(res.length){
+                resolve({err: err, data: res[0].task_num});
+            }
+            
+            resolve({err: "not_found", data: res});
         })
     })
 }
@@ -324,7 +328,7 @@ Task.selectTasksofWorkers = (userId) => {
                 resolve({err: null, data: res});
             }
             // select된 task가 없을 경우 
-            resolve({err: null, data: res})
+            resolve({err: "not_found", data: res})
         });
     })
 }
@@ -349,7 +353,7 @@ Task.selectTasksofManager = (userId) => {
                 resolve({err: null, data: res});
             }
             // select된 task가 없을 경우 
-            resolve({err: null, data: res})
+            resolve({err: "not_found", data: res})
         }); 
     })
 }
@@ -537,7 +541,7 @@ Task.getDetailTasksbyTaskNum = (taskNum) => {
                 console.log("task.model.js getDetailTasksbyTaskNum 끝");
                 return;
             }
-            resolve({err: null, data: res})
+            resolve({err: "not_found", data: res})
         })
     })
 }
@@ -561,7 +565,7 @@ Task.getWorkersbyTaskNum = (taskNum) => {
                 console.log("task.model.js getWorkersbyTaskNum 끝")
                 return;
             }
-            resolve({err: null, data: res})
+            resolve({err: "not_found", data: res})
         })
     })
 }
@@ -585,7 +589,7 @@ Task.getManagerbyTaskNum = (taskNum) => {
                 console.log("task.model.js getManagerbyTaskNum 끝")
                 return;
             }
-            resolve({err: null, data: res})
+            resolve({err: "not_found", data: res})
         })
     })
 }
@@ -604,7 +608,7 @@ Task.getTaskInfobyTaskNum = (taskNum) => {
                 console.log("task.model.js getTaskInfobyTaskNum 끝")
                 return;
             }
-            resolve({err: null, data: res})
+            resolve({err: "not_found", data: res})
         })
     })
 }

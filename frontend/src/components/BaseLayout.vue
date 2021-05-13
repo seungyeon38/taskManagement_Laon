@@ -119,7 +119,7 @@
             // "email":"seongyeon38@naver.com",
             // "profile_img":"a267d4aa260ac095cbed817b9fd7aa52"
             this.$axios({
-                url: 'http://localhost:3000/base',
+                url: 'http://localhost:3000/getUserInfo',
                 method: 'get',
                 withCredentials: true,
                 headers: {

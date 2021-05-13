@@ -122,7 +122,7 @@
                             this.$axios.get('http://localhost:3000/signUp/checkId/'+ this.id
                             ).then(res => {
                                 console.log("res")
-                                if(res.data === "notExist"){
+                                if(res.data.result == true){
                                     let formData = new FormData();
                                     if(this.files.length){
                                         console.log("SignUp.vue files.length!=0")
@@ -159,7 +159,7 @@
                                         console.log("ERROR!!!: ", ex)
                                     })
                                 }
-                                else if(res.data === "exist"){
+                                else if(res.data.result == false){
                                     alert("존재하는 아이디입니다. 다른 아이디를 입력해주세요.")
                                 }
                             }).catch(err => {
