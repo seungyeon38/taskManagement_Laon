@@ -1,13 +1,7 @@
 const DetailTask = require("../models/detailTask.model.js");
 
 
-exports.addDetailTask = (req, res) => {
-    console.log("addDetailTask")
-    console.log("req.session: " + JSON.stringify(req.session))
-    console.log("req.user: " + JSON.stringify(req.user))
-    // task_num, detail_task_name, worker(user_num), content, report_date 
-    console.log("req.body: " + JSON.stringify(req.body))
-
+exports.addDetailTask = async (req, res) => {
     const detailTask = new DetailTask({
         task_num: req.body.task_num,
         worker: req.user.user_num,
@@ -17,14 +11,13 @@ exports.addDetailTask = (req, res) => {
     });
 
     console.log("detailTask: " + JSON.stringify(detailTask))
-    DetailTask.addDetailTask(detailTask, (err, data) => {
-        if(err){
-            console.log("err: " + err);
-            res.status(500).send({
-                message: `Error retrieving DetailTask with task_num ${req.body.task_num}`
-            });
-        }
-        console.log("task.controller.js taskComplete update 끝")
-        res.send(data);
-    });
+    const promise = await DetailTask.addDetailTask(detailTask);
+    if(promise.err){
+        console.log("err: " + promise.err);
+        res.status(500).send({
+            message: `Error retrieving DetailTask with task_num ${req.body.task_num}`
+        });
+    }
+
+    res.send({result: true});
 };

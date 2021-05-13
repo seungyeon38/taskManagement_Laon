@@ -8,20 +8,17 @@ const DetailTask = function(detailTask){
     this.report_date = detailTask.report_date;
 };
 
-DetailTask.addDetailTask = (detailTask, result) => {
-    sql.query("INSERT INTO detail_task SET ?", detailTask, (err, res) => {
-        if(err){
-            console.log("addDetailTask_error: ", err);
-            result(err, null);
-            return;
-        }
-        // task_num = res.insertId;
-        // console.log("task_num");
-        // console.log(task_num);
+DetailTask.addDetailTask = (detailTask) => {
+    return new Promise(resolve => {
+        sql.query("INSERT INTO detail_task SET ?", detailTask, (err) => {
+            if(err){
+                resolve({err: err});
+                return;
+            }
 
-        console.log("addDetailTask task: ", {...detailTask});
-        result(null, {...detailTask});
-    })
+            resolve({err: null});
+        })
+    });
 }
 
 module.exports = DetailTask;

@@ -181,13 +181,12 @@ export default {
                     },
                     credentials: "same-origin"
                 }).then(res => {
-                    console.log("세부업무 등록 성공!")
-                    alert("세부업무가 등록되었습니다.")
-                    this.dialogFormVisible = false;
-                    // this.$router.push({name: 'logIn'})
-                    // console.log("this.$router.go()")
-                    this.$router.go()
-                    // this.$router.push({name: 'showDetail'})
+                    if(res.data.result == true){
+                        console.log("세부업무 등록 성공!")
+                        alert("세부업무가 등록되었습니다.")
+                        this.dialogFormVisible = false;
+                        this.$router.go()
+                    }
                 }).catch(err => {
                     console.log("세부업무 등록 ERROR!!: ", err)
                 })      
