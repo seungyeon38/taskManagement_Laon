@@ -144,7 +144,7 @@
                                         </td>
                                         <td>
                                             <div style="margin-left: 30px;">
-                                                <personal-role v-for="worker in selected_workers" :key="worker.user_num" v-on:enrollPersonalRole="enrollPersonalRole" :worker_num="worker.user_num" :worker_name="worker.name" :worker_id="worker.id"></personal-role>
+                                                <personal-role v-for="worker in selected_workers" :key="worker.user_num" v-on:enrollPersonalRole="enrollPersonalRole" :user_num="worker.user_num" :worker_name="worker.name" :worker_id="worker.id"></personal-role>
                                             </div>
                                         </td>
                                     </tr>
@@ -196,7 +196,7 @@ export default {
             manager: '',
             managerRole: '',
             users: [],
-            users_notManager: [], // manager를 제외한 worker들
+            // users_notManager: [], // manager를 제외한 worker들
             selected_workerNum: [],
             selected_workers: []   
         }
@@ -225,10 +225,10 @@ export default {
         });
     },
     watch: {
-        manager: function(){
-            this.users_notManager = this.users.filter(this.notManager);
-            console.log("this.users_notManager: " + JSON.stringify(this.users_notManager));
-        },
+        // manager: function(){
+        //     this.users_notManager = this.users.filter(this.notManager);
+        //     console.log("this.users_notManager: " + JSON.stringify(this.users_notManager));
+        // },
         selected_workerNum: function(newVal, oldVal){
             console.log("watch selected_workerNum: " + this.selected_workerNum);
             console.log("watch selected_workerNum newVal: " + newVal);
@@ -238,15 +238,18 @@ export default {
         }
     },
     computed: {
-
+        users_notManager: function(){
+            console.log("computed users_notManager")
+            return this.users.filter(this.notManager);
+        },
     },
     methods: {
         dateChenge(){
             console.log("start_date: " + this.start_date);
         },
-        checkbox(){
-            console.log("duration_check: " + this.duration_check);
-        },
+        // checkbox(){
+        //     console.log("duration_check: " + this.duration_check);
+        // },
         notManager(element){
             // console.log(element);
             // console.log(this.manager);
@@ -263,6 +266,7 @@ export default {
             // console.log("before worker: " + this.workers);
             this.selected_workerNum = [];
             this.selected_workers = [];
+            console.log("workerReset");
             // console.log("after worker: " + this.workers);
         },
         selectWorkers(newVal, oldVal){
@@ -298,11 +302,11 @@ export default {
             console.log("enrollPersonalRole personalRole: " + JSON.stringify(personalRole));
 
             const findIndex = this.selected_workers.findIndex(function(item){
-                return item.user_num == personalRole.worker_num;
+                return item.user_num == personalRole.user_num;
             })
             console.log(findIndex);
             // console.log("findItem: " + JSON.stringify(findIndex));
-            this.selected_workers[findIndex].personalRole = personalRole.content;
+            this.selected_workers[findIndex].personal_role = personalRole.personal_role;
             console.log("enrollPersonalRole this.selected_workers: " + JSON.stringify(this.selected_workers));
         },
         // enrollManagerRole(){
@@ -310,9 +314,8 @@ export default {
         //     // this.selected_workers.push({user_num: this.manager, personalRole: this.managerRole});
         //     console.log("this.selected_workers: " + JSON.stringify(this.selected_workers));
         // },
-        async enrollTask(){
+        enrollTask(){
             // await this.enrollPersonalTask;
-
             console.log("start_date: " + this.start_date);
             if(this.duration_check == true){
                 this.start_date = null;
@@ -330,7 +333,13 @@ export default {
 
             // this.selected_workerNum = Object.values(this.selected_workerNum);
 
-            this.register_date = this.$moment().format();
+            this.register_date = this.$moment().format('YYYY-MM-DDTHH:mm');
+
+            // 이 부분 수정할 수 있으면 하기 
+            if(!this.manager){
+                alert("관리자를 선택해주세요.")
+                return;
+            }
 
             // const selected_workers_manager = {};
 
@@ -364,11 +373,12 @@ export default {
                     manager: this.manager,
                     importance: false,
                     register_date: this.register_date,
-                    complete_time: null,
+                    complete_date: null,
                     label_color: this.label_color,
                     manager_role: this.managerRole,
                     selected_workers_list: this.selected_workers,
                     complete: false,
+                    update_date: null
                 },
                 withCredentials: true,
                 headers: {
