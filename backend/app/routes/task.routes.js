@@ -22,5 +22,9 @@ module.exports = app => {
     app.get("/showDetail/:taskNum", task.showDetailbyTaskNum);
 
     app.post("/taskImportance", task.taskImportance);
-    // app.get("/print", task.printSession);
+
+    app.get("/getTaskInfo/:taskNum", task.getTaskInfobyTaskNum);
+
+    app.post("/modifyTask", task.modifyTask);
+
 }

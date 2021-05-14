@@ -44,6 +44,10 @@ app.use(
     saveUninitialized: true,
     store: sessionStore,
     // cookie: {
+    //   httpOnly: true, // javascript로 cookie에 접근하지 못하게 하는 옵션
+    //   secure: false, // https 프로토콜만 허락하는 지 여부
+    // },
+    // cookie: {
     //   maxAge: 1000 * 60 * 30 // 쿠키 유효시간 30분  
     // }
   })

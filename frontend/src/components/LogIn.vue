@@ -46,30 +46,25 @@ export default{
                 credentials: "same-origin"
             }).then(res => {
                 console.log("res.data: " + JSON.stringify(res.data))
-                if(res.data.error){
-                    alert(res.data.error)
+
+                if(res.data.user){
+                    this.$store.commit("setUser", res.data.user);
+                    this.$router.push({name: 'main'});
                 }
-                else{
-                    console.log("로그인 성공")
-                    this.$router.push({name: 'main'})
+                else if(res.data.error_msg){
+                    alert(res.data.error_msg)
                 }
+                
             }).catch(err => {
                 console.log("로그인 실패")
                 console.log("Login ERROR!!: ", err)
 
                 alert("로그인 실패")
             })
-            // this.$axios.post('http://localhost:3000/login', {
-            //     id:this.id, pw:this.password
-            // }).then(res => {
-            //     console.log("로그인 성공!")
-            //     console.log("res: " + res);
-            //     console.log("res.data: " + res.data);
-            //     this.$router.push('main')
-            // }).catch(err => {
-            //     console.log("Login ERROR!!: ", err)
-            // })
         },
+    },
+    computed: {
+        user(){return this.$store.getters.user;}
     }
 }
 </script>

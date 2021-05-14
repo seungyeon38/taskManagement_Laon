@@ -14,15 +14,20 @@
 <script>
 export default{
     name: 'personalRole',
-    props: ['worker_num', 'worker_name', 'worker_id'],
+    props: ['user_num', 'worker_name', 'worker_id', 'personal_role'],
     data(){
         return{
-            content: ''
+            content: this.personal_role
         }
     },
     methods: {
         enrollPersonalRole(){
-            this.$emit('enrollPersonalRole', {worker_num: this.worker_num, content: this.content});
+            this.$emit('enrollPersonalRole', {user_num: this.user_num, personal_role: this.content});
+        }
+    },
+    created(){
+        if(this.personal_role === "undefined"){
+            this.content = ""
         }
     }
 }

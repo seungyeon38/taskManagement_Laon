@@ -107,12 +107,13 @@ exports.getAllManager = async (req, res) => {
 
 exports.loginResult = (req, res) => {
     const fmsg = req.flash();
-
+    console.log("loginResult req.user: " + JSON.stringify(req.user));
+    console.log("loginResult req.session: " + JSON.stringify(req.session));
     if(fmsg.error){
-        res.send({error: fmsg.error[0]});
+        res.send({error_msg: fmsg.error[0], user: null});
     }
     else {
-        res.send({error: null})
+        res.send({error_msg: null, user: req.user})
     }
 }
 

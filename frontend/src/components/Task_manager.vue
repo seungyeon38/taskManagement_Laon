@@ -5,7 +5,7 @@
                 <td align="right">
                     <div style="margin-top: 5px;">
                     </div>
-                    <button type="button" v-bind:style="star_style" class="el-icon-star-off" style="border: none; padding: 0px; background: none; font-size:1.7em;" @click.stop="changeStar"></button>
+                    <button type="button" v-bind:style="star_style" class="el-icon-star-off" style="border: none; padding: 0px; background: none; font-size:1.7em;" @click.stop="changeImportance"></button>
                     <!-- <button type="button" style="border: none; padding: 0px; background: none;" @click.stop="changeStar">
                         <img :src="star" style="width: 25px; height: 25px;"/>
                     </button> -->
@@ -61,7 +61,8 @@ export default{
             console.log("Task_manager taskNum: " + taskNum)
             this.$emit('clickTask', taskNum);
         },
-        changeStar(){            
+        changeImportance(){        
+            console.log("changeImportance: " + this.task_num)    
             // if(this.star_style.color == '#636363'){
             //     this.star_style.color = 'orange';
             // }
@@ -87,7 +88,8 @@ export default{
             }, 5);
         },
         taskModify(){
-            alert("taskModify")
+            this.$emit('modifyTask', this.task_num);
+            // alert("taskModify")
         },
         taskDelete(){
             this.$emit('deleteTask', this.task_num, this.task_name);
@@ -95,6 +97,7 @@ export default{
         }
     },
     created(){
+        console.log("importance: " + this.importance)
         if(this.importance == true){
             console.log("Task_manager importance true")
             // this.star = require('../img/star_color.png');

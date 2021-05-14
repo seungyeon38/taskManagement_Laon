@@ -110,7 +110,7 @@
                 <div v-if="manager.personal_role != 'undefined'" style="margin-left: 65px">{{manager.personal_role}}</div>
             </div>
             <div v-if="workers.length" class="label_title" style="margin-top:40px;">실무담당자</div>
-            <div v-for="worker in workers" :key="worker.worker_num" class="task_content"> 
+            <div v-for="worker in workers" :key="worker.user_num" class="task_content"> 
                 <div style="font-size: 1.1em; margin-bottom: 15px; display:flex; align-items: center;">
                     <el-avatar v-if="worker.profile_img" :size="45" style="border: 1px solid rgb(207, 211, 211);">
                         <img :src="require('../../../backend/uploads/' + worker.profile_img)" />
@@ -142,7 +142,8 @@ export default {
             detailTask_list: [],
             taskInfo: {},
             taskClosed: 0,
-            taskNum: '',
+            // taskNum: '',
+            taskNum: null,
             complete: '',
             workers: [],
             // start_date: '',
@@ -259,8 +260,8 @@ export default {
             // "manager":[{"manager":2,"personal_role":null,"name":"이승연ㄴㄴㄴㄴㄴㄴㄴㄴㄴㅇㅇㅇㄴㄴ","id":"seongyeon38","email":"seongyeon38@naver.com","profile_img":"1620276782681_4(1).jpg"}],
             // "info":[{"task_num":11,"task_name":"ㅇ","explanation":"ㄴㅇㅁㄴ","start_date":"2021-05-03T04:29:00.000Z","end_date":"2021-05-28T04:29:00.000Z","manager":2,"register_date":"2021-05-13T04:29:34.000Z","complete_date":null,"label_color":"#F56C6C","complete":0}]}
             this.workers = res.data.workers;
-            this.taskInfo = res.data.info[0];
-            this.manager = res.data.manager[0];
+            this.taskInfo = res.data.info;
+            this.manager = res.data.manager;
             
             console.log("this.workers: " + JSON.stringify(this.workers))
             console.log("this.taskInfo: " + JSON.stringify(this.taskInfo));
@@ -274,8 +275,8 @@ export default {
 
             console.log("this.taskClosed: " + this.taskClosed);
 
-            this.taskInfo.start_date = this.$moment(res.data.info[0].start_date).format('YYYY/MM/DD h:mm A');
-            this.taskInfo.end_date = this.$moment(res.data.info[0].end_date).format('YYYY/MM/DD h:mm A');
+            this.taskInfo.start_date = this.$moment(res.data.info.start_date).format('YYYY/MM/DD h:mm A');
+            this.taskInfo.end_date = this.$moment(res.data.info.end_date).format('YYYY/MM/DD h:mm A');
             
             // this.start_date = res.data.info[0].start_date;
             // this.end_date = res.data.info[0].end_date;
@@ -296,7 +297,7 @@ export default {
                 else{
                     for(var j=0; j<res.data.workers.length; j++){
                         console.log("res.data.workers: " + JSON.stringify(res.data.workers))
-                        if(res.data.detailTasks[i].worker == res.data.workers[j].worker_num){
+                        if(res.data.detailTasks[i].worker == res.data.workers[j].user_num){
                             console.log("저기")
                             res.data.detailTasks[i].workerId = res.data.workers[j].id;
                             res.data.detailTasks[i].workerName = res.data.workers[j].name;
@@ -372,8 +373,4 @@ export default {
     margin-left: 10px;
     margin-top: 30px;
 }
-/* 
-.interval{
-    margin-bottom: 50px;
-} */
 </style>

@@ -136,7 +136,7 @@
                     </td>
                 </tr>
                 <tr v-if="taskManagerImportant_list.length || taskImportant_list.length">
-                    <task-manager v-for="task in taskManagerImportant_list" :key="task.task_num" v-on:complete="complete" v-on:clickTask="clickTask" v-on:changeImportance="changeImportanceFalse" v-on:deleteTask="deleteTask" :task_name="task.task_name" :task_num="task.task_num" :manager="task.manager" :start_date="task.start_date" :end_date="task.end_date" :label_color="task.label_color" :importance="task.importance"></task-manager>
+                    <task-manager v-for="task in taskManagerImportant_list" :key="task.task_num" v-on:complete="complete" v-on:clickTask="clickTask" v-on:changeImportance="changeImportanceFalse" v-on:deleteTask="deleteTask" v-on:modifyTask="modifyTask" :task_name="task.task_name" :task_num="task.task_num" :manager="task.manager" :start_date="task.start_date" :end_date="task.end_date" :label_color="task.label_color" :importance="task.importance"></task-manager>
                     <task-in-progress v-for="task in taskImportant_list" :key="task.task_num" v-on:clickTask="clickTask" v-on:changeImportance="changeImportanceFalse" :task_name="task.task_name" :task_num="task.task_num" :manager="task.manager" :start_date="task.start_date" :end_date="task.end_date" :label_color="task.label_color" :importance="task.importance"></task-in-progress>
                 </tr>
                 <tr v-else>
@@ -149,7 +149,7 @@
                    
                 </tr>
                 <tr v-if="taskManagerInProgress_list.length || taskInProgress_list.length">
-                    <task-manager v-for="task in taskManagerInProgress_list" :key="task.task_num" v-on:complete="complete" v-on:clickTask="clickTask" v-on:changeImportance="changeImportanceTrue" v-on:deleteTask="deleteTask" :task_name="task.task_name" :task_num="task.task_num" :manager="task.manager" :start_date="task.start_date" :end_date="task.end_date" :label_color="task.label_color" :importance="task.importance"></task-manager>
+                    <task-manager v-for="task in taskManagerInProgress_list" :key="task.task_num" v-on:complete="complete" v-on:clickTask="clickTask" v-on:changeImportance="changeImportanceTrue" v-on:deleteTask="deleteTask" v-on:modifyTask="modifyTask" :task_name="task.task_name" :task_num="task.task_num" :manager="task.manager" :start_date="task.start_date" :end_date="task.end_date" :label_color="task.label_color" :importance="task.importance"></task-manager>
                     <task-in-progress v-for="task in taskInProgress_list" :key="task.task_num" v-on:clickTask="clickTask" v-on:changeImportance="changeImportanceTrue" :task_name="task.task_name" :task_num="task.task_num" :manager="task.manager" :start_date="task.start_date" :end_date="task.end_date" :label_color="task.label_color" :importance="task.importance"></task-in-progress>
                 </tr>
                 <tr v-else>
@@ -719,8 +719,15 @@ export default {
             }).catch(err => {
                 console.log("main deleteConfirm catch");
             });  
-            
-        }
+        },
+        modifyTask(taskNum){
+            console.log("main modifyTask")
+
+            this.$router.push({
+                name: 'modifyTask', 
+                params: {taskNum: taskNum}
+            })
+        },
         // handleClose(done) {
         //     this.$confirm('Are you sure to close this dialog?')
         //     .then(_ => {

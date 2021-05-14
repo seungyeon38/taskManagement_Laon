@@ -15,7 +15,7 @@ const bcrypt = require('bcrypt');
 // passport에 serializeUser, deserializeUser라는 기능을 설치함. 
 module.exports = () => {
     // 로그인에 성공했을 때 메소드에 인자로 전달된 callback함수가 호출되도록 약속되어있다. 
-    // 로그인에 성공했다는 것을 session store에 저장하는 기능을 함. 딱 한번 호출된다. 
+    // 로그인에 성공했다는 것을 session store에 저장하는 기능을 함. 즉, 로그인시에 딱 한번 호출된다. 
     passport.serializeUser(function(user, done) {
         console.log('serializeUser', user);
         // session data의 passport user안으로 간다. (req.session.passport.user에 저장)
@@ -61,23 +61,19 @@ module.exports = () => {
             const promise = await User.findById(id);
             if(promise.err){ 
                 if(promise.err === "not_found"){
-                    console.log("local2")
                     // 첫번째 인자: DB조회 같은 때 발생하는 서버 에러를 넣는 곳, 무조건 실패하는 경우에만 사용(성공했을 시 null) 
                     // 두번째 인자: 성공했을 때 return할 값을 넣는 곳 
                     // 세번째 인자: 사용자가 임의로 실패를 만들고 싶을 때 사용 
                     return done(null, false, {message: '존재하지 않는 회원입니다.'});
                 }
                 else{
-                    console.log("local1")
                     console.log(err)
                     return done(err); 
                 }
             }  
             if(!await bcrypt.compare(pw, promise.data.password)){
-                console.log("local3")
                 return done(null, false, { message: '비밀번호를 확인해주세요.' });
             }
-            console.log("local4")
             // 로그인에 성공시 serializeUser의 callback 함수의 첫번째 인자로 주입해주도록 약속되어있다. 
             // console.log("promise.data: " + JSON.stringify(promise.data));
             return done(null, promise.data);

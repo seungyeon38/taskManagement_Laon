@@ -361,7 +361,7 @@ export default {
             //     selected_workers_list: this.selected_workers,
             //     complete: false,
             // }).
-
+            console.log("selected_workers_list: " + JSON.stringify(this.selected_workers))
             this.$axios({
                 url: `http://localhost:3000/addTask`,
                 method: 'post',
