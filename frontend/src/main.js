@@ -7,7 +7,7 @@ import axios from 'axios';
 import Element from 'element-ui';
 import 'element-ui/lib/theme-chalk/index.css';
 import vueMoment from 'vue-moment';
-import {store} from './store';
+// import {store} from './store';
 
 Vue.prototype.$axios = axios;
 Vue.config.productionTip = false;
@@ -21,7 +21,7 @@ Vue.use(vueMoment);
 new Vue({
   el: '#app',
   router,
-  store,
+  // store,
   components: { App },
   template: '<App/>'
 })
