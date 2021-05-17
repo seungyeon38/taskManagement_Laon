@@ -4,6 +4,7 @@
             <table style="width: 100%">
                 <tr align="right">
                     <td colspan="2">
+                        <!-- <span>업무명</span> -->
                         <el-button v-if="taskInfo.complete == 0 && taskClosed == 0" id="enroll-detailTask" class="custom-icon"  @click="dialogFormVisible = true" icon="el-icon-plus" type="info"></el-button>
                         <div v-else style="height: 50px"></div>
                         <el-dialog title="세부업무 등록" :visible.sync="dialogFormVisible" style="text-align: left; font-weight: bolder;" @closed="cancelEnroll">
@@ -28,7 +29,7 @@
                 </tr>
                 <tr> 
                     <td style="width: 20%; padding-top: 20px;" valign="top">
-                        <el-select v-model="complete" v-if="detailTask_list.length == 0" filterable placeholder="Select" style="width: 220px;" disabled>
+                        <el-select v-model="complete" v-if="detailTask_list.length" filterable placeholder="Select" style="width: 220px;">
                             <!-- <el-option
                             v-for="item in options"
                             :key="item.value"
@@ -36,7 +37,7 @@
                             :value="item.value">
                             </el-option> -->
                         </el-select>
-                        <el-select v-model="complete" v-else filterable placeholder="Select" style="width: 220px;">
+                        <el-select v-model="complete" v-else filterable placeholder="Select" style="width: 220px;" disabled>
                             <!-- <el-option
                             v-for="item in options"
                             :key="item.value"
@@ -45,9 +46,12 @@
                             </el-option> -->
                         </el-select>
                     </td>
-                    <td v-if="detailTask_list.length != 0" style="width: 80%; padding-top: 20px; text-align: justify;">
+                    
+                    <td style="width: 80%; padding-top: 20px; text-align: justify;">
                         <!-- <detail-task v-for="detailTask in detailTask_list" :key="detailTask.detail_task_num" :detail_task_num="detailTask.detail_task_num" :workerName="detailTask.workerName" :detail_task_name="detailTask.detail_task_name" :content="detailTask.content" :report_date="detailTask.report_date"></detail-task> -->
-                        <div>
+                        <div style="text-align: center; font-size: 25px; font-weight: bolder; color: rgb(169, 183, 202);">{{taskInfo.task_name}}</div>
+                        <hr style="border-color: rgb(169, 183, 202); margin-top: 30px; margin-bottom: 35px; height: 12px; border: 0; height: 1px; background-image: linear-gradient(to right, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0));">
+                        <div v-if="detailTask_list.length != 0">
                             <el-timeline>
                                 <!-- <div v-for="detailTask in detailTask_list" :key="detailTask.detail_task_num"> -->
                                     <el-timeline-item  v-for="detailTask in detailTask_list" :key="detailTask.detail_task_num" :timestamp="`${detailTask.report_date}, ${detailTask.workerName} 님`" placement="top">
@@ -72,10 +76,13 @@
                                 </el-timeline-item> -->
                             </el-timeline>
                         </div>
+                        <div v-else style="font-size: 18px; color: gray; padding-top: 70px; text-align: center">
+                            <span>(등록된 세부 업무가 없습니다.)</span>
+                        </div>
                     </td>
-                    <td v-else style="font-size: 18px; color: gray; padding-top: 100px;">
+                    <!-- <td v-else style="font-size: 18px; color: gray; padding-top: 100px;">
                         (등록된 세부 업무가 없습니다.)
-                    </td>
+                    </td> -->
                 </tr>
             </table>
         </template>
@@ -107,7 +114,7 @@
                     <div style="margin-right: 20px"></div>
                     <span style="font-weight: bolder; max-width: 200px;" class="text-overflow">{{manager.name}} </span><span>님</span>
                 </div>
-                <div v-if="manager.personal_role != 'undefined'" style="margin-left: 65px">{{manager.personal_role}}</div>
+                <div v-if="manager.manager_role != 'undefined'" style="margin-left: 65px">{{manager.manager_role}}</div>
             </div>
             <div v-if="workers.length" class="label_title" style="margin-top:40px;">실무담당자</div>
             <div v-for="worker in workers" :key="worker.user_num" class="task_content"> 
@@ -351,6 +358,7 @@ export default {
     float: right; 
     width: 50px; 
     height: 50px;
+    /* color: #c0c4ca; */
 }
 
 #enroll-detailTask:focus{
