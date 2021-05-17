@@ -193,8 +193,11 @@
         <template v-slot:aside>
             
             <div class="label_title">이번주 업무</div>
-            <div>
+            <div v-if="tasks_thisWeek.length">
                 <this-week-task v-for="task in tasks_thisWeek" :key="task.task_num" :task_name="task.task_name" :manager="task.manager" :start_date="task.start_date" :end_date="task.end_date" :label_color="task.label_color"></this-week-task>
+            </div>
+            <div v-else class="noTask">
+                (이번주에 완료해야할 업무가 없습니다.) 
             </div>
         </template>
 
@@ -401,7 +404,7 @@ export default {
                 console.log("tasks_thisWeek")
 
                 this.tasks_thisWeek.sort(this.date_ascending);
-                console.log(this.tasks_thisWeek)
+                console.log("this.tasks_thisWeek: " + JSON.stringify(this.tasks_thisWeek))
                 
                 // console.log("taskImportant_list.length: " + this.taskImportant_list.length);
                 // console.log("taskManagerImportant_list.length: " + this.taskManagerImportant_list.length);
