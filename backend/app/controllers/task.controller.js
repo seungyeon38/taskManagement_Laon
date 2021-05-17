@@ -59,7 +59,7 @@ exports.create = async (req, res) => {
     task_num = promise.data;
 
     for(let worker of req.body.selected_workers_list){
-        promise = await Task.insertTaskWorker(task_num, worker.user_num, worker.personal_role, req.body.importance);
+        promise = await Task.insertTaskWorker(task_num, worker.user_num, worker.personal_role, false);
         
         if(promise.err){
             res.status(500).send({
@@ -70,7 +70,7 @@ exports.create = async (req, res) => {
         }
     }
 
-    promise = await Task.insertTaskWorker(task_num, req.body.manager, req.body.manager_role, req.body.importance);
+    promise = await Task.insertTaskWorker(task_num, req.body.manager, req.body.manager_role, false);
 
     if(promise.err){
         res.status(500).send({
@@ -98,7 +98,7 @@ exports.deleteTask = async (req, res) => {
         return;
     }
 
-    promise = await Task.deleteTaskWorker(req.body.task_num);
+    promise = await Task.deleteTaskWorkerbyTaskNum(req.body.task_num);
     if(promise.err){
         res.status(500).send({
             message: `Error retrieving Task with id ${req.body.id}`
@@ -299,6 +299,99 @@ exports.modifyTask = async (req, res) => {
         });
         return; 
     }
+    console.log(3)
+    console.log("req.body.sameManager: " + req.body.sameManager)
+
+    // 업데이트 
+    if(req.body.sameManager){
+        console.log(4)
+        console.log("req.body.info.manager: " + req.body.info.manager)
+        console.log("req.body.info.manager_role: " + req.body.info.manager_role)
+        promise = await Task.updateTaskWorker(req.body.info.task_num, req.body.info.manager, req.body.info.manager_role);
+        if(promise.err){
+            res.status(500).send({
+                message: `Error retrieving Worker with task_num ${req.body.info.task_num}`
+            });
+            return; 
+        }
+        console.log("4-1")
+    }
+    // Task.updateTaskWorker = (task_num, user_num, personal_role)
+    // 새로운 매니저라면 
+    else{
+        console.log(5)
+        promise = await Task.deleteTaskWorkerbyTaskNumUserNum(req.body.info.task_num, req.body.beforeManager);
+        console.log("요기")
+        if(promise.err){
+            res.status(500).send({
+                message: `Error retrieving Worker with task_num ${req.body.info.task_num}`
+            });
+            return; 
+        }
+        console.log("죠리")
+
+        promise = await Task.insertTaskWorker(req.body.info.task_num, req.body.info.manager, req.body.info.manager_role, false);
+        if(promise.err){
+            res.status(500).send({
+                message: `Error retrieving Worker with task_num ${req.body.info.task_num}`
+            });
+            return; 
+        }
+        console.log("저기")
+    }
+    console.log(6)
+    for(let worker of req.body.addedWorkers_list){
+        promise = await Task.insertTaskWorker(req.body.info.task_num, worker.user_num, worker.personal_role, false);
+        
+        if(promise.err){
+            res.status(500).send({
+                message:
+                    promise.err.message || "Some error occurred while creating the task."
+            });
+            return;
+        }
+    }
+    console.log(7)
+    for(let worker of req.body.existedWorkers_list){
+        promise = await Task.updateTaskWorker(req.body.info.task_num, worker.user_num, worker.personal_role);
+
+        if(promise.err){
+            res.status(500).send({
+                message:
+                    promise.err.message || "Some error occurred while creating the task."
+            });
+            return;
+        }
+    }
+    console.log(8)
+    for(let userNum of req.body.deletedWorkerNum_list){
+        promise = await Task.deleteTaskWorkerbyTaskNumUserNum(req.body.info.task_num, userNum);
+
+        if(promise.err){
+            res.status(500).send({
+                message:
+                    promise.err.message || "Some error occurred while creating the task."
+            });
+            return;
+        }
+    }
+
+
+
+
+    // addedWorkers_list: addedWorkers_list,
+    // existedWorkers_list: existedWorkers_list,
+    // deletedWorkerNum_list: deletedWorkerNum_list 
+
+
+
+    // importance를 업무를 생성할 때는 다 false로 생성했다. 
+    // 그리고 별표시 누를때마다 업데이트.
+    // 변경을 하면 없어진 실무담당자나 관리자의 정보는 없애야 하고, 
+    // 있던 사람들의 importance는 그대로 가야하고 (역할이 바꼈을 수도 있기 때문에 personal_role은 업데이트 해야됨), 
+    // 없던 사람들의 importance는 false로 설정되어야 한다. 
+
+
 
     // 현재 있는 taskworker가져와. 없는건 없애고 있는건 업데이트. 
 

@@ -83,7 +83,7 @@ Task.deleteTask = (taskNum) => {
     })
 }
 
-Task.deleteTaskWorker = (taskNum) => {
+Task.deleteTaskWorkerbyTaskNum = (taskNum) => {
     return new Promise(resolve => {
         sql.query(`DELETE FROM task_worker 
         WHERE task_num = '${taskNum}'`,  (err) => {
@@ -96,6 +96,21 @@ Task.deleteTaskWorker = (taskNum) => {
         });
     })
 }
+
+Task.deleteTaskWorkerbyTaskNumUserNum = (taskNum, userNum) => {
+    return new Promise(resolve => {
+        sql.query(`DELETE FROM task_worker 
+        WHERE task_num = '${taskNum}' AND user_num = '${userNum}'`,  (err) => {
+            if(err){
+                resolve({err: err});
+                return;
+            }
+
+            resolve({err: null});
+        });
+    })
+}
+
 
 Task.deleteDetailTasks = (taskNum) => {
     return new Promise(resolve => {
@@ -338,7 +353,7 @@ Task.getTaskInfobyTaskNum = (taskNum) => {
 
 Task.updateTaskInfo = (taskInfo) => {
     console.log("taskInfo: " + JSON.stringify(taskInfo));
-    console.log("taskInfo.task_name " + taskInfo.task_name);
+    // console.log("taskInfo.task_name " + taskInfo.task_name);
 
     return new Promise(resolve => {
         sql.query(`UPDATE task 
@@ -362,6 +377,24 @@ Task.updateTaskInfo = (taskInfo) => {
         })
     })
 }
+
+Task.updateTaskWorker = (task_num, user_num, personal_role) => {
+    return new Promise(resolve => {
+        sql.query(`UPDATE task_worker 
+        SET personal_role = '${personal_role}'
+        WHERE task_num = ${task_num} AND user_num = ${user_num}`, (err) => {
+            if(err){
+                console.log(err)
+                resolve({err: err});
+                return;
+            }
+
+            resolve({err: null});
+            return;
+        })
+    })
+}
+
 
 Task.getImportance = (taskInfo) => {
     console.log("taskInfo " + JSON.stringify(taskInfo))

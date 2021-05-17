@@ -2,6 +2,13 @@
     <base-layout>
         <template v-slot:main>
             <el-form @submit.prevent.native="enrollTask" label-width=auto style="text-align: center; margin-top: 30px">
+                <!-- <el-dialog title="관리자 변경" :visible.sync="managerAlertDialogVisible" width="30%" style="text-align: left; font-weight: bolder;">
+                    <span>선택하신 관리자가 실무담당자로 지정되어있습니다. 관리자로 설정하면 해당 실무담당자와 역할이 목록에서 삭제됩니다.</span>
+                    <span slot="footer" class="dialog-footer">
+                        <el-button @click="dialogVisible = false" @click.native="managerChangeCancel">Cancel</el-button>
+                        <el-button type="primary" @click.native="managerChangeConfirm">Confirm</el-button>
+                    </span>
+                </el-dialog> -->
                 <div style="display: inline-block; text-align: center;">
                     <div>
                         <el-form-item label="업무명" for="task_name">
@@ -198,7 +205,8 @@ export default {
             users: [],
             // users_notManager: [], // manager를 제외한 worker들
             selected_workerNum: [],
-            selected_workers: []   
+            selected_workers: [],
+            // managerAlertDialogVisible: false
         }
     },
     components: {
@@ -225,7 +233,29 @@ export default {
         });
     },
     watch: {
-        // manager: function(){
+        // manager: function(newVal, oldVal){
+        //     if(this.selected_workerNum.indexOf(this.manager) != -1){
+
+        //     }
+
+        //     const selectedManager = this.selected_workerNum.indexOf(this.manager);
+        //     const manager_num = this.manager;
+        //     console.log("selectedManager: " + selectedManager)
+        //     // 실무담당자 목록에 있는 경우 그 인덱스의 것을 삭제. workers, workerNum에서 모두 삭제. 
+        //     if(selectedManager >= 0){
+        //         const findIndex = this.selected_workers.findIndex(function(item){
+        //             return item.user_num == manager_num;
+        //         })
+        //         this.selected_workers.splice(findIndex, 1);
+        //         this.selected_workerNum.splice(selectedManager, 1);
+        //     }
+        //     // 실무담당자 목록에 없는 경우 
+        //     else if(selectedManager == -1){
+                
+        //     }
+
+
+            
         //     this.users_notManager = this.users.filter(this.notManager);
         //     console.log("this.users_notManager: " + JSON.stringify(this.users_notManager));
         // },
@@ -233,9 +263,10 @@ export default {
             console.log("watch selected_workerNum: " + this.selected_workerNum);
             console.log("watch selected_workerNum newVal: " + newVal);
             console.log("watch selected_workerNum oldVal: " + oldVal);
+            // console.log("watch selected_workerNum typeof(oldVal): " + typeof(oldVal));
             
             this.selectWorkers(newVal, oldVal);
-        }
+        },
     },
     computed: {
         users_notManager: function(){
@@ -263,9 +294,32 @@ export default {
             }       
         },
         workerReset(){
+            console.log("workerReset 이전 selected_workers: " + JSON.stringify(this.selected_workers));
+            console.log("workerReset 이전 selected_workerNum: " + JSON.stringify(this.selected_workerNum));            
+            console.log("workerReset 이전 manager: " + this.manager);
+            // console.log("workerReset this.selected_workerNum.indexof(this.manager): " + this.selected_workerNum.indexof(this.manager));
+            const selectedManager = this.selected_workerNum.indexOf(this.manager);
+            const manager_num = this.manager;
+            console.log("selectedManager: " + selectedManager)
+            // 실무담당자 목록에 있는 경우 그 인덱스의 것을 삭제. workers, workerNum에서 모두 삭제. 
+            if(selectedManager >= 0){
+                const findIndex = this.selected_workers.findIndex(function(item){
+                    return item.user_num == manager_num;
+                })
+                this.selected_workers.splice(findIndex, 1);
+                this.selected_workerNum.splice(selectedManager, 1);
+            }
+            // 실무담당자 목록에 없는 경우 
+            else if(selectedManager == -1){
+                
+            }
+            console.log("workerReset 이후 selected_workers: " + JSON.stringify(this.selected_workers));
+            console.log("workerReset 이후 selected_workerNum: " + JSON.stringify(this.selected_workerNum));
+            console.log("workerReset 이후 manager: " + this.manager);
+
             // console.log("before worker: " + this.workers);
-            this.selected_workerNum = [];
-            this.selected_workers = [];
+            // this.selected_workerNum = [];
+            // this.selected_workers = [];
             console.log("workerReset");
             // console.log("after worker: " + this.workers);
         },
@@ -288,12 +342,20 @@ export default {
             else if(newVal.length < oldVal.length){
                 changedElement = oldVal.filter(function(element){return newVal.indexOf(element) == -1});
                 console.log("뺌: " + changedElement);
-                for(var i=0; i<this.selected_workers.length; i++){
-                    if(this.selected_workers[i].user_num == changedElement){
-                        this.selected_workers.splice(i,1);
-                        break;
-                    }
-                }
+
+              
+                console.log("이전: " + JSON.stringify(this.selected_workers));
+                const deletedIndex = this.selected_workers.findIndex(function(item){
+                    return item.user_num == changedElement;
+                })
+                this.selected_workers.splice(deletedIndex, 1);
+                // for(var i=0; i<this.selected_workers.length; i++){
+                //     if(this.selected_workers[i].user_num == changedElement){
+                //         this.selected_workers.splice(i,1);
+                //         break;
+                //     }
+                // }
+                console.log("이후: " + JSON.stringify(this.selected_workers));
             }
 
             console.log("selectWorkers this.selected_workers: " + JSON.stringify(this.selected_workers));
@@ -371,7 +433,7 @@ export default {
                     start_date: this.start_date,
                     end_date: this.end_date,
                     manager: this.manager,
-                    importance: false,
+                    // importance: false,
                     register_date: this.register_date,
                     complete_date: null,
                     label_color: this.label_color,
