@@ -6,9 +6,6 @@
                     <div style="margin-top: 5px;">
                     </div>
                     <button type="button" id="star_btn" v-bind:style="star_style" class="el-icon-star-off" style="border: none; padding: 0px; background: none; font-size:1.7em; margin-right: 5px;" @click.stop="changeStar"></button>
-                    <!-- <button type="button" style="border: none; padding: 0px; margin-top: 5px; margin-right: 5px; background: none;" @click.stop="changeStar">
-                        <img :src="star" style="width: 25px; height: 25px;" />
-                    </button> -->
                 </td>
             </tr>
             <tr>
@@ -29,7 +26,6 @@ const offColor = '#636363';
 export default{
     data(){
         return{
-            // star: ''
             star_style: {
                 color: ''
             }
@@ -45,13 +41,6 @@ export default{
             this.$emit('clickTask', taskNum);
         },
         changeStar(){
-            // if(this.star == require('../img/star.png')){
-            //     this.star = require('../img/star_color.png');
-            // }
-            // else if(this.star == require('../img/star_color.png')){
-            //     this.star = require('../img/star.png');
-            // }
-            // alert("눌렀습니다.")
             this.$emit('changeImportance', this.task_num);
             
             setTimeout(function() {
@@ -66,19 +55,12 @@ export default{
     },
     created(){
         if(this.importance == true){
-            console.log("Task_inProgress importance true")
-            // this.star = require('../img/star_color.png');
-            this.star_style.color = onColor
+            this.star_style.color = onColor;
         }
         else if(this.importance == false){
-            console.log("Task_inProgress importance false")
-            // this.star = require('../img/star.png');
-            this.star_style.color = offColor
+            this.star_style.color = offColor;
         }
         
     }
 }
 </script>
-
-<style scoped>
-</style>

@@ -18,8 +18,6 @@ app.use(
   })
 );
 
-// app.use(cors());
-
 // parse requests of content-type: application/json
 app.use(bodyParser.json());
 
@@ -78,12 +76,10 @@ app.get("/session", function(req, res){
   }
 });
 
-// simple route
-app.get("/", (req, res) => {
-  // console.log('/', req.user);
-  console.log("/")
-  // res.json({ message: "Welcome to bezkoder application." });
-});
+// // simple route
+// app.get("/", (req, res) => {
+//   console.log("/")
+// });
 
 // set port, listen for requests
 app.listen(3000, () => {

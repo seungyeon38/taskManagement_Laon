@@ -121,7 +121,6 @@ export default {
                 task_num: null,
                 task_name: '',
                 explanation: '',
-                // duration_check: false,
                 start_date: '',
                 end_date: '',
                 update_date: '',
@@ -132,7 +131,6 @@ export default {
             },
 
             users: [],
-            // users_notManager: [],
             selected_workerNum: [],
             selected_workers: [],
             before_selected_workerNum: [],
@@ -149,7 +147,7 @@ export default {
         console.log("modifyTask taskNum: " + this.task_form.task_num)
         
         this.$axios({
-            url: `http://localhost:3000/users`,
+            url: `http://localhost:3000/getUsers`,
             method: 'get',
             withCredentials: true,
             headers: {
@@ -178,47 +176,31 @@ export default {
 
             this.task_form.task_name = res.data.info.task_name;
             this.task_form.explanation = res.data.info.explanation;
-            // duration_check: false,
             this.task_form.start_date = this.$moment(res.data.info.start_date).format('YYYY-MM-DDTHH:mm');
             this.task_form.end_date = this.$moment(res.data.info.end_date).format('YYYY-MM-DDTHH:mm');
             this.task_form.label_color = res.data.info.label_color;
-            console.log(2)
             this.task_form.importance = res.data.importance;
-            console.log("this.task_form.importance: " + JSON.stringify(this.task_form.importance));
-            console.log("res.data.importance: " + JSON.stringify(res.data.importance));
-
-            // console.log("this.task_form: " + JSON.stringify(this.task_form));
 
             this.task_form.manager = res.data.manager.manager;
             this.before_manager = res.data.manager.manager;
             this.task_form.manager_role = res.data.manager.personal_role;
-
-            console.log("this.task_form: " + JSON.stringify(this.task_form));
 
             for(var i=0; i<res.data.workers.length; i++){
                 this.selected_workers.push(res.data.workers[i]);
                 this.selected_workerNum.push(res.data.workers[i].user_num);
                 this.before_selected_workerNum.push(res.data.workers[i].user_num);
             };
-            
-            console.log("selected workers: " + this.selected_workers)
-
-        }).catch(err => {
-            console.log("Modify getTaskInfo ERROR!!: ", err)
-        });
+    }).catch(err => {
+        console.log("err: " + err);
+    });
     },
     watch: {
         selected_workerNum: function(newVal, oldVal){
-            console.log("watch selected_workerNum: " + this.selected_workerNum);
-            console.log("watch selected_workerNum newVal: " + newVal);
-            console.log("watch selected_workerNum oldVal: " + oldVal);
-            
             this.selectWorkers(newVal, oldVal);
         }
     },
     computed: {
         users_notManager: function(){
-            console.log("computed users_notManager")
             return this.users.filter(this.notManager);
         },
     },
@@ -243,13 +225,8 @@ export default {
 
         // 선택된 관리자가 실무담당자에 있을 때만 비우기. (선택된 관리자만 비워야 하지 않을까 -> 알림창 띄우기)
         workerReset(){
-            console.log("workerReset 이전 selected_workers: " + JSON.stringify(this.selected_workers));
-            console.log("workerReset 이전 selected_workerNum: " + JSON.stringify(this.selected_workerNum));            
-            console.log("workerReset 이전 manager: " + this.task_form.manager);
-            // console.log("workerReset this.selected_workerNum.indexof(this.manager): " + this.selected_workerNum.indexof(this.manager));
             const selectedManager = this.selected_workerNum.indexOf(this.task_form.manager);
             const manager_num = this.task_form.manager;
-            console.log("selectedManager: " + selectedManager)
 
             // 실무담당자 목록에 있는 경우 그 인덱스의 것을 삭제. workers, workerNum에서 모두 삭제. 
             if(selectedManager >= 0){
@@ -263,30 +240,12 @@ export default {
             else if(selectedManager == -1){
                 
             }
-            console.log("workerReset 이후 selected_workers: " + JSON.stringify(this.selected_workers));
-            console.log("workerReset 이후 selected_workerNum: " + JSON.stringify(this.selected_workerNum));
-            console.log("workerReset 이후 manager: " + this.manager);
-
-            console.log("workerReset");
-
-
-
-            // const select = this.selected_workerNum.indexof(this.task_form.manager);
-            // if(this.selected_workerNum.includes(this.task_form.manager)){
-            //     this.selected_workerNum = [];
-            //     this.selected_workers = [];
-            // }
         },
         selectWorkers(newVal, oldVal){
-            // 하나씩만 더해지는 코드 
-            console.log("selectWorkers newVal: " + JSON.stringify(newVal));
-            console.log("selectWorkers oldVal: " + JSON.stringify(oldVal));
-
             var changedElement; 
             
             if(newVal.length > oldVal.length){
                 changedElement = newVal.filter(function(element){return oldVal.indexOf(element) == -1}); // 존재하지 않는 원소 
-                console.log("더함: " + changedElement);
                 for(var i=0; i<this.users.length; i++){
                     if(changedElement == this.users[i].user_num){
                         this.selected_workers.push({user_num: this.users[i].user_num, name: this.users[i].name, id: this.users[i].id});
@@ -296,10 +255,7 @@ export default {
             }
             else if(newVal.length < oldVal.length){
                 changedElement = oldVal.filter(function(element){return newVal.indexOf(element) == -1});
-                console.log("뺌: " + changedElement);
                 for(var i=0; i<this.selected_workers.length; i++){
-                    console.log("changedElement " + changedElement)
-                    console.log("this.selected_workers[i].user_num " + this.selected_workers[i].user_num)
                     if(this.selected_workers[i].user_num == changedElement){
                         this.selected_workers.splice(i,1);
                         break;
@@ -311,46 +267,26 @@ export default {
             const findIndex = this.selected_workers.findIndex(function(item){
                 return item.user_num == personalRole.user_num;
             })
-            console.log("enrollPersonalRole findIndex: " + findIndex);
 
             this.selected_workers[findIndex].personal_role = personalRole.personal_role;
         },
         modifyTask(){
-            console.log("start_date: " + this.task_form.start_date);
             if(this.task_form.duration_check == true){
                 this.task_form.start_date = null;
                 this.task_form.end_date = null;
             }
 
-            console.log("start_date: " + this.task_form.start_date);
-
             this.task_form.update_date = this.$moment().format('YYYY-MM-DDTHH:mm');
 
             var sameManager = false;
 
-            console.log("this.before_manager: " + this.before_manager);
-            console.log("this.task_form.manager: " + this.task_form.manager);
-
-            
             if(this.before_manager === this.task_form.manager){
-                console.log("같은 관리자");
                 sameManager = true;    
             }
 
-            // const before_selected_workerNum = this.before_selected_workerNum;
-            
-            // const addedWorkerNum_list = this.selected_workerNum.filter(num => this.before_selected_workerNum.indexOf(num) == -1)
             const addedWorkers_list = this.selected_workers.filter(worker => this.before_selected_workerNum.indexOf(worker.user_num) == -1)
-            console.log("addedWorkers_list: " + JSON.stringify(addedWorkers_list))
             
             const deletedWorkerNum_list = this.before_selected_workerNum.filter(num => this.selected_workerNum.indexOf(num) == -1)
-            // console.log("deletedWorkerNum_list: " + deletedWorkerNum_list)
-
-            
-            // 추가된 실무담당자 
-            // const addedWorkers_list = this.selected_workers.filter(worker => addedWorkerNum_list.indexOf(worker.user_num) >= 0);
-
-            // console.log("addedWorkers_list: " + JSON.stringify(addedWorkers_list));
 
             const existedWorkers_list = [];
 
@@ -361,37 +297,20 @@ export default {
                 }
             }
 
-            // console.log("existedWorkers_list: " + JSON.stringify(existedWorkers_list))
-            // 삭제된 실무담당자 
-
             // manager가 바뀌었는지 유무 
             // 실무담당자에서   없어진 사용자 
             //                새로 생긴 사용자 
             //                없어지지 않은 사용자    
-            console.log("this.task_form.manager_role: " + this.task_form.manager_role);
-
-            // console.log("this.task_form.update_date: " + this.task_form.update_date)
             this.$axios({
                 url: `http://localhost:3000/modifyTask`,
                 method: 'post',
                 data: {
                     info: Object.assign(this.task_form),
-                    // task_num: this.task_form.task_num,
-                    // task_name: this.task_form.task_name,
-                    // explanation: this.task_form.explanation,
-                    // start_date: this.task_form.start_date,
-                    // end_date: this.task_form.end_date,
-                    // update_date: this.update_date,
-                    // label_color: this.label_color,
-                    // manager: this.task_form.manager,
-                    // manager_role: this.managerRole,
-
                     addedWorkers_list: addedWorkers_list,
                     existedWorkers_list: existedWorkers_list,
                     deletedWorkerNum_list: deletedWorkerNum_list,
                     sameManager: sameManager,
                     beforeManager: this.before_manager
-                    // selected_workers_list: this.selected_workers,
                 },
                 withCredentials: true,
                 headers: {
@@ -403,12 +322,11 @@ export default {
                     alert("해당 업무명을 가진 업무가 존재합니다. 업무명을 변경해주세요.")
                 }
                 else if(res.data.result == true){
-                    console.log("업무 수정 성공!")
                     alert("업무가 수정되었습니다.")
                     this.$router.go(-1)
                 }
             }).catch(err => {
-                console.log("업무 수정 ERROR!!: ", err)
+                console.log("err: ", err)
             })           
         },
     }
@@ -444,27 +362,17 @@ export default {
         line-height: 40px;
         outline: 0;
         padding: 0 15px;
-        /* -webkit-writing-mode: horizontal-tb !important; */
         text-rendering: auto;
-        /* color: -internal-light-dark(black, white); */
         letter-spacing: normal;
         word-spacing: normal;
         text-transform: none;
         text-indent: 0px;
         text-shadow: none;
-        /* display: inline-block; */
         text-align: start;
-        /* appearance: auto;
-        background-color: -internal-light-dark(rgb(255, 255, 255), rgb(59, 59, 59)); */
         -webkit-rtl-ordering: logical;
         cursor: text;
         margin: 0em;
         font: 400 13.3333px Arial;
-        /* padding: 1px 2px;
-        border-width: 2px;
-        border-style: inset;
-        border-color: -internal-light-dark(rgb(118, 118, 118), rgb(133, 133, 133));
-        border-image: initial; */
     }
 
     input[type="radio"] {
@@ -497,30 +405,6 @@ export default {
     input[type="datetime-local"]:disabled {
         background: #c2c2c2;
     }
-    /* input[type="datetime-local"]::-webkit-outer-spin-button,
-    input[type="datetime-local"]::-webkit-inner-spin-button {
-        -webkit-appearance: none;
-        margin: 0;
-    } */
-    /* input[type="datetime-local"]::-webkit-datetime-edit-text { 
-        -webkit-appearance: none; 
-        display: none; 
-    } 
-        
-    input[type="datetime-local"]::-webkit-datetime-edit-month-field{ 
-        -webkit-appearance: none; 
-        display: none; 
-    } 
-    
-    input[type="datetime-local"]::-webkit-datetime-edit-day-field { 
-        -webkit-appearance: none; 
-        display: none; 
-    } 
-        
-    input[type="datetime-local"]::-webkit-datetime-edit-year-field { 
-        -webkit-appearance: none; 
-        display: none; 
-    } */
 
     .el-input__inner{
         padding-right: 5px;
@@ -536,9 +420,7 @@ export default {
         background-color: white; 
         margin: 0px;
         width: 100%;
-        /* width: 370px; */
         padding: 10px;
-        /* padding: 0px;  */
         box-sizing : border-box;
         vertical-align: top;
         border-radius: 3px;
@@ -550,9 +432,7 @@ export default {
         background-color: white; 
         margin: 0px;
         width: 100%;
-        /* width: 370px; */
         padding: 10px;
-        /* padding: 0px;  */
         box-sizing : border-box;
         vertical-align: top;
         border-radius: 3px;
@@ -573,7 +453,4 @@ export default {
         background-color: #f5f5f5;
         color: #646464; 
     }
-    /* .el-input--suffix{
-        padding-right: 5px;
-    } */
 </style>

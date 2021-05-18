@@ -9,30 +9,11 @@
                         </router-link>
                     </td>
                 </tr>
-                <!-- <th>
-                    <el-upload
-                    action="#"
-                    list-type="picture-card"
-                    :auto-upload="false"
-                    >
-                        <i slot="default" class="el-icon-plus"></i>
-                        <div slot="file" slot-scope="{file}">
-                            <img
-                            class="el-upload-list__item-thumbnail"
-                            :src="file.url" alt=""
-                            >
-                        </div>
-                    </el-upload>
-                </th> -->
                 <tr>
                     <td>
-                        <!-- 'fill', 'contain', 'cover', 'none', 'scale-down' -->
-                        <el-avatar v-if="src" :src="src" shape="square" :size="180" style="font-size: 8rem; border: 1px solid #DCDFE6">
-                            <!-- <el-image :src="src" :fit="fill" /> -->
-                        </el-avatar>
+                        <el-avatar v-if="src" :src="src" shape="square" :size="180" style="font-size: 8rem; border: 1px solid #DCDFE6"></el-avatar>
                         <el-avatar v-else icon="el-icon-user-solid" :size="180" shape="square" style="font-size: 8rem; border: 1px solid #DCDFE6"></el-avatar>
                         <div class="filebox" style="margin-top: 30px">
-                            
                             <label for="profile_img">이미지 업로드</label>
                             <div style="font-size: 0.8em; margin-top: 10px; color: #8b8b8b">(1:1비율의 이미지 권장)</div>
                             <input type="file" id="profile_img" name="profile_img" v-on:change="setImage" accept="image/png, image/jpeg, image/jpg" />
@@ -78,32 +59,10 @@
                 id:'',
                 password:'',
                 password_re: '',
-                // password_confirm:false,
                 email:'',
                 src: '',
                 files: {},
                 formData: '',
-                // dialogImageUrl: '',
-                // dialogVisible: false
-
-                //  rules: {
-                //     name: [
-                //         { required: true, message: '이름을 입력해주세요.', trigger: 'blur' },
-                //         { min: 8, max: 12, message: 'Length should be 3 to 5', trigger: 'blur' }
-                //     ],
-                //     id: [
-                //         { required: true, message: 'Please select Activity zone', trigger: 'change' }
-                //     ],
-                //     password: [
-                //         { required: true, message: 'Please pick a date', trigger: 'change' }
-                //     ],
-                //     password_confirm: [
-                //         { required: true, message: 'Please pick a date', trigger: 'change' }
-                //     ],
-                //     email: [
-                //         { required: true, message: 'Please pick a date', trigger: 'change' }
-                //     ]
-                // }   
             }   
         },
         methods:{
@@ -125,10 +84,6 @@
                                 if(res.data.result == true){
                                     let formData = new FormData();
                                     if(this.files.length){
-                                        console.log("SignUp.vue files.length!=0")
-                                        // this.files[0].id = this.id;
-                                        // console.log("this.files[0].id: " + this.files[0].id)
-                                        console.log("this.files[0]: " + this.files[0])
                                         formData.append('profile_img', this.files[0]);
                                         formData.append('name', this.name);
                                         formData.append('id', this.id);
@@ -136,7 +91,6 @@
                                         formData.append('email', this.email);
                                     }
                                     else{
-                                        console.log("SignUp.vue files.length==0")
                                         formData.append('name', this.name);
                                         formData.append('id', this.id);
                                         formData.append('password', this.password);
@@ -151,47 +105,37 @@
                                             'Content-Type': 'multipart/form-data',
                                         },   
                                     }).then(res => {
-                                        console.log("signUp")
-                                        // this.result = response.data
-                                        alert("회원가입을 축하드립니다. 로그인 후 사용해주세요.")
-                                        this.$router.push({name: 'logIn'})
-                                    }).catch((ex) => {
-                                        console.log("ERROR!!!: ", ex)
+                                        alert("회원가입을 축하드립니다. 로그인 후 사용해주세요.");
+                                        this.$router.push({name: 'logIn'});
+                                    }).catch((err) => {
+                                        console.log("err: ", err);
                                     })
                                 }
                                 else if(res.data.result == false){
-                                    alert("존재하는 아이디입니다. 다른 아이디를 입력해주세요.")
+                                    alert("존재하는 아이디입니다. 다른 아이디를 입력해주세요.");
                                 }
                             }).catch(err => {
-                                console.log("catch");
+                                console.log("err: ", err);
                             });
                         }
                         else{
-                            alert("비밀번호가 일치하지 않습니다.")
+                            alert("비밀번호가 일치하지 않습니다.");
                         }                       
                     }
                     else{
-                        alert("비밀번호는 대소문자와 숫자(최소 8자, 최대 12자)를 포함하여 구성하여야 합니다.")
+                        alert("비밀번호는 대소문자와 숫자(최소 8자, 최대 12자)를 포함하여 구성하여야 합니다.");
                     }   
                 }
                 else{
-                    alert("아이디는 대소문자나 숫자(최소 8자, 최대 12자)로 구성하여야 합니다.")
+                    alert("아이디는 대소문자나 숫자(최소 8자, 최대 12자)로 구성하여야 합니다.");
                 }
             },
             setImage(event){
                 this.files = event.target.files;
                 console.log("this.files[0]: " + this.files[0])
-                this.src = window.URL.createObjectURL(this.files[0]) // 이는 Blob 객체를 가리키는 URL을 생성하여 DOM에서 참조할 수 있게 합니다.
+                this.src = window.URL.createObjectURL(this.files[0]) // Blob 객체를 가리키는 URL을 생성하여 DOM에서 참조할 수 있게 함.
                 console.log("this.src: " + JSON.stringify(this.src))
-                // console.log("this.$refs.profile_img: " + JSON.stringify(this.$refs.profile_img));
-                // console.log("this.$refs.profile_img.files[0]: " + JSON.stringify(this.$refs.profile_img.files[0]));
-                // // // console.log("typeof(this.src): " + typeof(this.src)) // string
-                // console.log("this.src: " + this.src)
             }
-        //  fileSlc : function(event){
-        //      let file = event.target.files[0];
-        //      this.slc2 = window.URL.createObjectURL(file);
-        //  }
         },
     }
 </script>
@@ -257,5 +201,4 @@
         background-color: #f5f5f5;
         color: #646464; 
     }
-    
 </style>

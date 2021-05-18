@@ -10,7 +10,6 @@
                 <td id="taskName" class="text-overflow" style="padding-top: 35px;">
                     {{task_name}}
                 </td>
-                <!-- <div style="margin-bottom: 10px;"></div> -->
             </tr> 
         </slot>
         <tr>
@@ -80,7 +79,6 @@ export default{
     }
 
     #task:hover{
-        /* background-color: #fcfcfc; */
         box-shadow: 3px 3px #dadada;
     }
 
@@ -92,23 +90,6 @@ export default{
         font-size: 2rem;
     }
 
-    
-    /* .text {
-        font-size: 14px;
-    }
-
-    .item {
-        margin-bottom: 18px;
-    }
-
-    .clearfix:before,
-    .clearfix:after {
-        display: table;
-        content: "";
-    }
-    .clearfix:after {
-        clear: both
-    } */
     .el-card{
         border-radius: 2px;
         border: 1px solid #909399;
@@ -127,26 +108,7 @@ export default{
 
     .box-card {
         width: 180px;
-        /* height: 200px; */
     }
-/* 
-    .text-overflow{
-        display: block; 
-        text-overflow: ellipsis; 
-        overflow: hidden; 
-        white-space: nowrap;
-        margin: 2px;
-    }  */
-
-    /* .text-overflow-twoLine{
-        display: -webkit-box;
-        overflow: hidden;
-        height: 40px;
-        text-overflow: ellipsis; 
-        -webkit-line-clamp: 2;
-        -webkit-box-orient: vertical;
-        word-break:break-all;
-    } */
 
     #info_table{
         width: 90%;

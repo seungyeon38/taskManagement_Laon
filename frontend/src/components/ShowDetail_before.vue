@@ -4,7 +4,6 @@
             <table style="width: 100%">
                 <tr align="right">
                     <td colspan="2">
-                        <!-- <span>업무명</span> -->
                         <el-button v-if="taskInfo.complete == 0 && taskClosed == 0" id="enroll-detailTask" class="custom-icon"  @click="dialogFormVisible = true" icon="el-icon-plus" type="info"></el-button>
                         <div v-else style="height: 50px"></div>
                         <el-dialog title="세부업무 등록" :visible.sync="dialogFormVisible" style="text-align: left; font-weight: bolder;" @closed="cancelEnroll">
@@ -13,10 +12,6 @@
                                     <el-input v-model="form.detailTask_name" autocomplete="off" placeholder="필수 사항입니다."></el-input>
                                 </el-form-item>
                                 <el-form-item label="세부업무내용" :label-width="formLabelWidth">
-                                <!-- <el-select v-model="form.detailTask_content" placeholder="Please select a zone">
-                                    <el-option label="Zone No.1" value="shanghai"></el-option>
-                                    <el-option label="Zone No.2" value="beijing"></el-option>
-                                </el-select> -->
                                     <el-input type="textarea" v-model="form.detailTask_content" :rows="4" name="explanation" placeholder="선택 사항입니다." maxlength= "100" show-word-limit/> 
                                 </el-form-item>
                             </el-form>
@@ -31,50 +26,19 @@
                 <tr> 
                     <td style="width: 20%; padding-top: 20px;" valign="top">
                         <el-select v-model="complete" v-if="detailTask_list.length" filterable placeholder="Select" style="width: 220px;">
-                            <!-- <el-option
-                            v-for="item in options"
-                            :key="item.value"
-                            :label="item.label"
-                            :value="item.value">
-                            </el-option> -->
                         </el-select>
                         <el-select v-model="complete" v-else filterable placeholder="Select" style="width: 220px;" disabled>
-                            <!-- <el-option
-                            v-for="item in options"
-                            :key="item.value"
-                            :label="item.label"
-                            :value="item.value">
-                            </el-option> -->
                         </el-select>
                     </td>
                     
                     <td style="width: 80%; padding-top: 20px; text-align: justify;">
-                        <!-- <detail-task v-for="detailTask in detailTask_list" :key="detailTask.detail_task_num" :detail_task_num="detailTask.detail_task_num" :workerName="detailTask.workerName" :detail_task_name="detailTask.detail_task_name" :content="detailTask.content" :report_date="detailTask.report_date"></detail-task> -->
                         <div style="text-align: center; font-size: 25px; font-weight: bolder; color: rgb(169, 183, 202);">{{taskInfo.task_name}}</div>
                         <hr style="border-color: rgb(169, 183, 202); margin-top: 30px; margin-bottom: 35px; height: 12px; border: 0; height: 1px; background-image: linear-gradient(to right, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0));">
                         <div v-if="detailTask_list.length != 0">
                             <el-timeline>
-                                <!-- <div v-for="detailTask in detailTask_list" :key="detailTask.detail_task_num"> -->
                                     <el-timeline-item  v-for="detailTask in detailTask_list" :key="detailTask.detail_task_num" :timestamp="`${detailTask.report_date}, ${detailTask.workerName} 님`" placement="top">
                                         <detail-task :detail_task_num="detailTask.detail_task_num" :workerName="detailTask.workerName" :detail_task_name="detailTask.detail_task_name" :content="detailTask.content" :report_date="detailTask.report_date" :profile_img="detailTask.profile_img"></detail-task>
-                                    <!-- <el-card>
-                                        <h4>Update Github template</h4>
-                                        <p>Tom committed 2018/4/12 20:46</p>
-                                    </el-card> -->
                                     </el-timeline-item>
-                                <!-- </div> -->
-                                <!-- <el-timeline-item timestamp="2018/4/3" placement="top">
-                                <el-card>
-                                    <h4>Update Github template</h4>
-                                    <p>Tom committed 2018/4/3 20:46</p>
-                                </el-card>
-                                </el-timeline-item>
-                                <el-timeline-item timestamp="2018/4/2" placement="top">
-                                <el-card>
-                                    <h4>Update Github template</h4>
-                                    <p>Tom committed 2018/4/2 20:46</p>
-                                </el-card>
-                                </el-timeline-item> -->
                             </el-timeline>
                         </div>
                         <div v-else style="font-size: 18px; color: gray; padding-top: 70px; text-align: center">

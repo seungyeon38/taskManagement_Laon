@@ -80,8 +80,6 @@ exports.addTask = async (req, res) => {
         return;
     }
 
-    // promise = await Task.insertTaskManager(task_num, req.body.manager, req.body.manager_role, false);
-
     res.send({result: true});
 };
 
@@ -184,7 +182,7 @@ exports.showDetailbyTaskNum = async (req, res) => {
             return; 
         }
     }
-    // t.manager, t.manager_role, u.name, u.id, u.email, u.profile_img
+
     promise2 = await Task.getManagerbyTaskNum(req.params.taskNum);
 
     if(promise2.err){
@@ -195,7 +193,7 @@ exports.showDetailbyTaskNum = async (req, res) => {
             return; 
         }
     }
-    // task_num, task_name, explanation, start_date, end_date, register_date, complete_date, label_color, complete
+
     promise3 = await Task.getTaskInfobyNum(req.params.taskNum);
 
     if(promise3.err){
@@ -206,7 +204,7 @@ exports.showDetailbyTaskNum = async (req, res) => {
             return; 
         }
     }
-    // tw.user_num, tw.personal_role, u.name, u.id, u.email, u.profile_img
+    
     promise4 = await Task.getWorkersbyTaskNum(req.params.taskNum);
 
     if(promise4.err){
@@ -226,7 +224,6 @@ exports.getTaskInfobyTaskNum = async (req, res) => {
     console.log("getTaskInfobyTaskNum")
     console.log("req.params.taskNum: " + req.params.taskNum)
     
-    // console.log(1)
     
     const promise1 = await Task.getTaskInfobyTaskNum(req.params.taskNum);
     
@@ -237,8 +234,6 @@ exports.getTaskInfobyTaskNum = async (req, res) => {
         return; 
     }
 
-    // console.log(2)
-
     const promise2 = await Task.getManagerbyTaskNum(req.params.taskNum);
 
     if(promise2.err){
@@ -247,8 +242,6 @@ exports.getTaskInfobyTaskNum = async (req, res) => {
         });
         return; 
     }
-    
-    // console.log(3)
 
     const promise3 = await Task.getWorkersbyTaskNum(req.params.taskNum);
 
@@ -261,8 +254,6 @@ exports.getTaskInfobyTaskNum = async (req, res) => {
         }
     }
 
-    // console.log(4)
-
     const promise4 = await Task.getImportance({task_num: req.params.taskNum, user_num: req.user.user_num});
 
     if(promise4.err){
@@ -272,7 +263,6 @@ exports.getTaskInfobyTaskNum = async (req, res) => {
         return; 
     }
 
-    // console.log(5)
 
     res.send({info: promise1.data, manager: {manager: promise2.data.manager, personal_role: promise2.data.manager_role}, workers: promise3.data, importance: promise4.data});
 }
@@ -312,7 +302,7 @@ exports.modifyTask = async (req, res) => {
             return; 
         }
     }
-    // Task.updateTaskWorker = (task_num, user_num, personal_role)
+
     // 새로운 매니저라면 
     else{
         promise = await Task.deleteTaskWorkerbyTaskNumUserNum(req.body.info.task_num, req.body.beforeManager);
@@ -332,6 +322,16 @@ exports.modifyTask = async (req, res) => {
             return; 
         }
     }
+
+    // addedWorkers_list: addedWorkers_list,
+    // existedWorkers_list: existedWorkers_list,
+    // deletedWorkerNum_list: deletedWorkerNum_list 
+
+    // importance를 업무를 생성할 때는 다 false로 생성했다. 
+    // 그리고 별표시 누를때마다 업데이트.
+    // 변경을 하면 없어진 실무담당자나 관리자의 정보는 없애야 하고, 
+    // 있던 사람들의 importance는 그대로 가야하고 (역할이 바꼈을 수도 있기 때문에 personal_role은 업데이트 해야됨), 
+    // 없던 사람들의 importance는 false로 설정되어야 한다.
 
     for(let worker of req.body.addedWorkers_list){
         promise = await Task.insertTaskWorker(req.body.info.task_num, worker.user_num, worker.personal_role, false);
@@ -369,70 +369,6 @@ exports.modifyTask = async (req, res) => {
         }
     }
 
-
-
-
-    // addedWorkers_list: addedWorkers_list,
-    // existedWorkers_list: existedWorkers_list,
-    // deletedWorkerNum_list: deletedWorkerNum_list 
-
-
-
-    // importance를 업무를 생성할 때는 다 false로 생성했다. 
-    // 그리고 별표시 누를때마다 업데이트.
-    // 변경을 하면 없어진 실무담당자나 관리자의 정보는 없애야 하고, 
-    // 있던 사람들의 importance는 그대로 가야하고 (역할이 바꼈을 수도 있기 때문에 personal_role은 업데이트 해야됨), 
-    // 없던 사람들의 importance는 false로 설정되어야 한다. 
-
-
-
-    // 현재 있는 taskworker가져와. 없는건 없애고 있는건 업데이트. 
-
-    // promise = await Task.getTaskWorkerbyTaskNum(req.body.info.task_num);
-    // if(promise.err){
-    //     res.status(500).send({
-    //         message: `Error retrieving Worker with task_num ${req.body.info.task_num}`
-    //     });
-    //     return; 
-    // }
-
-    // const taskworkerList = promise.data;
-
-    // for(let taskworker of req.body.taskworkerList){
-    //     if(taskworker.user_num == req.info.manager || taskworker.user_num)
-    // }
-
-    // promise = await Task.deleteTaskWorker(req.body.info.task_num);
-    // console.log(3)
-    // if(promise.err){
-    //     res.status(500).send({
-    //         message: `Error retrieving Worker with task_num ${req.body.info.task_num}`
-    //     });
-    //     return; 
-    // }
-
-    // console.log("req.body.selected_workers_list: " + JSON.stringify(req.body.selected_workers_list))
-    // for(let worker of req.body.selected_workers_list){
-    //     console.log("안")
-    //     promise = await Task.insertTaskWorker(req.body.info.task_num, worker.user_num, worker.personal_role, req.body.info.importance);
-    //     if(promise.err){
-    //         res.status(500).send({
-    //             message:
-    //                 promise.err.message || "Some error occurred while creating the task."
-    //         });
-    //         return;
-    //     }
-    // }
-
-    // promise = await Task.insertTaskWorker(task_num, req.body.manager, req.body.manager_role, req.body.info.deleteDetailTasksimportance);
-
-    // if(promise.err){
-    //     res.status(500).send({
-    //         message:
-    //             promise.err.message || "Some error occurred while creating the task."
-    //     });
-    //     return;
-    // }
 
     res.send({result: true});
 }

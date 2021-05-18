@@ -2,13 +2,6 @@
     <base-layout>
         <template v-slot:main>
             <el-form @submit.prevent.native="enrollTask" label-width=auto style="text-align: center; margin-top: 30px">
-                <!-- <el-dialog title="관리자 변경" :visible.sync="managerAlertDialogVisible" width="30%" style="text-align: left; font-weight: bolder;">
-                    <span>선택하신 관리자가 실무담당자로 지정되어있습니다. 관리자로 설정하면 해당 실무담당자와 역할이 목록에서 삭제됩니다.</span>
-                    <span slot="footer" class="dialog-footer">
-                        <el-button @click="dialogVisible = false" @click.native="managerChangeCancel">Cancel</el-button>
-                        <el-button type="primary" @click.native="managerChangeConfirm">Confirm</el-button>
-                    </span>
-                </el-dialog> -->
                 <div style="display: inline-block; text-align: center;">
                     <div>
                         <el-form-item label="업무명" for="task_name">
@@ -41,68 +34,19 @@
                                     </td>
                                 </tr>
                             </table>
-                            <!-- <label style="margin-right: 10px;">설정 안함</label>
-                            <el-checkbox v-model="duration_check" @change="checkbox" name="duration" style="margin-right: 20px;"/>  -->
-                            <!-- <el-date-picker v-model="start_date" type="datetime" placeholder="업무 시작일" style="margin-right: 5px; width: 200px;"/>
-                            <el-date-picker v-model="end_date" type="datetime" placeholder="업무 마감일" style="width: 200px;"/> -->
                         </el-form-item>
                     </div>
                     <el-form-item>
-                        <!-- <table>
-                            <tr>
-                                <td>
-                                    업무 시작일
-                                </td>
-                                <td>
-                                    업무 마감일
-                                </td>
-                            </tr> -->
-                            <!-- <tr v-if="duration_check == true">
-                                <td>
-                                    <input v-model="start_date" @change="dateChenge" type="datetime-local" placeholder="업무 시작일" style="margin-right: 10px;" disabled/>
-                                </td>
-                                <td>
-                                    <input v-model="end_date" type="datetime-local" placeholder="업무 마감일" :min= "start_date" disabled/>
-                                </td>
-                            </tr>
-                            <tr v-else>
-                                <td>
-                                    <input v-model="start_date" @change="dateChenge" type="datetime-local" placeholder="업무 시작일" style="margin-right: 10px;"/>
-                                </td>
-                                <td>
-                                    <input v-model="end_date" type="datetime-local" placeholder="업무 마감일" :min= "start_date"/>
-                                </td>
-                            </tr> -->
-                            <!-- <tr>
-                                <td>
-                                    <input v-model="start_date" @change="dateChenge" type="datetime-local" placeholder="업무 시작일" style="margin-right: 10px;"/>
-                                </td>
-                                <td>
-                                    <input v-model="end_date" type="datetime-local" placeholder="업무 마감일" :min= "start_date"/>
-                                </td>
-                            </tr> -->
-                        <!-- </table> -->
                     </el-form-item>
                     <br/>
                     <div>
                         <el-form-item label="라벨 색상" for="label_color">
                             <div style="line-height: 40px;">
-                                <!-- <el-button type="danger" class="labelColor" style="" circle></el-button>
-                                <el-button type="warning" class="labelColor" circle></el-button>
-                                <el-button type="success" class="labelColor" circle></el-button>
-                                <el-button type="primary" class="labelColor" circle></el-button>
-                                <el-button type="info" class="labelColor" circle></el-button> -->
-                                <!-- <button type="button" @click="label_color='#F56C6C'" class="labelColor" style="background-color: #F56C6C"></button>
-                                <button type="button" @click="label_color='#E6A23C'" class="labelColor" style="background-color: #E6A23C"></button>
-                                <button type="button" @click="label_color='#67C23A'" class="labelColor" style="background-color: #67C23A"></button>
-                                <button type="button" @click="label_color='#409EFF'" class="labelColor" style="background-color: #409EFF"></button>
-                                <button type="button" @click="label_color='#909399'" class="labelColor" style="background-color: #909399"></button> -->
                                 <input type="radio" class="labelColor" name="label_color" v-model="label_color" value="#F56C6C" style="background-color: #F56C6C">
                                 <input type="radio" class="labelColor" name="label_color" v-model="label_color" value="#E6A23C" style="background-color: #E6A23C">
                                 <input type="radio" class="labelColor" name="label_color" v-model="label_color" value="#67C23A" style="background-color: #67C23A">
                                 <input type="radio" class="labelColor" name="label_color" v-model="label_color" value="#409EFF" style="background-color: #409EFF">
                                 <input type="radio" class="labelColor" name="label_color" v-model="label_color" value="#909399" style="background-color: #909399" checked>
-                                <!-- <el-color-picker v-model="label_color" :predefine="predefineColors" /> -->
                             </div>
                         </el-form-item>
                     </div>
@@ -123,8 +67,6 @@
                                         </td>
                                         <td>
                                             <div style="margin-left: 30px; width: 370px">
-                                                <!-- <textarea v-model="managerTask" v-if="manager" id="content" placeholder="해당 관리자의 역할을 적어주세요.(최대 100자)"></textarea>
-                                                <textarea v-model="managerTask" v-else id="content_disabled" placeholder="우선 관리자를 선택해주세요." disabled></textarea> -->
                                                 <el-input type="textarea" v-model="managerRole" v-if="manager" id="content" :rows="3" placeholder="해당 관리자의 역할을 적어주세요.(최대 100자)" maxlength= "100" show-word-limit></el-input>
                                                 <el-input type="textarea" v-model="managerRole" v-else :rows="3" id="content_disabled" placeholder="우선 관리자를 선택해주세요." disabled></el-input>
                                             </div>
@@ -159,28 +101,12 @@
 
                         </el-form-item>
                     </div>
-                <!-- <el-form-item>
-                    <div style="max-height: 300px; background-color: white" class="width">
-                        <table>
-                            <tr>
-                                <td>이승연</td>
-                                <td>
-                                    <el-button icon="el-icon-minus" style="padding: 0; font-size: 30px; weight: 30px; height: 30px;" />
-                                </td>
-                            </tr>
-                        </table>
-                    </div>
-                </el-form-item> -->
                     <el-button native-type="submit" id="enrollBtn" name="button" style="width: 200px; margin-top: 100px;">
                         등록하기
                     </el-button>
                 </div>
             </el-form>
         </template>
-
-        <!-- <template v-slot:aside>
-            aside
-        </template> -->
     </base-layout>
 </template>
 
@@ -192,7 +118,6 @@ import PersonalRole from './PersonalRole.vue';
 export default {
     data(){
         return{
-            // now: '', // 현재 datatime
             task_name: '',
             explanation: '',
             duration_check: false,
@@ -203,10 +128,9 @@ export default {
             manager: '',
             managerRole: '',
             users: [],
-            // users_notManager: [], // manager를 제외한 worker들
+            users_notManager: [], // manager를 제외한 worker들
             selected_workerNum: [],
             selected_workers: [],
-            // managerAlertDialogVisible: false
         }
     },
     components: {
@@ -215,7 +139,7 @@ export default {
     },
     created(){
          this.$axios({
-            url: `http://localhost:3000/users`,
+            url: `http://localhost:3000/getUsers`,
             method: 'get',
             withCredentials: true,
             headers: {
@@ -224,7 +148,6 @@ export default {
             credentials: "same-origin"    
         }).then(res => {
             for(var i=0; i<res.data.length; i++){
-                // console.log("res.data[i]: " + JSON.stringify(res.data[i]))
                 this.users.push(res.data[i])
                 console.log("this.users: " + JSON.stringify(this.users))
             };
@@ -233,37 +156,10 @@ export default {
         });
     },
     watch: {
-        // manager: function(newVal, oldVal){
-        //     if(this.selected_workerNum.indexOf(this.manager) != -1){
-
-        //     }
-
-        //     const selectedManager = this.selected_workerNum.indexOf(this.manager);
-        //     const manager_num = this.manager;
-        //     console.log("selectedManager: " + selectedManager)
-        //     // 실무담당자 목록에 있는 경우 그 인덱스의 것을 삭제. workers, workerNum에서 모두 삭제. 
-        //     if(selectedManager >= 0){
-        //         const findIndex = this.selected_workers.findIndex(function(item){
-        //             return item.user_num == manager_num;
-        //         })
-        //         this.selected_workers.splice(findIndex, 1);
-        //         this.selected_workerNum.splice(selectedManager, 1);
-        //     }
-        //     // 실무담당자 목록에 없는 경우 
-        //     else if(selectedManager == -1){
-                
-        //     }
-
-
-            
-        //     this.users_notManager = this.users.filter(this.notManager);
-        //     console.log("this.users_notManager: " + JSON.stringify(this.users_notManager));
-        // },
         selected_workerNum: function(newVal, oldVal){
             console.log("watch selected_workerNum: " + this.selected_workerNum);
             console.log("watch selected_workerNum newVal: " + newVal);
             console.log("watch selected_workerNum oldVal: " + oldVal);
-            // console.log("watch selected_workerNum typeof(oldVal): " + typeof(oldVal));
             
             this.selectWorkers(newVal, oldVal);
         },
@@ -278,29 +174,18 @@ export default {
         dateChenge(){
             console.log("start_date: " + this.start_date);
         },
-        // checkbox(){
-        //     console.log("duration_check: " + this.duration_check);
-        // },
         notManager(element){
-            // console.log(element);
-            // console.log(this.manager);
             if(element.user_num == this.manager){
-                // console.log("manager임")
                 return false;
             }
             else {
-                // console.log("manager아님")
                 return true;
             }       
         },
         workerReset(){
-            console.log("workerReset 이전 selected_workers: " + JSON.stringify(this.selected_workers));
-            console.log("workerReset 이전 selected_workerNum: " + JSON.stringify(this.selected_workerNum));            
-            console.log("workerReset 이전 manager: " + this.manager);
-            // console.log("workerReset this.selected_workerNum.indexof(this.manager): " + this.selected_workerNum.indexof(this.manager));
             const selectedManager = this.selected_workerNum.indexOf(this.manager);
             const manager_num = this.manager;
-            console.log("selectedManager: " + selectedManager)
+            
             // 실무담당자 목록에 있는 경우 그 인덱스의 것을 삭제. workers, workerNum에서 모두 삭제. 
             if(selectedManager >= 0){
                 const findIndex = this.selected_workers.findIndex(function(item){
@@ -313,25 +198,12 @@ export default {
             else if(selectedManager == -1){
                 
             }
-            console.log("workerReset 이후 selected_workers: " + JSON.stringify(this.selected_workers));
-            console.log("workerReset 이후 selected_workerNum: " + JSON.stringify(this.selected_workerNum));
-            console.log("workerReset 이후 manager: " + this.manager);
-
-            // console.log("before worker: " + this.workers);
-            // this.selected_workerNum = [];
-            // this.selected_workers = [];
-            console.log("workerReset");
-            // console.log("after worker: " + this.workers);
         },
         selectWorkers(newVal, oldVal){
-            console.log("selectWorkers newVal: " + newVal);
-            console.log("selectWorkers oldVal: " + oldVal);
-
             var changedElement; 
             
             if(newVal.length > oldVal.length){
                 changedElement = newVal.filter(function(element){return oldVal.indexOf(element) == -1});
-                console.log("더함: " + changedElement);
                 for(var i=0; i<this.users.length; i++){
                     if(changedElement == this.users[i].user_num){
                         this.selected_workers.push({user_num: this.users[i].user_num, name: this.users[i].name, id: this.users[i].id});
@@ -341,59 +213,26 @@ export default {
             }
             else if(newVal.length < oldVal.length){
                 changedElement = oldVal.filter(function(element){return newVal.indexOf(element) == -1});
-                console.log("뺌: " + changedElement);
 
-              
-                console.log("이전: " + JSON.stringify(this.selected_workers));
                 const deletedIndex = this.selected_workers.findIndex(function(item){
                     return item.user_num == changedElement;
                 })
                 this.selected_workers.splice(deletedIndex, 1);
-                // for(var i=0; i<this.selected_workers.length; i++){
-                //     if(this.selected_workers[i].user_num == changedElement){
-                //         this.selected_workers.splice(i,1);
-                //         break;
-                //     }
-                // }
-                console.log("이후: " + JSON.stringify(this.selected_workers));
             }
 
-            console.log("selectWorkers this.selected_workers: " + JSON.stringify(this.selected_workers));
         },
         enrollPersonalRole(personalRole){
-            console.log("enrollPersonalRole personalRole: " + JSON.stringify(personalRole));
-
             const findIndex = this.selected_workers.findIndex(function(item){
                 return item.user_num == personalRole.user_num;
             })
             console.log(findIndex);
-            // console.log("findItem: " + JSON.stringify(findIndex));
             this.selected_workers[findIndex].personal_role = personalRole.personal_role;
-            console.log("enrollPersonalRole this.selected_workers: " + JSON.stringify(this.selected_workers));
         },
-        // enrollManagerRole(){
-        //     console.log("enrollManagerRole");
-        //     // this.selected_workers.push({user_num: this.manager, personalRole: this.managerRole});
-        //     console.log("this.selected_workers: " + JSON.stringify(this.selected_workers));
-        // },
         enrollTask(){
-            // await this.enrollPersonalTask;
-            console.log("start_date: " + this.start_date);
             if(this.duration_check == true){
                 this.start_date = null;
                 this.end_date = null;
             }
-            console.log("start_date: " + this.start_date);
-            // console.log(this.workers);
-            // console.log(typeof(this.workers));
-            // console.log(typeof(Object.values(this.workers)));
-            // console.log(Object.values(this.workers));
-            // var arr = Object.values(this.workers);
-            // console.log(typeof(arr));
-            // console.log("this.start_date: " + this.start_date); // 2021-04-15T03:48
-
-
-            // this.selected_workerNum = Object.values(this.selected_workerNum);
 
             this.register_date = this.$moment().format('YYYY-MM-DDTHH:mm');
 
@@ -403,27 +242,6 @@ export default {
                 return;
             }
 
-            // const selected_workers_manager = {};
-
-            // selected_workers_manager.push(this.selected_workers);
-            // selected_workers_manager.push({user_num: this.manager, personalRole: this.managerRole});
-            // console.log("this.selected_workers: " + JSON.stringify(selected_workers_manager));
-
-            // this.$axios.post('http://localhost:3000/addTask', {
-            //     task_name: this.task_name,
-            //     explanation: this.explanation,
-            //     start_date: this.start_date,
-            //     end_date: this.end_date,
-            //     manager: this.manager,
-            //     importance: false,
-            //     register_date: this.register_date,
-            //     complete_time: null,
-            //     label_color: this.label_color,
-            //     manager_role: this.managerRole,
-            //     selected_workers_list: this.selected_workers,
-            //     complete: false,
-            // }).
-            console.log("selected_workers_list: " + JSON.stringify(this.selected_workers))
             this.$axios({
                 url: `http://localhost:3000/addTask`,
                 method: 'post',
@@ -433,7 +251,6 @@ export default {
                     start_date: this.start_date,
                     end_date: this.end_date,
                     manager: this.manager,
-                    // importance: false,
                     register_date: this.register_date,
                     complete_date: null,
                     label_color: this.label_color,
@@ -452,7 +269,6 @@ export default {
                     alert("해당 업무명을 가진 업무가 존재합니다. 업무명을 변경해주세요.")
                 }
                 else if(res.data.result == true){
-                    console.log("업무 등록 성공!")
                     alert("업무가 등록되었습니다.")
                     this.$router.go(-1)
                 }
@@ -494,27 +310,17 @@ export default {
         line-height: 40px;
         outline: 0;
         padding: 0 15px;
-        /* -webkit-writing-mode: horizontal-tb !important; */
         text-rendering: auto;
-        /* color: -internal-light-dark(black, white); */
         letter-spacing: normal;
         word-spacing: normal;
         text-transform: none;
         text-indent: 0px;
         text-shadow: none;
-        /* display: inline-block; */
         text-align: start;
-        /* appearance: auto;
-        background-color: -internal-light-dark(rgb(255, 255, 255), rgb(59, 59, 59)); */
         -webkit-rtl-ordering: logical;
         cursor: text;
         margin: 0em;
         font: 400 13.3333px Arial;
-        /* padding: 1px 2px;
-        border-width: 2px;
-        border-style: inset;
-        border-color: -internal-light-dark(rgb(118, 118, 118), rgb(133, 133, 133));
-        border-image: initial; */
     }
 
     input[type="radio"] {
@@ -547,30 +353,6 @@ export default {
     input[type="datetime-local"]:disabled {
         background: #c2c2c2;
     }
-    /* input[type="datetime-local"]::-webkit-outer-spin-button,
-    input[type="datetime-local"]::-webkit-inner-spin-button {
-        -webkit-appearance: none;
-        margin: 0;
-    } */
-    /* input[type="datetime-local"]::-webkit-datetime-edit-text { 
-        -webkit-appearance: none; 
-        display: none; 
-    } 
-        
-    input[type="datetime-local"]::-webkit-datetime-edit-month-field{ 
-        -webkit-appearance: none; 
-        display: none; 
-    } 
-    
-    input[type="datetime-local"]::-webkit-datetime-edit-day-field { 
-        -webkit-appearance: none; 
-        display: none; 
-    } 
-        
-    input[type="datetime-local"]::-webkit-datetime-edit-year-field { 
-        -webkit-appearance: none; 
-        display: none; 
-    } */
 
     .el-input__inner{
         padding-right: 5px;
@@ -586,9 +368,7 @@ export default {
         background-color: white; 
         margin: 0px;
         width: 100%;
-        /* width: 370px; */
         padding: 10px;
-        /* padding: 0px;  */
         box-sizing : border-box;
         vertical-align: top;
         border-radius: 3px;
@@ -600,9 +380,7 @@ export default {
         background-color: white; 
         margin: 0px;
         width: 100%;
-        /* width: 370px; */
         padding: 10px;
-        /* padding: 0px;  */
         box-sizing : border-box;
         vertical-align: top;
         border-radius: 3px;
@@ -623,7 +401,4 @@ export default {
         background-color: #f5f5f5;
         color: #646464; 
     }
-    /* .el-input--suffix{
-        padding-right: 5px;
-    } */
 </style>

@@ -5,15 +5,8 @@
             <br>
             <el-input v-model="id" type="text" name="id" placeholder="아이디" style="width: 250px; border-radius:0px;" required /> 
             <el-input v-model="password" type="password" name="pw" placeholder="비밀번호" style="width: 250px; margin-top: 15px" show-password required /> 
-            <!-- <el-form-item label="아아디" for="id">
-            <el-input v-model="id" type="text" name="id" required /> 
-            </el-form-item>
-            <el-form-item label="비밀번호" for="password">
-            <el-input v-model="password" type="password" name="password" required /> 
-            </el-form-item> -->
-
             <el-button native-type="submit" name="button" style="width: 250px; margin-top:60px;">
-            로그인
+                로그인
             </el-button>
             <br>
             <br>
@@ -45,16 +38,6 @@ export default{
                 },
                 credentials: "same-origin"
             }).then(res => {
-                console.log("res.data: " + JSON.stringify(res.data))
-                
-                // if(res.data.user){
-                //     this.$store.commit("setUser", res.data.user);
-                //     this.$router.push({name: 'main'});
-                // }
-                // else if(res.data.error_msg){
-                //     alert(res.data.error_msg)
-                // }
-                
                 if(res.data.error_msg){
                     alert(res.data.error_msg)
                 }
@@ -63,37 +46,10 @@ export default{
                 }
                 
             }).catch(err => {
-                console.log("로그인 실패")
-                console.log("Login ERROR!!: ", err)
-
                 alert("로그인 실패")
             })
         },
     },
-    // created(){
-    //     this.$axios({
-    //         url: 'http://localhost:3000/isLoggedIn',
-    //         method: 'get',
-    //         withCredentials: true,
-    //         headers: {
-    //             'Content-Type': 'application/json',
-    //         },
-    //         credentials: "same-origin"
-    //     }).then(res => {
-    //         console.log("res.data: " + JSON.stringify(res.data))
-    //         if(res.data.isLoggedIn){
-    //             this.$router.push({name: 'main'});
-    //         }
-    //     }).catch(err => {
-    //         console.log("isLoggedIn 실패: ", err)
-    //         // console.log("Login ERROR!!: ", err)
-
-    //         // alert("로그인 실패")
-    //     })
-    // }
-    // computed: {
-    //     user(){return this.$store.getters.user;}
-    // }
 }
 </script>
 

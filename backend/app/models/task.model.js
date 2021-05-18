@@ -35,7 +35,6 @@ Task.insertTaskWorker = (taskNum, workerNum, personalRole, importance) => {
         sql.query(`INSERT INTO task_worker VALUES(${taskNum}, ${workerNum}, "${personalRole}", ${importance})`, (err, res) => {
             if(err){
                 resolve({err: err});
-                // resolve(result(err, null));
             }
             resolve({err: null});
         });
@@ -194,16 +193,11 @@ Task.getImportance = (taskInfo) => {
         sql.query(`SELECT importance 
         FROM task_worker 
         WHERE task_num = ${taskInfo.task_num} AND user_num = ${taskInfo.user_num}`, (err, res) => {
-            // console.log(10)
             if(err){
                 resolve({err: err, data: null});
                 return;
             }
-            // console.log("res " + JSON.stringify(res))
-            // console.log(11)
             if(res.length){
-                // console.log(12)
-
                 resolve({err: null, data: res[0].importance});
                 return;
             }
@@ -324,8 +318,7 @@ Task.updateImportance = (taskNum, userNum, importance) => {
 
 Task.updateTask = (taskInfo) => {
     console.log("taskInfo: " + JSON.stringify(taskInfo));
-    // console.log("taskInfo.task_name " + taskInfo.task_name);
-
+    
     return new Promise(resolve => {
         sql.query(`UPDATE task 
         SET task_name = '${taskInfo.task_name}', 

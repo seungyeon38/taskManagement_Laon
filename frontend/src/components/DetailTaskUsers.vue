@@ -11,7 +11,6 @@
                 <span style="font-weight: bolder;">{{workerName}}</span>
                 <span>님</span>
             </div>
-            <!-- <div style="margin-right: 550px;"></div> -->
             <div>
                 <button @click="showModifyDialog" id="edit_btn" class="el-icon-setting" style="background: none; border: none; padding: 0px; margin-right: 3px; font-size: 1.9em;"/>
             </div>
@@ -54,13 +53,10 @@ export default{
         border: 1px solid #8b8b8b; 
         background-color: white;
         width: 700px; 
-        /* height: 170px; */
         border-spacing: 0px;
         margin: 15px 30px;
-        /* padding: 15px 25px; */
         background-color: white;
         overflow: hidden;
-        /* border-radius: 5px; */
         box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.185);
 
     }

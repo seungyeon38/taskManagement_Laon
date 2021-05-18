@@ -1,6 +1,5 @@
 module.exports = app => {
     const task = require("../controllers/task.controller.js");
-    // const isAuthenticated = require("../models/passport.js");
 
     // function isAuthenticated(req, res, next) {
     //     if (req.isAuthenticated()){
@@ -16,7 +15,7 @@ module.exports = app => {
     app.post("/deleteTask", task.deleteTask);
 
     app.post("/modifyTask", task.modifyTask);
-    // app.get("/tasks", task.findTasksbyUserId);
+    
     app.get("/tasks", task.getTasksbyUserId);
 
     app.post("/completeTask", task.completeTask);

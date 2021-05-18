@@ -349,13 +349,8 @@ export default {
             this.taskInfo = res.data.info;
             
             this.userNum = res.data.userNum;
-            console.log("this.userNum: " + this.userNum)
-            
-            console.log("this.workers: " + JSON.stringify(this.workers));
-            console.log("this.taskInfo: " + JSON.stringify(this.taskInfo));
-            console.log("this.manager: " + JSON.stringify(this.manager));
 
-            const now = this.$moment().format();
+            const now = this.$moment().format('YYYY-MM-DDTHH:mm');
 
             if(this.taskInfo.end_date < now){
                 this.taskClosed = 1;
@@ -365,18 +360,10 @@ export default {
 
             this.taskInfo.start_date = this.$moment(res.data.info.start_date).format('YYYY/MM/DD h:mm A');
             this.taskInfo.end_date = this.$moment(res.data.info.end_date).format('YYYY/MM/DD h:mm A');
-            
-
-            // this.start_date = res.data.info[0].start_date;
-            // this.end_date = res.data.info[0].end_date;
-
-            // console.log("this.taskInfo.start_date: " + this.taskInfo.start_date)
-            // console.log("this.taskInfo.end_date: " + this.taskInfo.end_date)
 
             
             for(var i=0; i< res.data.detailTasks.length; i++){
                 if(res.data.detailTasks[i].worker == this.manager.manager){
-                    // console.log("여기")
                     res.data.detailTasks[i].workerId = this.manager.id;
                     res.data.detailTasks[i].workerName = this.manager.name;
                     res.data.detailTasks[i].workerEmail = this.manager.email;
@@ -384,9 +371,7 @@ export default {
                 }
                 else{
                     for(var j=0; j<res.data.workers.length; j++){
-                        // console.log("res.data.workers: " + JSON.stringify(res.data.workers))
                         if(res.data.detailTasks[i].worker == res.data.workers[j].user_num){
-                            // console.log("저기")
                             res.data.detailTasks[i].workerId = res.data.workers[j].id;
                             res.data.detailTasks[i].workerName = res.data.workers[j].name;
                             res.data.detailTasks[i].workerEmail = res.data.workers[j].email;
@@ -395,39 +380,16 @@ export default {
                         }
                     }
                 }
-                // res.data.detailTasks[i].report_date = this.$moment(res.data.detailTasks[i].report_date).format(`YYYY년 MM월 DD일 h:mm A`);
                 res.data.detailTasks[i].report_date = this.$moment(res.data.detailTasks[i].report_date).format(`YYYY/MM/DD h:mm A`);
-                // console.log("res.data.detailTasks[i]: " + JSON.stringify(res.data.detailTasks[i]));
 
                 // "detailTasks": detail_task_num, task_num, worker, detail_task_name, content, report_date, workerId, workerName, workerEmail, profile_img
                 this.detailTask_list.push(res.data.detailTasks[i]);
             }
-
-            console.log("this.detailTask_list: " + JSON.stringify(this.detailTask_list));
-            // this.detailTask_list.sort(this.date_ascending); // 오름차순 
-            // 원래는 굳이 정렬하지 않아도 순서대로 들어감
-            // console.log("this.detailTask_list(sort): " + JSON.stringify(this.detailTask_list));
-            // {"detail_task_num":1,
-            // "task_num":1,
-            // "detail_task_name":"fsdfsdfd",
-            // "worker":2,
-            // "content":"b dfadsvfdsfvds",
-            // "report_date":"2021-04-30T16:47:00.000Z",
-            // "workerId":"2002eunah",
-            // "workerName":"장은아",
-            // "workerEmail":"2002eunah@hanmail.com"}
-
-            // console.log("res: " + JSON.stringify(res));
-        // taskManagerImportant_list: [],  // task_manager
-        // taskManagerInProgress_list: [], // task_manager
-        // taskComplete_list: [],          // task_complete
         }).catch(err => {
-            console.log("showDetail created catch");
-            console.log(err);
+            console.log("err: " + err);
         });
     },
 }
-
 </script>
 
 <style scoped>
@@ -441,7 +403,6 @@ export default {
     float: right; 
     width: 50px; 
     height: 50px;
-    /* color: #c0c4ca; */
 }
 
 #enroll-detailTask:focus{
