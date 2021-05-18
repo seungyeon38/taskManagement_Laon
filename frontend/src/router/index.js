@@ -5,6 +5,7 @@ import LogIn from '@/components/LogIn'
 import Main from '@/components/Main'
 import EnrollTask from '@/components/EnrollTask'
 import ModifyTask from '@/components/ModifyTask'
+import DetailTask from '@/components/DetailTask_mine'
 import ShowDetail from '@/components/ShowDetail'
 const auth = require('../main.js') 
 
@@ -21,7 +22,9 @@ export default new Router({
     {
       path: '/login',
       name: 'logIn',
-      component: LogIn
+      component: LogIn,
+      // 로그인이 되어있으면 바로 메인페이지로 가도록 
+      beforeEnter: auth.isLoggedIn
     },
     {
       path: '/main',
@@ -51,6 +54,18 @@ export default new Router({
       component: ModifyTask,
       beforeEnter: auth.requireAuth
       // beforeEnter: requireAuth()
+    },
+    // {
+    //   path: '/modifydetailtask/:detailTaskNum',
+    //   name: 'modifyDetailTask',
+    //   component: ModifyDetailTask,
+    //   beforeEnter: auth.requireAuth
+    // },
+    {
+      path: '/detailtask',
+      name: 'DetailTask',
+      component: DetailTask,
+      beforeEnter: auth.requireAuth
     },
   ]
 })

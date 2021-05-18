@@ -36,13 +36,13 @@ export function requireAuth(to, from, next) {
     },
     credentials: "same-origin"    
   }).then(res => {
-      console.log("requireAuth res.data: " + JSON.stringify(res.data))
+      // console.log("requireAuth res.data: " + JSON.stringify(res.data))
       if(res.data.auth){
-        console.log("requireAuth if")
+        // console.log("requireAuth if")
         return next();
       }
       else{
-        console.log("requireAuth else")
+        // console.log("requireAuth else")
         alert("로그인해주세요!")
         next('/login');
       }
@@ -51,3 +51,24 @@ export function requireAuth(to, from, next) {
   })
 }
 
+export function isLoggedIn(to, from, next) {
+  axios({ 
+    url: `http://localhost:3000/session`,
+    method: 'get',
+    withCredentials: true,
+    headers: {
+        'Content-Type': 'application/json',
+    },
+    credentials: "same-origin"    
+  }).then(res => {
+      if(!res.data.auth){
+        return next();
+      }
+      else{
+        // 로그인이 되어있으면 바로 메인페이지로 가도록 
+        next('/main');
+      }
+  }).catch((ex) => {
+      console.log("ERROR!!!: ", ex)
+  })
+}
