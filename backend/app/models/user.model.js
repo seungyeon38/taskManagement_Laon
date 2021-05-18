@@ -8,7 +8,7 @@ const User = function(user){
     this.profile_img = user.profile_img;
 };
 
-User.create = (newUser) => {
+User.insertUser = (newUser) => {
     return new Promise(resolve => {
         sql.query("INSERT INTO user SET ?", newUser, (err) => {
             if(err){
@@ -21,7 +21,7 @@ User.create = (newUser) => {
     });
 };
 
-User.findById = (userId) => {
+User.getUserById = (userId) => {
     return new Promise(resolve => {
         sql.query(`SELECT * FROM user WHERE id = '${userId}'`, (err, res) => {
             if(err){
@@ -39,7 +39,7 @@ User.findById = (userId) => {
     });
 };
 
-User.findByUserNum = (userNum) => {
+User.getUserInfoByUserNum = (userNum) => {
     return new Promise(resolve => {
         console.log("user.model.js findByUserNum");
 
@@ -59,7 +59,7 @@ User.findByUserNum = (userNum) => {
     });
 };
 
-User.getAllUser = () => {
+User.getAllUserInfo = () => {
     console.log("getAllUser")
     return new Promise(resolve => {
         sql.query("SELECT user_num, name, id, email FROM user", (err, res) => {
@@ -79,7 +79,7 @@ User.getAllUser = () => {
     });
 };
 
-User.getAllManager = () => {
+User.getAllManagerInfo = () => {
     return new Promise(resolve => {
         sql.query(`SELECT distinct t.manager, u.name, u.id 
         FROM task AS t
@@ -100,6 +100,5 @@ User.getAllManager = () => {
         });
     });
 };
-
 
 module.exports = User;

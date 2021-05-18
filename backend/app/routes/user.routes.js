@@ -44,15 +44,15 @@ module.exports = app => {
     }
 
 
-    app.get("/signUp/checkId/:userId", user.isExistWithId);
+    app.get("/checkIdExist/:userId", user.isExistWithId);
   
     app.post("/signUp", upload.single('profile_img'), user.create); // upload.single('') 이 안의 인자가 input type="file"인 것의 name이어야 된다. 
     // 두 번째 인자로 multer를 통해서 만든 모듈을 미들웨어라는 것을 이렇게 갖다놓게 되면 뒤에 있는 function이 실행되기 전에 이게 먼저 실행이 된다. 
     // 얘가 하는 역할은 사용자가 전달한 데이터에서 file이 포함되어있다면 그 파일을 가공해서 request객체에 file이라는 property를 암시적으로 추가하도록 약속되어있는 미들웨어
     
-    app.get("/users", user.getAllUser);    
+    app.get("/getUsers", user.getAllUsers);    
 
-    app.get("/managers", user.getAllManager);
+    app.get("/getManagers", user.getAllManagers);
 
     // app.get("/workers", user.getAllWorker);
 

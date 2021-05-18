@@ -168,7 +168,7 @@ exports.changeTaskImportance = async (req, res) => {
     res.send({result: true});
 }
 
-exports.showDetailbyNum = async (req, res) => {
+exports.showDetailbyTaskNum = async (req, res) => {
     var promise1;
     var promise2;
     var promise3;

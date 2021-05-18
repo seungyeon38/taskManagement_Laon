@@ -466,7 +466,7 @@ export default {
 
             // complete 1로, complete_date 현재 시간으로
             this.$axios({
-                url: 'http://localhost:3000/taskComplete',
+                url: 'http://localhost:3000/completeTask',
                 method: 'post',
                 data: {
                     task_num: taskNum, 
@@ -502,7 +502,7 @@ export default {
 
         //     // complete 1로, complete_date 현재 시간으로
         //     this.$axios({
-        //         url: 'http://localhost:3000/taskComplete',
+        //         url: 'http://localhost:3000/completeTask',
         //         method: 'post',
         //         data: {
         //             task_num: taskNum, 
@@ -535,7 +535,7 @@ export default {
         //     const complete_date = this.$moment().format()
         //     // complete 1로, complete_date 현재 시간으로
         //     this.$axios({
-        //         url: 'http://localhost:3000/taskComplete',
+        //         url: 'http://localhost:3000/completeTask',
         //         method: 'post',
         //         data: {
         //             task_num: taskNum, 

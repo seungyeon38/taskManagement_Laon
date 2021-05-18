@@ -119,7 +119,7 @@
                         // 비밀번호, 비밀번호 확인이 일치하지 않는 경우
                         if(this.password === this.password_re){
                             // id가 이미 존재하는 아이디인지 확인.(중복 확인)
-                            this.$axios.get('http://localhost:3000/signUp/checkId/'+ this.id
+                            this.$axios.get('http://localhost:3000/checkIdExist/'+ this.id
                             ).then(res => {
                                 console.log("res")
                                 if(res.data.result == true){

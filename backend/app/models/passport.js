@@ -37,13 +37,13 @@ module.exports = () => {
     passport.deserializeUser(async function(userNum, done) {
         console.log('deserializeUser', userNum);
        
-        const promise = await User.findByUserNum(userNum);
+        const promise = await User.getUserInfoByUserNum(userNum);
 
         // console.log("deserializeUser promise.data: " + JSON.stringify(promise.data));
 
         done(promise.err, promise.data);
         
-        // await User.findByUserNum(userNum, function(err, user) {
+        // await User.getUserInfoByUserNum(userNum, function(err, user) {
         //     // deserializeUser의 callback함수가 호출될 때 done의 두번째 인자로 주입한 data가 request의 user라고하는 객체로 전달되도록 약속되어있다.
         //     // passport를 사용하지 않으면 request는 user라는 객체를 가지고 있지 않는다. 
         //     done(err, user); // 여기의 user가 req.user가 됨
@@ -58,7 +58,7 @@ module.exports = () => {
         // done이라는 함수를 어떻게 호출하느냐에 따라서 로그인의 성공, 실패를 passport에게 알려줄 수 있다. 
         async function(id, pw, done) {
             // 여기에서밖에 안 쓰임 
-            const promise = await User.findById(id);
+            const promise = await User.getUserById(id);
             if(promise.err){ 
                 if(promise.err === "not_found"){
                     // 첫번째 인자: DB조회 같은 때 발생하는 서버 에러를 넣는 곳, 무조건 실패하는 경우에만 사용(성공했을 시 null) 
@@ -81,6 +81,8 @@ module.exports = () => {
         }
     ));
 }
+
+
 
 // exports.isAuthenticated = function(req, res, next) {
 //     if (req.isAuthenticated()){
