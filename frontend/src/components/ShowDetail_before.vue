@@ -36,24 +36,19 @@
                         <hr style="border-color: rgb(169, 183, 202); margin-top: 30px; margin-bottom: 35px; height: 12px; border: 0; height: 1px; background-image: linear-gradient(to right, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0));">
                         <div v-if="detailTask_list.length != 0">
                             <el-timeline>
-                                    <el-timeline-item  v-for="detailTask in detailTask_list" :key="detailTask.detail_task_num" :timestamp="`${detailTask.report_date}, ${detailTask.workerName} 님`" placement="top">
-                                        <detail-task :detail_task_num="detailTask.detail_task_num" :workerName="detailTask.workerName" :detail_task_name="detailTask.detail_task_name" :content="detailTask.content" :report_date="detailTask.report_date" :profile_img="detailTask.profile_img"></detail-task>
-                                    </el-timeline-item>
+                                <el-timeline-item  v-for="detailTask in detailTask_list" :key="detailTask.detail_task_num" :timestamp="`${detailTask.report_date}, ${detailTask.workerName} 님`" placement="top">
+                                    <detail-task :detail_task_num="detailTask.detail_task_num" :workerName="detailTask.workerName" :detail_task_name="detailTask.detail_task_name" :content="detailTask.content" :report_date="detailTask.report_date" :profile_img="detailTask.profile_img"></detail-task>
+                                </el-timeline-item>
                             </el-timeline>
                         </div>
                         <div v-else style="font-size: 18px; color: gray; padding-top: 70px; text-align: center">
                             <span>(등록된 세부 업무가 없습니다.)</span>
                         </div>
                     </td>
-                    <!-- <td v-else style="font-size: 18px; color: gray; padding-top: 100px;">
-                        (등록된 세부 업무가 없습니다.)
-                    </td> -->
                 </tr>
             </table>
         </template>
         <template v-slot:aside>
-            <!-- <div style="font-weight: bold; font-size: 1.1em; margin-bottom: 20px;">시작/ 마감일</div>
-            <div>{{start_date}}~ {{end_date}}</div> -->
             <div style="display: inline-block; width: 50%;">
                 <div class="label_title">시작일</div>
                 <div style="margin-bottom: 50px;">{{taskInfo.start_date}}</div>
@@ -75,7 +70,6 @@
                         <img :src="require('../../../backend/uploads/' + manager.profile_img)" />
                     </el-avatar>
                     <el-avatar v-else icon="el-icon-user-solid" :size="45" style="font-size: 1.5rem;"></el-avatar>
-                    <!-- <el-avatar v-else icon="el-icon-user-solid"></el-avatar> -->
                     <div style="margin-right: 20px"></div>
                     <span style="font-weight: bolder; max-width: 200px;" class="text-overflow">{{manager.name}} </span><span>님</span>
                 </div>
@@ -93,8 +87,6 @@
                 </div>
                 <div v-if="worker.personal_role != 'undefined'" style="margin-left: 65px">{{worker.personal_role}}</div>                
             </div>
-            <!-- <div>{{this.$moment().format('YYYY/MM/DD h:mm A')}}</div> -->
-            <!-- <div>{{this.$moment(end_date).format('YYYY/MM/DD h:mm A')}}</div> -->
         </template>
     </base-layout>
 </template>
@@ -114,12 +106,9 @@ export default {
             detailTask_list: [],
             taskInfo: {},
             taskClosed: 0,
-            // taskNum: '',
             taskNum: null,
             complete: '',
             workers: [],
-            // start_date: '',
-            // end_date: '',
             manager: {},
             dialogFormVisible: false,
             form: {
@@ -133,9 +122,7 @@ export default {
     methods: {
         enrollDetailTask(){
             console.log("enrollDetailTask")
-            console.log("form: " + JSON.stringify(this.form)) // form: {"detailTask_name":"fgfdg","detailTask_content":"dfgdfgfdg"}
-            // task_num, detail_task_name, worker(user_num), content, report_date 
-            // this.taskNum, form.detailTask_name, 
+            console.log("form: " + JSON.stringify(this.form)) 
             if(this.form.detailTask_name == ''){
                 alert("세부업무명은 필수 사항입니다.");
             }

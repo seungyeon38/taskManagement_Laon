@@ -86,27 +86,27 @@ exports.addTask = async (req, res) => {
 exports.deleteTask = async (req, res) => {
     var promise;
 
-    promise = await Task.deleteTaskbyTaskNum(req.body.task_num);
+    promise = await Task.deleteTaskbyTaskNum(req.params.taskNum);
 
     if(promise.err){
         res.status(500).send({
-            message: `Error retrieving Task with id ${req.body.id}`
+            message: `Error retrieving Task with id ${req.params.taskNum}`
         });
         return;
     }
 
-    promise = await Task.deleteTaskWorkerbyTaskNum(req.body.task_num);
+    promise = await Task.deleteTaskWorkerbyTaskNum(req.params.taskNum);
     if(promise.err){
         res.status(500).send({
-            message: `Error retrieving Task with id ${req.body.id}`
+            message: `Error retrieving Task with id ${req.params.taskNum}`
         });
         return;
     }
 
-    promise = await Task.deleteDetailTasksbyTaskNum(req.body.task_num);
+    promise = await Task.deleteDetailTasksbyTaskNum(req.params.taskNum);
     if(promise.err){
         res.status(500).send({
-            message: `Error retrieving Task with id ${req.body.id}`
+            message: `Error retrieving Task with id ${req.params.taskNum}`
         });
         return;
     }
@@ -141,11 +141,11 @@ exports.getTasksbyUserId = async (req, res) => {
 };
 
 exports.completeTask = async (req, res) => {
-    var promise = await Task.updateComplete(req.body.task_num, req.body.complete_date);
+    var promise = await Task.updateComplete(req.params.taskNum, true, req.body.complete_date);
 
     if(promise.err){
         res.status(500).send({
-            message: `Error retrieving Task with task_num ${req.body.task_num}`
+            message: `Error retrieving Task with task_num ${req.params.taskNum}`
         });
         return;
     }
@@ -194,7 +194,7 @@ exports.showDetailbyTaskNum = async (req, res) => {
         }
     }
 
-    promise3 = await Task.getTaskInfobyNum(req.params.taskNum);
+    promise3 = await Task.getTaskInfobyTaskNum(req.params.taskNum);
 
     if(promise3.err){
         if(promise3.err != "not_found"){

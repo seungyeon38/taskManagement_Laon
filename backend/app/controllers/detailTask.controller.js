@@ -34,13 +34,10 @@ exports.getDetailTask = async (req, res) => {
 
     res.send({detailTask: promise.data});
 }
-// detail_task_num: detailTaskNum,
-// detail_task_name: this.form.detailTask_name,
-// content: this.form.detailTask_content,
-// update_date: this.$moment().format()
+
 exports.modifyDetailTask = async (req, res) => {
     console.log("modifyDetailTask req.body: " + JSON.stringify(req.body));
-    const promise = await DetailTask.updateDetailTask(req.body.detail_task_num, req.body.detail_task_name, req.body.content, req.body.update_date);
+    const promise = await DetailTask.updateDetailTask(req.params.detailTaskNum, req.body.detail_task_name, req.body.content, req.body.update_date);
     
     if(promise.err){
         console.log("err: " + promise.err);

@@ -281,12 +281,11 @@ Task.deleteDetailTasksbyTaskNum = (taskNum) => {
     })
 }
 
-
 // update
-Task.updateComplete = (taskNum, completeDate) => { 
+Task.updateComplete = (taskNum, complete, completeDate) => { 
     return new Promise(resolve => {
         sql.query(`UPDATE task 
-        SET complete = true, 
+        SET complete = ${complete}, 
         complete_date = '${completeDate}' 
         WHERE task_num = ${taskNum}`, (err) => {
             if(err){
@@ -318,7 +317,7 @@ Task.updateImportance = (taskNum, userNum, importance) => {
 
 Task.updateTask = (taskInfo) => {
     console.log("taskInfo: " + JSON.stringify(taskInfo));
-    
+
     return new Promise(resolve => {
         sql.query(`UPDATE task 
         SET task_name = '${taskInfo.task_name}', 

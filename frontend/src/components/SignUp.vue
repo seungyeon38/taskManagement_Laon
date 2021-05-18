@@ -75,12 +75,12 @@
                 if(type_numOrEng.test(this.id)){
                     // pw는 대소문자와 숫자로만 이루어져있고, 대소문자와 숫자가 꼭 들어가도록 설정 
                     if(type_numOrEng.test(this.password) && type_includeNumEng.test(this.password)){
-                        // 비밀번호, 비밀번호 확인이 일치하지 않는 경우
+                        // 비밀번호, 비밀번호 확인이 일치하는 경우
                         if(this.password === this.password_re){
                             // id가 이미 존재하는 아이디인지 확인.(중복 확인)
                             this.$axios.get('http://localhost:3000/checkIdExist/'+ this.id
                             ).then(res => {
-                                console.log("res")
+                                // 아이디가 존재하지 않을 때
                                 if(res.data.result == true){
                                     let formData = new FormData();
                                     if(this.files.length){
@@ -105,12 +105,15 @@
                                             'Content-Type': 'multipart/form-data',
                                         },   
                                     }).then(res => {
-                                        alert("회원가입을 축하드립니다. 로그인 후 사용해주세요.");
-                                        this.$router.push({name: 'logIn'});
+                                        if(res.data.result == true){
+                                            alert("회원가입을 축하드립니다. 로그인 후 사용해주세요.");
+                                            this.$router.push({name: 'logIn'});
+                                        }
                                     }).catch((err) => {
                                         console.log("err: ", err);
                                     })
                                 }
+                                // 존재하는 아이디일 떄 
                                 else if(res.data.result == false){
                                     alert("존재하는 아이디입니다. 다른 아이디를 입력해주세요.");
                                 }
@@ -118,6 +121,7 @@
                                 console.log("err: ", err);
                             });
                         }
+                        // 비밀번호, 비밀번호 확인이 일치하지 않는 경우
                         else{
                             alert("비밀번호가 일치하지 않습니다.");
                         }                       

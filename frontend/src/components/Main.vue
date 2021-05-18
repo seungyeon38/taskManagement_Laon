@@ -31,7 +31,7 @@
                     </td>
                 </tr>
                 <tr v-if="taskManagerImportant_list.length || taskImportant_list.length">
-                    <task-manager v-for="task in taskManagerImportant_list" :key="task.task_num" v-on:complete="complete" v-on:clickTask="clickTask" v-on:changeImportance="changeImportanceFalse" v-on:deleteTask="deleteTask" v-on:modifyTask="modifyTask" :task_name="task.task_name" :task_num="task.task_num" :manager="task.manager" :start_date="task.start_date" :end_date="task.end_date" :label_color="task.label_color" :importance="task.importance"></task-manager>
+                    <task-manager v-for="task in taskManagerImportant_list" :key="task.task_num" v-on:completeTask="completeTask" v-on:clickTask="clickTask" v-on:changeImportance="changeImportanceFalse" v-on:deleteTask="deleteTask" v-on:modifyTask="modifyTask" :task_name="task.task_name" :task_num="task.task_num" :manager="task.manager" :start_date="task.start_date" :end_date="task.end_date" :label_color="task.label_color" :importance="task.importance"></task-manager>
                     <task-in-progress v-for="task in taskImportant_list" :key="task.task_num" v-on:clickTask="clickTask" v-on:changeImportance="changeImportanceFalse" :task_name="task.task_name" :task_num="task.task_num" :manager="task.manager" :start_date="task.start_date" :end_date="task.end_date" :label_color="task.label_color" :importance="task.importance"></task-in-progress>
                 </tr>
                 <tr v-else>
@@ -44,7 +44,7 @@
                    
                 </tr>
                 <tr v-if="taskManagerInProgress_list.length || taskInProgress_list.length">
-                    <task-manager v-for="task in taskManagerInProgress_list" :key="task.task_num" v-on:complete="complete" v-on:clickTask="clickTask" v-on:changeImportance="changeImportanceTrue" v-on:deleteTask="deleteTask" v-on:modifyTask="modifyTask" :task_name="task.task_name" :task_num="task.task_num" :manager="task.manager" :start_date="task.start_date" :end_date="task.end_date" :label_color="task.label_color" :importance="task.importance"></task-manager>
+                    <task-manager v-for="task in taskManagerInProgress_list" :key="task.task_num" v-on:completeTask="completeTask" v-on:clickTask="clickTask" v-on:changeImportance="changeImportanceTrue" v-on:deleteTask="deleteTask" v-on:modifyTask="modifyTask" :task_name="task.task_name" :task_num="task.task_num" :manager="task.manager" :start_date="task.start_date" :end_date="task.end_date" :label_color="task.label_color" :importance="task.importance"></task-manager>
                     <task-in-progress v-for="task in taskInProgress_list" :key="task.task_num" v-on:clickTask="clickTask" v-on:changeImportance="changeImportanceTrue" :task_name="task.task_name" :task_num="task.task_num" :manager="task.manager" :start_date="task.start_date" :end_date="task.end_date" :label_color="task.label_color" :importance="task.importance"></task-in-progress>
                 </tr>
                 <tr v-else>
@@ -94,15 +94,13 @@ import TaskComplete from './Task_complete.vue'
 import TaskInProgress from './Task_inProgress.vue'
 import TaskManager from './Task_manager.vue'
 import ThisWeekTask from './ThisWeekTask.vue'
-
 import BaseLayout from '../components/BaseLayout.vue'
 
-// 컴포넌트는 루트 인스턴스가 생성되기 전에 정의해야 한다. 
+
 export default {
     data(){
         return{
             userNum: null,
-            // 현재는 important한 것을 나눠놓았지만 아직 안됨.
             taskImportant_list: [],         // task_inProgress
             taskManagerImportant_list: [],  // task_manager
             taskComplete_list: [],          // task_complete
@@ -164,6 +162,7 @@ export default {
                     }
                     else if(res.data.tasks_worker[i].importance == true){
                         this.taskImportant_list.push(res.data.tasks_worker[i])
+                        this.taskInProgress_list.push(res.data.tasks_worker[i])
                     }
                     else{
                         this.taskInProgress_list.push(res.data.tasks_worker[i])
@@ -179,6 +178,7 @@ export default {
                     }
                     else if(res.data.tasks_manager[i].importance == true){
                         this.taskManagerImportant_list.push(res.data.tasks_manager[i])
+                        this.taskManagerInProgress_list.push(res.data.tasks_manager[i])
                     }
                     else{
                         this.taskManagerInProgress_list.push(res.data.tasks_manager[i])
@@ -200,16 +200,16 @@ export default {
 
                 const weekAfter = this.$moment().add(7, 'days').format()
 
-                for(var i=0; i<this.taskManagerImportant_list.length; i++){
-                    if(this.taskManagerImportant_list[i].end_date < weekAfter){
-                        this.tasks_thisWeek.push(this.taskManagerImportant_list[i]);
-                    }
-                }
-                for(var i=0; i<this.taskImportant_list.length; i++){
-                    if(this.taskImportant_list[i].end_date < weekAfter){
-                        this.tasks_thisWeek.push(this.taskImportant_list[i]);
-                    }
-                }
+                // for(var i=0; i<this.taskManagerImportant_list.length; i++){
+                //     if(this.taskManagerImportant_list[i].end_date < weekAfter){
+                //         this.tasks_thisWeek.push(this.taskManagerImportant_list[i]);
+                //     }
+                // }
+                // for(var i=0; i<this.taskImportant_list.length; i++){
+                //     if(this.taskImportant_list[i].end_date < weekAfter){
+                //         this.tasks_thisWeek.push(this.taskImportant_list[i]);
+                //     }
+                // }
                 for(var i=0; i<this.taskManagerInProgress_list.length; i++){
                     if(this.taskManagerInProgress_list[i].end_date < weekAfter){
                         this.tasks_thisWeek.push(this.taskManagerInProgress_list[i]);
@@ -246,15 +246,14 @@ export default {
         enrollTask(){
             this.$router.push({name: 'enrollTask'});
         },
-        complete(taskNum){            
+        completeTask(taskNum){            
             console.log("parent complete function")
             console.log("taskNum: " + taskNum)
 
             this.$axios({
-                url: 'http://localhost:3000/completeTask',
+                url: `http://localhost:3000/tasks/${taskNum}/complete`,
                 method: 'post',
                 data: {
-                    task_num: taskNum, 
                     complete_date: this.$moment().format('YYYY-MM-DDTHH:mm')
                 },
                 withCredentials: true,
@@ -348,11 +347,8 @@ export default {
         },
         deleteConfirm(){
             this.$axios({
-                url: 'http://localhost:3000/deleteTask',
-                method: 'post',
-                data: {
-                    task_num: this.deleteTaskNum, 
-                },
+                url: `http://localhost:3000/tasks/${this.deleteTaskNum}`,
+                method: 'delete',
                 withCredentials: true,
                 headers: {
                     'Content-Type': 'application/json',

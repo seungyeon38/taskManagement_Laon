@@ -155,9 +155,7 @@ export default {
             },
             credentials: "same-origin"    
         }).then(res => {
-            for(var i=0; i<res.data.length; i++){
-                this.users.push(res.data[i])
-            };
+            this.users = res.data;
         }).catch(err => {
             console.log("Modify all users ERROR!!: ", err)
         });
@@ -302,8 +300,8 @@ export default {
             //                새로 생긴 사용자 
             //                없어지지 않은 사용자    
             this.$axios({
-                url: `http://localhost:3000/modifyTask`,
-                method: 'post',
+                url: `http://localhost:3000/tasks`,
+                method: 'put',
                 data: {
                     info: Object.assign(this.task_form),
                     addedWorkers_list: addedWorkers_list,

@@ -10,15 +10,15 @@ module.exports = app => {
     //     res.redirect('/');
     // };
 
-    app.post("/addTask", task.addTask);
+    app.post("/tasks", task.addTask);
 
-    app.post("/deleteTask", task.deleteTask);
+    app.delete("/tasks/:taskNum", task.deleteTask);
 
-    app.post("/modifyTask", task.modifyTask);
+    app.put("/tasks", task.modifyTask);
     
     app.get("/tasks", task.getTasksbyUserId);
 
-    app.post("/completeTask", task.completeTask);
+    app.post("/tasks/:taskNum/complete", task.completeTask);
 
     app.get("/showDetail/:taskNum", task.showDetailbyTaskNum);
 

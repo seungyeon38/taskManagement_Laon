@@ -63,6 +63,20 @@
                                                     :label="`${item.name} (${item.id})`" 
                                                     :value="item.user_num">
                                                 </el-option>
+                                                <!-- <div v-for="user in users" :key="user.user_num" >
+                                                    <div v-if="user.profile_img" style="display: flex; align-items: center;">
+                                                        <template slot="prefix"><img class="prefix" :src="require('../../../backend/uploads/' + user.profile_img)" /></template>
+                                                        <el-option :label="`${user.name} (${user.id})`" :value="user.user_num">
+                                                            <el-avatar :size="25" style="display: inline-block; border: 1px solid #a4a7ad; "><img :src="require('../../../backend/uploads/' + user.profile_img)" /></el-avatar>{{`${user.name} (${user.id})`}}
+                                                        </el-option>
+                                                    </div>
+                                                    <div v-else style="display: flex; align-items: center;">
+                                                        <template slot="prefix"><img class="prefix" icon="el-icon-user-solid" /></template>
+                                                        <el-option :label="`${user.name} (${user.id})`" :value="user.user_num">
+                                                            <el-avatar icon="el-icon-user-solid" :size="25" style="border: 1px solid #a4a7ad;" />{{`${user.name} (${user.id})`}}
+                                                        </el-option>
+                                                    </div>
+                                                </div> -->
                                             </el-select>
                                         </td>
                                         <td>
@@ -128,7 +142,7 @@ export default {
             manager: '',
             managerRole: '',
             users: [],
-            users_notManager: [], // manager를 제외한 worker들
+            // users_notManager: [], // manager를 제외한 worker들
             selected_workerNum: [],
             selected_workers: [],
         }
@@ -138,7 +152,7 @@ export default {
         PersonalRole
     },
     created(){
-         this.$axios({
+        this.$axios({
             url: `http://localhost:3000/getUsers`,
             method: 'get',
             withCredentials: true,
@@ -147,10 +161,11 @@ export default {
             },
             credentials: "same-origin"    
         }).then(res => {
-            for(var i=0; i<res.data.length; i++){
-                this.users.push(res.data[i])
-                console.log("this.users: " + JSON.stringify(this.users))
-            };
+            console.log("res.data: " + JSON.stringify(res.data));
+            this.users = res.data;
+            // for(var i=0; i<res.data.length; i++){
+            //     this.users.push(res.data[i])
+            // };
         }).catch(err => {
             console.log("EnrollTask_Get all users ERROR!!: ", err)
         });
@@ -243,7 +258,7 @@ export default {
             }
 
             this.$axios({
-                url: `http://localhost:3000/addTask`,
+                url: `http://localhost:3000/tasks`,
                 method: 'post',
                 data: {
                     task_name: this.task_name,
@@ -282,6 +297,15 @@ export default {
 </script>
 
 <style scoped>
+    img {
+        width: 20px;
+        height: 20px;
+    }
+
+    .prefix {
+        margin-top: 10px;
+    }
+
     .text-overflow{
         text-overflow: ellipsis; 
         overflow: hidden; 
@@ -401,4 +425,7 @@ export default {
         background-color: #f5f5f5;
         color: #646464; 
     }
+    /* .el-input--suffix{
+        padding-right: 5px;
+    } */
 </style>
