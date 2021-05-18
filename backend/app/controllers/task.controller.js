@@ -2,7 +2,7 @@ const Task = require("../models/task.model.js");
 
 
 
-exports.create = async (req, res) => {
+exports.addTask = async (req, res) => {
     if(!req.body){
         res.status(400).send({
             message: "Content can not empty!"
@@ -27,7 +27,7 @@ exports.create = async (req, res) => {
     var promise;
 
     // 해당 이름을 가진 task가 존재하는지 확인 
-    promise = await Task.selectTaskNumbyTaskName(req.body.task_name);
+    promise = await Task.getTaskNumbyTaskName(req.body.task_name);
 
     if(promise.err != "not_found"){
         res.send({result: "duplicate"});
@@ -45,7 +45,7 @@ exports.create = async (req, res) => {
         return;
     }
     
-    promise = await Task.selectTaskNumbyTaskName(req.body.task_name);
+    promise = await Task.getTaskNumbyTaskName(req.body.task_name);
 
     // 못 찾아도 오류임 
     if(promise.err){
@@ -88,7 +88,7 @@ exports.create = async (req, res) => {
 exports.deleteTask = async (req, res) => {
     var promise;
 
-    promise = await Task.deleteTask(req.body.task_num);
+    promise = await Task.deleteTaskbyTaskNum(req.body.task_num);
 
     if(promise.err){
         res.status(500).send({
@@ -105,7 +105,7 @@ exports.deleteTask = async (req, res) => {
         return;
     }
 
-    promise = await Task.deleteDetailTasks(req.body.task_num);
+    promise = await Task.deleteDetailTasksbyTaskNum(req.body.task_num);
     if(promise.err){
         res.status(500).send({
             message: `Error retrieving Task with id ${req.body.id}`
@@ -116,8 +116,8 @@ exports.deleteTask = async (req, res) => {
     res.send({result: true});
 }
 
-exports.findTasksbyUserId = async (req, res) => {
-    const promise1 = await Task.selectTasksofWorkers(req.user.id);
+exports.getTasksbyUserId = async (req, res) => {
+    const promise1 = await Task.getTasksofWorkersbyUserId(req.user.id);
 
     if(promise1.err){
         if(promise1.err != "not_found"){
@@ -128,7 +128,7 @@ exports.findTasksbyUserId = async (req, res) => {
         }
     }
 
-    const promise2 = await Task.selectTasksofManager(req.user.id);
+    const promise2 = await Task.getTasksofManagerbyUserId(req.user.id);
 
     if(promise2.err){
         if(promise2.err != "not_found"){
@@ -142,9 +142,9 @@ exports.findTasksbyUserId = async (req, res) => {
     res.send({tasks_worker: promise1.data, tasks_manager: promise2.data, userNum: req.user.user_num});
 };
 
-exports.taskComplete = async (req, res) => {
-    var promise = await Task.updateComplete(req.body);
-    
+exports.completeTask = async (req, res) => {
+    var promise = await Task.updateComplete(req.body.task_num, req.body.complete_date);
+
     if(promise.err){
         res.status(500).send({
             message: `Error retrieving Task with task_num ${req.body.task_num}`
@@ -155,8 +155,8 @@ exports.taskComplete = async (req, res) => {
     res.send({result: true});
 }
 
-exports.taskImportance = async (req, res) => {
-    var promise = await Task.updateImportance({task_num: req.body.task_num, importance: req.body.importance, user_num: req.user.user_num});
+exports.changeTaskImportance = async (req, res) => {
+    var promise = await Task.updateImportance(req.body.task_num, req.user.user_num, req.body.importance);
 
     if(promise.err){
         res.status(500).send({
@@ -168,7 +168,7 @@ exports.taskImportance = async (req, res) => {
     res.send({result: true});
 }
 
-exports.showDetailbyTaskNum = async (req, res) => {
+exports.showDetailbyNum = async (req, res) => {
     var promise1;
     var promise2;
     var promise3;
@@ -196,7 +196,7 @@ exports.showDetailbyTaskNum = async (req, res) => {
         }
     }
     // task_num, task_name, explanation, start_date, end_date, register_date, complete_date, label_color, complete
-    promise3 = await Task.getTaskInfobyTaskNum(req.params.taskNum);
+    promise3 = await Task.getTaskInfobyNum(req.params.taskNum);
 
     if(promise3.err){
         if(promise3.err != "not_found"){
@@ -282,14 +282,14 @@ exports.modifyTask = async (req, res) => {
     console.log("modifyTask req.body: " + JSON.stringify(req.body));
     console.log("modifyTask req.body.info: " + JSON.stringify(req.body.info));
 
-    var promise = await Task.selectTaskNumbyTaskName(req.body.info.task_name);
+    var promise = await Task.getTaskNumbyTaskName(req.body.info.task_name);
 
     if(promise.err != "not_found" && promise.data != req.body.info.task_num){
         res.send({result: "duplicate"});
         return;
     }
 
-    promise = await Task.updateTaskInfo(req.body.info);
+    promise = await Task.updateTask(req.body.info);
  
     if(promise.err){
         res.status(500).send({

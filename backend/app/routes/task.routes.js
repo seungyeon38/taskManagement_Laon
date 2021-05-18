@@ -11,20 +11,20 @@ module.exports = app => {
     //     res.redirect('/');
     // };
 
-    app.post("/addTask", task.create);
+    app.post("/addTask", task.addTask);
 
     app.post("/deleteTask", task.deleteTask);
 
-    app.get("/tasks", task.findTasksbyUserId);
-
-    app.post("/taskComplete", task.taskComplete);
-
-    app.get("/showDetail/:taskNum", task.showDetailbyTaskNum);
-
-    app.post("/taskImportance", task.taskImportance);
-
-    app.get("/getTaskInfo/:taskNum", task.getTaskInfobyTaskNum);
-
     app.post("/modifyTask", task.modifyTask);
+    // app.get("/tasks", task.findTasksbyUserId);
+    app.get("/tasks", task.getTasksbyUserId);
+
+    app.post("/completeTask", task.completeTask);
+
+    app.get("/showDetail/:taskNum", task.showDetailbyNum);
+
+    app.post("/taskImportance", task.changeTaskImportance);
+
+    app.get("/getTaskInfo/:taskNum", task.getTaskInfobyNum);
 
 }
