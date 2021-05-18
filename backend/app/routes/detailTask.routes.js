@@ -13,4 +13,7 @@ module.exports = app => {
 
     app.post("/addDetailTask", detailTask.addDetailTask);
 
+    app.get("/getDetailTask/:detailTaskNum", detailTask.getDetailTask);
+
+    app.post("/modifyDetailTask", detailTask.modifyDetailTask);
 }

@@ -82,7 +82,6 @@ exports.create = async (req, res) => {
 
     // promise = await Task.insertTaskManager(task_num, req.body.manager, req.body.manager_role, false);
 
-
     res.send({result: true});
 };
 
@@ -185,7 +184,7 @@ exports.showDetailbyTaskNum = async (req, res) => {
             return; 
         }
     }
-
+    // t.manager, t.manager_role, u.name, u.id, u.email, u.profile_img
     promise2 = await Task.getManagerbyTaskNum(req.params.taskNum);
 
     if(promise2.err){
@@ -196,7 +195,7 @@ exports.showDetailbyTaskNum = async (req, res) => {
             return; 
         }
     }
-
+    // task_num, task_name, explanation, start_date, end_date, register_date, complete_date, label_color, complete
     promise3 = await Task.getTaskInfobyTaskNum(req.params.taskNum);
 
     if(promise3.err){
@@ -207,7 +206,7 @@ exports.showDetailbyTaskNum = async (req, res) => {
             return; 
         }
     }
-
+    // tw.user_num, tw.personal_role, u.name, u.id, u.email, u.profile_img
     promise4 = await Task.getWorkersbyTaskNum(req.params.taskNum);
 
     if(promise4.err){
@@ -219,7 +218,7 @@ exports.showDetailbyTaskNum = async (req, res) => {
         }
     }
 
-    res.send({detailTasks: promise1.data, manager: promise2.data, info: promise3.data, workers: promise4.data});
+    res.send({detailTasks: promise1.data, manager: promise2.data, info: promise3.data, workers: promise4.data, userNum: req.user.user_num});
 }
 
 
@@ -285,26 +284,24 @@ exports.modifyTask = async (req, res) => {
 
     var promise = await Task.selectTaskNumbyTaskName(req.body.info.task_name);
 
-    console.log(1)
     if(promise.err != "not_found" && promise.data != req.body.info.task_num){
         res.send({result: "duplicate"});
         return;
     }
 
     promise = await Task.updateTaskInfo(req.body.info);
-    console.log(2)
+ 
     if(promise.err){
         res.status(500).send({
             message: `Error retrieving Worker with task_num ${req.body.info.task_num}`
         });
         return; 
     }
-    console.log(3)
+ 
     console.log("req.body.sameManager: " + req.body.sameManager)
 
     // 업데이트 
     if(req.body.sameManager){
-        console.log(4)
         console.log("req.body.info.manager: " + req.body.info.manager)
         console.log("req.body.info.manager_role: " + req.body.info.manager_role)
         promise = await Task.updateTaskWorker(req.body.info.task_num, req.body.info.manager, req.body.info.manager_role);
@@ -314,21 +311,18 @@ exports.modifyTask = async (req, res) => {
             });
             return; 
         }
-        console.log("4-1")
     }
     // Task.updateTaskWorker = (task_num, user_num, personal_role)
     // 새로운 매니저라면 
     else{
-        console.log(5)
         promise = await Task.deleteTaskWorkerbyTaskNumUserNum(req.body.info.task_num, req.body.beforeManager);
-        console.log("요기")
+
         if(promise.err){
             res.status(500).send({
                 message: `Error retrieving Worker with task_num ${req.body.info.task_num}`
             });
             return; 
         }
-        console.log("죠리")
 
         promise = await Task.insertTaskWorker(req.body.info.task_num, req.body.info.manager, req.body.info.manager_role, false);
         if(promise.err){
@@ -337,9 +331,8 @@ exports.modifyTask = async (req, res) => {
             });
             return; 
         }
-        console.log("저기")
     }
-    console.log(6)
+
     for(let worker of req.body.addedWorkers_list){
         promise = await Task.insertTaskWorker(req.body.info.task_num, worker.user_num, worker.personal_role, false);
         
@@ -351,7 +344,7 @@ exports.modifyTask = async (req, res) => {
             return;
         }
     }
-    console.log(7)
+    
     for(let worker of req.body.existedWorkers_list){
         promise = await Task.updateTaskWorker(req.body.info.task_num, worker.user_num, worker.personal_role);
 
@@ -363,7 +356,7 @@ exports.modifyTask = async (req, res) => {
             return;
         }
     }
-    console.log(8)
+    
     for(let userNum of req.body.deletedWorkerNum_list){
         promise = await Task.deleteTaskWorkerbyTaskNumUserNum(req.body.info.task_num, userNum);
 
@@ -441,6 +434,5 @@ exports.modifyTask = async (req, res) => {
     //     return;
     // }
 
-    console.log(4)
     res.send({result: true});
 }

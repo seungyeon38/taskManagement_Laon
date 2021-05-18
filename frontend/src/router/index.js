@@ -5,7 +5,6 @@ import LogIn from '@/components/LogIn'
 import Main from '@/components/Main'
 import EnrollTask from '@/components/EnrollTask'
 import ModifyTask from '@/components/ModifyTask'
-import DetailTask from '@/components/DetailTask_mine'
 import ShowDetail from '@/components/ShowDetail'
 const auth = require('../main.js') 
 
@@ -31,40 +30,23 @@ export default new Router({
       name: 'main',
       component: Main,
       beforeEnter: auth.requireAuth
-      // beforeEnter: requireAuth()
     },
     {
       path: '/enrolltask',
       name: 'enrollTask',
       component: EnrollTask,
       beforeEnter: auth.requireAuth
-      // beforeEnter: requireAuth()
     },
     {
       path: '/showdetail/:taskNum',
-      // path: '/showdetail',
       name: 'showDetail',
       component: ShowDetail,
       beforeEnter: auth.requireAuth
-      // beforeEnter: requireAuth()
     },
     {
       path: '/modifytask/:taskNum',
       name: 'modifyTask',
       component: ModifyTask,
-      beforeEnter: auth.requireAuth
-      // beforeEnter: requireAuth()
-    },
-    // {
-    //   path: '/modifydetailtask/:detailTaskNum',
-    //   name: 'modifyDetailTask',
-    //   component: ModifyDetailTask,
-    //   beforeEnter: auth.requireAuth
-    // },
-    {
-      path: '/detailtask',
-      name: 'DetailTask',
-      component: DetailTask,
       beforeEnter: auth.requireAuth
     },
   ]

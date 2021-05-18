@@ -46,13 +46,20 @@ export default{
                 credentials: "same-origin"
             }).then(res => {
                 console.log("res.data: " + JSON.stringify(res.data))
-
-                if(res.data.user){
-                    this.$store.commit("setUser", res.data.user);
-                    this.$router.push({name: 'main'});
-                }
-                else if(res.data.error_msg){
+                
+                // if(res.data.user){
+                //     this.$store.commit("setUser", res.data.user);
+                //     this.$router.push({name: 'main'});
+                // }
+                // else if(res.data.error_msg){
+                //     alert(res.data.error_msg)
+                // }
+                
+                if(res.data.error_msg){
                     alert(res.data.error_msg)
+                }
+                else{
+                    this.$router.push({name: 'main'});
                 }
                 
             }).catch(err => {
@@ -63,9 +70,30 @@ export default{
             })
         },
     },
-    computed: {
-        user(){return this.$store.getters.user;}
-    }
+    // created(){
+    //     this.$axios({
+    //         url: 'http://localhost:3000/isLoggedIn',
+    //         method: 'get',
+    //         withCredentials: true,
+    //         headers: {
+    //             'Content-Type': 'application/json',
+    //         },
+    //         credentials: "same-origin"
+    //     }).then(res => {
+    //         console.log("res.data: " + JSON.stringify(res.data))
+    //         if(res.data.isLoggedIn){
+    //             this.$router.push({name: 'main'});
+    //         }
+    //     }).catch(err => {
+    //         console.log("isLoggedIn 실패: ", err)
+    //         // console.log("Login ERROR!!: ", err)
+
+    //         // alert("로그인 실패")
+    //     })
+    // }
+    // computed: {
+    //     user(){return this.$store.getters.user;}
+    // }
 }
 </script>
 

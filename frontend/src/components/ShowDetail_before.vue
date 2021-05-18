@@ -7,7 +7,7 @@
                         <!-- <span>업무명</span> -->
                         <el-button v-if="taskInfo.complete == 0 && taskClosed == 0" id="enroll-detailTask" class="custom-icon"  @click="dialogFormVisible = true" icon="el-icon-plus" type="info"></el-button>
                         <div v-else style="height: 50px"></div>
-                        <el-dialog title="세부업무 등록" :visible.sync="dialogFormVisible" style="text-align: left; font-weight: bolder;" @closed="cancel">
+                        <el-dialog title="세부업무 등록" :visible.sync="dialogFormVisible" style="text-align: left; font-weight: bolder;" @closed="cancelEnroll">
                             <el-form :model="form">
                                 <el-form-item label="세부업무명" :label-width="formLabelWidth">
                                     <el-input v-model="form.detailTask_name" autocomplete="off" placeholder="필수 사항입니다."></el-input>
@@ -25,25 +25,7 @@
                                 <el-button type="primary" @click.native="enrollDetailTask">Confirm</el-button>
                             </span>
                         </el-dialog>
-                        <!-- 세부업무 수정 -->
-                        <el-dialog title="세부업무 수정" :visible.sync="dialogModifyFormVisible" style="text-align: left; font-weight: bolder;" @closed="cancel">
-                            <el-form :model="form">
-                                <el-form-item label="세부업무명" :label-width="formLabelWidth">
-                                    <el-input v-model="form.detailTask_name" autocomplete="off" placeholder="필수 사항입니다."></el-input>
-                                </el-form-item>
-                                <el-form-item label="세부업무내용" :label-width="formLabelWidth">
-                                <!-- <el-select v-model="form.detailTask_content" placeholder="Please select a zone">
-                                    <el-option label="Zone No.1" value="shanghai"></el-option>
-                                    <el-option label="Zone No.2" value="beijing"></el-option>
-                                </el-select> -->
-                                    <el-input type="textarea" v-model="form.detailTask_content" :rows="4" name="explanation" placeholder="선택 사항입니다." maxlength= "100" show-word-limit/> 
-                                </el-form-item>
-                            </el-form>
-                            <span slot="footer" class="dialog-footer">
-                                <el-button @click="dialogModifyFormVisible = false">Cancel</el-button>
-                                <el-button type="primary" @click.native="modifyDetailTask">Confirm</el-button>
-                            </span>
-                        </el-dialog>
+                        
                     </td>
                 </tr>
                 <tr> 
@@ -74,8 +56,7 @@
                             <el-timeline>
                                 <!-- <div v-for="detailTask in detailTask_list" :key="detailTask.detail_task_num"> -->
                                     <el-timeline-item  v-for="detailTask in detailTask_list" :key="detailTask.detail_task_num" :timestamp="`${detailTask.report_date}, ${detailTask.workerName} 님`" placement="top">
-                                        <detail-task-users v-if="detailTask.worker == userNum" v-on:showModifyDialog="showModifyDialog" :detail_task_num="detailTask.detail_task_num" :workerName="detailTask.workerName" :detail_task_name="detailTask.detail_task_name" :content="detailTask.content" :report_date="detailTask.report_date" :profile_img="detailTask.profile_img"></detail-task-users>
-                                        <detail-task v-else :workerName="detailTask.workerName" :detail_task_name="detailTask.detail_task_name" :content="detailTask.content" :report_date="detailTask.report_date" :profile_img="detailTask.profile_img"></detail-task>
+                                        <detail-task :detail_task_num="detailTask.detail_task_num" :workerName="detailTask.workerName" :detail_task_name="detailTask.detail_task_name" :content="detailTask.content" :report_date="detailTask.report_date" :profile_img="detailTask.profile_img"></detail-task>
                                     <!-- <el-card>
                                         <h4>Update Github template</h4>
                                         <p>Tom committed 2018/4/12 20:46</p>
@@ -157,14 +138,12 @@
 <script>
 import BaseLayout from './BaseLayout.vue';
 import DetailTask from './DetailTask.vue';
-import DetailTaskUsers from './DetailTaskUsers.vue';
 
 // 컴포넌트는 루트 인스턴스가 생성되기 전에 정의해야 한다. 
 export default {
     components: {
         BaseLayout,
-        DetailTask,
-        DetailTaskUsers,
+        DetailTask
     },
     data(){
         return{
@@ -179,16 +158,12 @@ export default {
             // end_date: '',
             manager: {},
             dialogFormVisible: false,
-            dialogModifyFormVisible: false,
             form: {
                 detailTask_name: '',
                 detailTask_content: ''
             },
             formLabelWidth: '120px',
-            userNum: null,
-            detailTaskNumtoModify: null
-            // before_detail_task_name: '',
-            // before_content: ''
+            
         }
     },
     methods: {
@@ -208,7 +183,7 @@ export default {
                         task_num: this.taskNum,
                         detail_task_name: this.form.detailTask_name,
                         content: this.form.detailTask_content,
-                        report_date: this.$moment().format('YYYY-MM-DDTHH:mm'),
+                        report_date: this.$moment().format()
                     },
                     withCredentials: true,
                     headers: {
@@ -227,7 +202,7 @@ export default {
                 })      
             }
         },
-        cancel(){
+        cancelEnroll(){
             this.form.detailTask_name = '';
             this.form.detailTask_content = '';
         },
@@ -235,55 +210,6 @@ export default {
             var dateA = new Date(a['report_date']).getTime();
             var dateB = new Date(b['report_date']).getTime();
             return dateA > dateB ? 1 : -1;
-        },
-        showModifyDialog(detailTaskNum){
-            this.detailTaskNumtoModify = detailTaskNum;
-
-            this.$axios({
-                url: `http://localhost:3000/getDetailTask/${detailTaskNum}`,
-                method: 'get',
-                withCredentials: true,
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                credentials: "same-origin"
-            }).then(res => {
-                console.log("showDetail modifyDetailTask res.data: " + JSON.stringify(res.data));
-                // detailTask
-                this.form.detailTask_name = res.data.detailTask.detail_task_name;
-                this.form.detailTask_content = res.data.detailTask.content;
-
-            }).catch(err => {
-                console.log("세부업무 가져오기 ERROR!!: ", err)
-            })      
-
-            this.dialogModifyFormVisible = true;
-        },
-        modifyDetailTask(){
-            this.$axios({
-                url: 'http://localhost:3000/modifyDetailTask',
-                method: 'post',
-                data: {
-                    detail_task_num: this.detailTaskNumtoModify,
-                    detail_task_name: this.form.detailTask_name,
-                    content: this.form.detailTask_content,
-                    update_date: this.$moment().format('YYYY-MM-DDTHH:mm'),
-                },
-                withCredentials: true,
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                credentials: "same-origin"
-            }).then(res => {
-                if(res.data.result == true){
-                    console.log("세부업무 수정 성공!")
-                    alert("세부업무가 수정되었습니다.")
-                    this.dialogModifyFormVisible = false;
-                    this.$router.go();
-                }
-            }).catch(err => {
-                console.log("세부업무 등록 ERROR!!: ", err)
-            })      
         }
         // getWorkerInfo(workerNum){
         //     for(var i=0; i<this.workers.length; i++){
@@ -339,21 +265,16 @@ export default {
         }).then(res => {
             console.log("showDetail created then");
             console.log("showDetail res.data: " + JSON.stringify(res.data));
-
-            // "detailTasks": detail_task_num, task_num, worker, detail_task_name, content, report_date
-            // "manager": manager, manager_role, name, id, email, profile_img
-            // "info": task_num, task_name, explanation, start_date, end_date, register_date, complete_date, label_color, complete
-            // "workers": user_num, personal_role, name, id, email, profile_img
-            this.manager = res.data.manager;
+            // {"workers":[{"detail_task_num":5,"task_num":11,"worker":2,"detail_task_name":"이거 지워지나","content":"ㄹㅇㅎㅇㅀㅇㅀ","report_date":"2021-05-13T04:59:54.000Z"},{"detail_task_num":6,"task_num":11,"worker":2,"detail_task_name":"이거 지워지나2","content":"ㄴㅇㄹㄴㄻㄴㅇ","report_date":"2021-05-13T05:00:17.000Z"}],
+            // "manager":[{"manager":2,"personal_role":null,"name":"이승연ㄴㄴㄴㄴㄴㄴㄴㄴㄴㅇㅇㅇㄴㄴ","id":"seongyeon38","email":"seongyeon38@naver.com","profile_img":"1620276782681_4(1).jpg"}],
+            // "info":[{"task_num":11,"task_name":"ㅇ","explanation":"ㄴㅇㅁㄴ","start_date":"2021-05-03T04:29:00.000Z","end_date":"2021-05-28T04:29:00.000Z","manager":2,"register_date":"2021-05-13T04:29:34.000Z","complete_date":null,"label_color":"#F56C6C","complete":0}]}
             this.workers = res.data.workers;
             this.taskInfo = res.data.info;
+            this.manager = res.data.manager;
             
-            this.userNum = res.data.userNum;
-            console.log("this.userNum: " + this.userNum)
-            
-            console.log("this.workers: " + JSON.stringify(this.workers));
+            console.log("this.workers: " + JSON.stringify(this.workers))
             console.log("this.taskInfo: " + JSON.stringify(this.taskInfo));
-            console.log("this.manager: " + JSON.stringify(this.manager));
+            console.log("this.manager: " + JSON.stringify(this.manager))
 
             const now = this.$moment().format();
 
@@ -366,17 +287,17 @@ export default {
             this.taskInfo.start_date = this.$moment(res.data.info.start_date).format('YYYY/MM/DD h:mm A');
             this.taskInfo.end_date = this.$moment(res.data.info.end_date).format('YYYY/MM/DD h:mm A');
             
-
             // this.start_date = res.data.info[0].start_date;
             // this.end_date = res.data.info[0].end_date;
 
-            // console.log("this.taskInfo.start_date: " + this.taskInfo.start_date)
-            // console.log("this.taskInfo.end_date: " + this.taskInfo.end_date)
+
+            console.log("this.taskInfo.start_date: " + this.taskInfo.start_date)
+            console.log("this.taskInfo.end_date: " + this.taskInfo.end_date)
 
             
             for(var i=0; i< res.data.detailTasks.length; i++){
                 if(res.data.detailTasks[i].worker == this.manager.manager){
-                    // console.log("여기")
+                    console.log("여기")
                     res.data.detailTasks[i].workerId = this.manager.id;
                     res.data.detailTasks[i].workerName = this.manager.name;
                     res.data.detailTasks[i].workerEmail = this.manager.email;
@@ -384,9 +305,9 @@ export default {
                 }
                 else{
                     for(var j=0; j<res.data.workers.length; j++){
-                        // console.log("res.data.workers: " + JSON.stringify(res.data.workers))
+                        console.log("res.data.workers: " + JSON.stringify(res.data.workers))
                         if(res.data.detailTasks[i].worker == res.data.workers[j].user_num){
-                            // console.log("저기")
+                            console.log("저기")
                             res.data.detailTasks[i].workerId = res.data.workers[j].id;
                             res.data.detailTasks[i].workerName = res.data.workers[j].name;
                             res.data.detailTasks[i].workerEmail = res.data.workers[j].email;
@@ -397,9 +318,7 @@ export default {
                 }
                 // res.data.detailTasks[i].report_date = this.$moment(res.data.detailTasks[i].report_date).format(`YYYY년 MM월 DD일 h:mm A`);
                 res.data.detailTasks[i].report_date = this.$moment(res.data.detailTasks[i].report_date).format(`YYYY/MM/DD h:mm A`);
-                // console.log("res.data.detailTasks[i]: " + JSON.stringify(res.data.detailTasks[i]));
-
-                // "detailTasks": detail_task_num, task_num, worker, detail_task_name, content, report_date, workerId, workerName, workerEmail, profile_img
+                console.log("res.data.detailTasks[i]: " + JSON.stringify(res.data.detailTasks[i]));
                 this.detailTask_list.push(res.data.detailTasks[i]);
             }
 

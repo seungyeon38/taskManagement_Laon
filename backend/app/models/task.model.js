@@ -295,7 +295,7 @@ Task.getManagerbyTaskNum = (taskNum) => {
 
 Task.getTaskInfobyTaskNum = (taskNum) => {
     return new Promise(resolve => {
-        sql.query(`SELECT task_num, task_name, explanation, start_date, end_date, register_date, complete_date, label_color, complete FROM task WHERE task_num = ${taskNum}`, (err, res) => {
+        sql.query(`SELECT task_num, task_name, explanation, start_date, end_date, register_date, complete_date, update_date, label_color, complete FROM task WHERE task_num = ${taskNum}`, (err, res) => {
             if(err){
                 resolve({err: err, data: null});
                 return;
@@ -394,7 +394,6 @@ Task.updateTaskWorker = (task_num, user_num, personal_role) => {
         })
     })
 }
-
 
 Task.getImportance = (taskInfo) => {
     console.log("taskInfo " + JSON.stringify(taskInfo))

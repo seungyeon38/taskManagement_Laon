@@ -33,6 +33,16 @@ module.exports = app => {
     //     console.log("session 없음");
     //     res.redirect('/');
     // };
+    function isLoggedIn(req, res, next){
+        if(!req.isAuthenticated()){
+            console.log("로그인 안되어있음");
+            res.send({isLoggedIn: false})
+            // return next();
+        }
+        console.log("이미 로그인 되어있음");
+        res.send({isLoggedIn: true})
+    }
+
 
     app.get("/signUp/checkId/:userId", user.isExistWithId);
   
@@ -57,7 +67,7 @@ module.exports = app => {
     // 로그인을 할 때 전송받는 부분을 passport의 체계로 바꿔야 한다. 
     // '/login'으로 인증정보를 보냈을 때. 데이터가 들어오면 데이터를 처리하는 callback을 passport에서 제공하는 API로 
     // 사용자가 login을 전송했을 때 passport가 그 login data를 처리하기 위한 코드 
-    app.post("/login", 
+    app.post("/login",
     // 앞(local)은 전략
         passport.authenticate('local', {
             successRedirect: '/loginResult',  // home으로 
@@ -83,6 +93,7 @@ module.exports = app => {
         })
     });
 
+    app.get("/isLoggedIn", isLoggedIn);
 
     // 기존의 라우팅인 app.post("경로", callback) 형태와 동일.
     // 대신 callback 자리에 passport가 제공하는 authenticate라는 함수가 대입됨.

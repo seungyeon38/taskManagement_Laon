@@ -21,4 +21,40 @@ DetailTask.addDetailTask = (detailTask) => {
     });
 }
 
+DetailTask.getDetailTaskbyNum = (detailTaskNum) => {
+    return new Promise(resolve => {
+        sql.query(`SELECT * FROM detail_task 
+        WHERE detail_task_num = ${detailTaskNum}`, (err, res) => {
+            if(err){
+                resolve({err: err, data: null});
+                return;
+            }
+            if(res.length){
+                resolve({err: null, data: res[0]});
+                return;
+            }
+
+            resolve({err: "not_found", data: res});
+        })
+    });
+}
+
+DetailTask.updateDetailTask = (detailTaskNum, detailTaskName, content, updateDate) => {
+    return new Promise(resolve => {
+        sql.query(`UPDATE detail_task 
+        SET detail_task_name = '${detailTaskName}', 
+            content = '${content}', 
+            update_date = '${updateDate}'
+        WHERE detail_task_num = ${detailTaskNum}`, (err) => {
+            if(err){
+                resolve({err: err});
+                return;
+            }
+
+            resolve({err: null});
+        });
+    });
+}
+
+
 module.exports = DetailTask;
