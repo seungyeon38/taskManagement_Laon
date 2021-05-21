@@ -23,28 +23,28 @@ var upload = multer({ storage: _storage }); // 사용자가 업로드한 파일�
 module.exports = app => {
     const user = require("../controllers/user.controller.js");
 
-    function isLoggedIn(req, res, next){
-        if(!req.isAuthenticated()){
-            console.log("로그인 안되어있음");
-            res.send({isLoggedIn: false})
-            // return next();
-        }
-        console.log("이미 로그인 되어있음");
-        res.send({isLoggedIn: true})
-    }
+    // function isLoggedIn(req, res, next){
+    //     if(!req.isAuthenticated()){
+    //         console.log("로그인 안되어있음");
+    //         res.send({isLoggedIn: false})
+    //         // return next();
+    //     }
+    //     console.log("이미 로그인 되어있음");
+    //     res.send({isLoggedIn: true})
+    // }
 
 
-    app.get("/checkIdExist/:userId", user.checkIdExist);
+    app.get("/:userId/exist", user.checkIdExist);
   
-    app.post("/signUp", upload.single('profile_img'), user.addUser); // upload.single('') 이 안의 인자가 input type="file"인 것의 name이어야 된다. 
+    app.post("/users", upload.single('profile_img'), user.addUser); // upload.single('') 이 안의 인자가 input type="file"인 것의 name이어야 된다. 
     // 두 번째 인자로 multer를 통해서 만든 모듈을 미들웨어라는 것을 이렇게 갖다놓게 되면 뒤에 있는 function이 실행되기 전에 이게 먼저 실행이 된다. 
     // 얘가 하는 역할은 사용자가 전달한 데이터에서 file이 포함되어있다면 그 파일을 가공해서 request객체에 file이라는 property를 암시적으로 추가하도록 약속되어있는 미들웨어
     
-    app.get("/getUsers", user.getAllUsers);    
+    app.get("/allUsers", user.getAllUsers);    
 
-    app.get("/getManagers", user.getAllManagers);
+    app.get("/allManagers", user.getAllManagers);
     
-    app.get("/getUserInfo", user.getUserInfo);
+    app.get("/users/info", user.getUserInfo);
 
     // 로그인을 할 때 전송받는 부분을 passport의 체계로 바꿔야 한다. 
     // '/login'으로 인증정보를 보냈을 때. 데이터가 들어오면 데이터를 처리하는 callback을 passport에서 제공하는 API로 
@@ -81,5 +81,5 @@ module.exports = app => {
         })
     });
 
-    app.get("/isLoggedIn", isLoggedIn);
+    // app.get("/isLoggedIn", isLoggedIn);
 }

@@ -20,10 +20,10 @@ module.exports = app => {
 
     app.post("/tasks/:taskNum/complete", task.completeTask);
 
-    app.get("/showDetail/:taskNum", task.showDetailbyTaskNum);
+    app.get("/tasks/:taskNum/details", task.showDetailbyTaskNum);
 
-    app.post("/taskImportance", task.changeTaskImportance);
+    app.post("/tasks/importance", task.changeTaskImportance);
 
-    app.get("/getTaskInfo/:taskNum", task.getTaskInfobyTaskNum);
+    app.get("/tasks/info/:taskNum", task.getTaskInfobyTaskNum);
 
 }
