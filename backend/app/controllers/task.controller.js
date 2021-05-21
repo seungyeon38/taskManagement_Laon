@@ -288,7 +288,38 @@ exports.modifyTask = async (req, res) => {
         return; 
     }
  
+    // addedWorkers_list: addedWorkers_list,
+    // existedWorkers_list: existedWorkers_list,
+    // deletedWorkerNum_list: deletedWorkerNum_list 
+
+    // importance를 업무를 생성할 때는 다 false로 생성했다. 
+    // 그리고 별표시 누를때마다 업데이트.
+    // 변경을 하면 없어진 실무담당자나 관리자의 정보는 없애야 하고, 
+    // 있던 사람들의 importance는 그대로 가야하고 (역할이 바꼈을 수도 있기 때문에 personal_role은 업데이트 해야됨), 
+    // 없던 사람들의 importance는 false로 설정되어야 한다.
+
+    console.log("req.body.addedWorkers_list: " + JSON.stringify(req.body.addedWorkers_list));
+    console.log("req.body.existedWorkers_list: " + JSON.stringify(req.body.existedWorkers_list));
+    console.log("req.body.deletedWorkerNum_list: " + JSON.stringify(req.body.deletedWorkerNum_list));
+    
+    
+    for(let userNum of req.body.deletedWorkerNum_list){
+        promise = await Task.deleteTaskWorkerbyTaskNumUserNum(req.body.info.task_num, userNum);
+
+        if(promise.err){
+            res.status(500).send({
+                message:
+                    promise.err.message || "Some error occurred while creating the task."
+            });
+            return;
+        }
+    }
+
     console.log("req.body.sameManager: " + req.body.sameManager)
+
+    // 2번 매니저 -> 없어지고 
+    // 4번 실무담당자에서 매니저로 -> 가 없어짐. 
+    // 5번은 그대로 실무담당자 
 
     // 업데이트 
     if(req.body.sameManager){
@@ -305,6 +336,11 @@ exports.modifyTask = async (req, res) => {
 
     // 새로운 매니저라면 
     else{
+        console.log("req.body.beforeManager: " + req.body.beforeManager);
+        console.log("req.body.info.manager: " + req.body.info.manager);
+        console.log("req.body.info.manager_role: " + req.body.info.manager_role);
+        
+        // 이전 매니저 없애고 
         promise = await Task.deleteTaskWorkerbyTaskNumUserNum(req.body.info.task_num, req.body.beforeManager);
 
         if(promise.err){
@@ -313,7 +349,7 @@ exports.modifyTask = async (req, res) => {
             });
             return; 
         }
-
+        // 새로운 매니저 insert
         promise = await Task.insertTaskWorker(req.body.info.task_num, req.body.info.manager, req.body.info.manager_role, false);
         if(promise.err){
             res.status(500).send({
@@ -322,16 +358,6 @@ exports.modifyTask = async (req, res) => {
             return; 
         }
     }
-
-    // addedWorkers_list: addedWorkers_list,
-    // existedWorkers_list: existedWorkers_list,
-    // deletedWorkerNum_list: deletedWorkerNum_list 
-
-    // importance를 업무를 생성할 때는 다 false로 생성했다. 
-    // 그리고 별표시 누를때마다 업데이트.
-    // 변경을 하면 없어진 실무담당자나 관리자의 정보는 없애야 하고, 
-    // 있던 사람들의 importance는 그대로 가야하고 (역할이 바꼈을 수도 있기 때문에 personal_role은 업데이트 해야됨), 
-    // 없던 사람들의 importance는 false로 설정되어야 한다.
 
     for(let worker of req.body.addedWorkers_list){
         promise = await Task.insertTaskWorker(req.body.info.task_num, worker.user_num, worker.personal_role, false);
@@ -344,7 +370,7 @@ exports.modifyTask = async (req, res) => {
             return;
         }
     }
-    
+
     for(let worker of req.body.existedWorkers_list){
         promise = await Task.updateTaskWorker(req.body.info.task_num, worker.user_num, worker.personal_role);
 
@@ -356,19 +382,6 @@ exports.modifyTask = async (req, res) => {
             return;
         }
     }
-    
-    for(let userNum of req.body.deletedWorkerNum_list){
-        promise = await Task.deleteTaskWorkerbyTaskNumUserNum(req.body.info.task_num, userNum);
-
-        if(promise.err){
-            res.status(500).send({
-                message:
-                    promise.err.message || "Some error occurred while creating the task."
-            });
-            return;
-        }
-    }
-
 
     res.send({result: true});
 }
