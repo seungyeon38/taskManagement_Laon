@@ -269,9 +269,6 @@ exports.getTaskInfobyTaskNum = async (req, res) => {
 
 
 exports.modifyTask = async (req, res) => {
-    console.log("modifyTask req.body: " + JSON.stringify(req.body));
-    console.log("modifyTask req.body.info: " + JSON.stringify(req.body.info));
-
     var promise = await Task.getTaskNumbyTaskName(req.body.info.task_name);
 
     if(promise.err != "not_found" && promise.data != req.body.info.task_num){
@@ -298,11 +295,8 @@ exports.modifyTask = async (req, res) => {
     // 있던 사람들의 importance는 그대로 가야하고 (역할이 바꼈을 수도 있기 때문에 personal_role은 업데이트 해야됨), 
     // 없던 사람들의 importance는 false로 설정되어야 한다.
 
-    console.log("req.body.addedWorkers_list: " + JSON.stringify(req.body.addedWorkers_list));
-    console.log("req.body.existedWorkers_list: " + JSON.stringify(req.body.existedWorkers_list));
-    console.log("req.body.deletedWorkerNum_list: " + JSON.stringify(req.body.deletedWorkerNum_list));
-    
-    
+    // delete먼저, add나중에 (add한 것까지 delete됨)
+
     for(let userNum of req.body.deletedWorkerNum_list){
         promise = await Task.deleteTaskWorkerbyTaskNumUserNum(req.body.info.task_num, userNum);
 
@@ -315,16 +309,8 @@ exports.modifyTask = async (req, res) => {
         }
     }
 
-    console.log("req.body.sameManager: " + req.body.sameManager)
-
-    // 2번 매니저 -> 없어지고 
-    // 4번 실무담당자에서 매니저로 -> 가 없어짐. 
-    // 5번은 그대로 실무담당자 
-
     // 업데이트 
     if(req.body.sameManager){
-        console.log("req.body.info.manager: " + req.body.info.manager)
-        console.log("req.body.info.manager_role: " + req.body.info.manager_role)
         promise = await Task.updateTaskWorker(req.body.info.task_num, req.body.info.manager, req.body.info.manager_role);
         if(promise.err){
             res.status(500).send({
@@ -336,10 +322,6 @@ exports.modifyTask = async (req, res) => {
 
     // 새로운 매니저라면 
     else{
-        console.log("req.body.beforeManager: " + req.body.beforeManager);
-        console.log("req.body.info.manager: " + req.body.info.manager);
-        console.log("req.body.info.manager_role: " + req.body.info.manager_role);
-        
         // 이전 매니저 없애고 
         promise = await Task.deleteTaskWorkerbyTaskNumUserNum(req.body.info.task_num, req.body.beforeManager);
 
