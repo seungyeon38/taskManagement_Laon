@@ -147,7 +147,7 @@ export default {
         console.log("modifyTask taskNum: " + this.task_form.task_num)
         
         this.$axios({
-            url: `http://localhost:3000/getUsers`,
+            url: `http://localhost:3000/allUsers`,
             method: 'get',
             withCredentials: true,
             headers: {
@@ -162,7 +162,7 @@ export default {
 
 
         this.$axios({
-            url: `http://localhost:3000/getTaskInfo/${this.task_form.task_num}`,
+            url: `http://localhost:3000/tasks/info/${this.task_form.task_num}`,
             method: 'get',
             withCredentials: true,
             headers: {
@@ -279,6 +279,7 @@ export default {
             var sameManager = false;
 
             if(this.before_manager === this.task_form.manager){
+                console.log("this.before_manager === this.task_form.manager")
                 sameManager = true;    
             }
 

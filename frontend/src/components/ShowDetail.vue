@@ -146,7 +146,7 @@ export default {
             }
             else{
                 this.$axios({
-                    url: 'http://localhost:3000/DetailTasks',
+                    url: 'http://localhost:3000/detailTasks',
                     method: 'post',
                     data: {
                         task_num: this.taskNum,
@@ -183,7 +183,7 @@ export default {
             this.detailTaskNumtoModify = detailTaskNum;
 
             this.$axios({
-                url: `http://localhost:3000/DetailTasks/${detailTaskNum}`,
+                url: `http://localhost:3000/detailTasks/${detailTaskNum}`,
                 method: 'get',
                 withCredentials: true,
                 headers: {
@@ -202,7 +202,7 @@ export default {
         },
         modifyDetailTask(){
             this.$axios({
-                url: `http://localhost:3000/DetailTasks/${this.detailTaskNumtoModify}`,
+                url: `http://localhost:3000/detailTasks/${this.detailTaskNumtoModify}`,
                 method: 'put',
                 data: {
                     // detail_task_num: this.detailTaskNumtoModify,
@@ -230,7 +230,7 @@ export default {
         this.taskNum = this.$route.params.taskNum;
 
         this.$axios({
-            url: `http://localhost:3000/getUsers`,
+            url: `http://localhost:3000/allUsers`,
             method: 'get',
             withCredentials: true,
             headers: {
@@ -241,7 +241,7 @@ export default {
             this.users = res.data;
 
             this.$axios({
-                url: `http://localhost:3000/showDetail/${this.taskNum}`,
+                url: `http://localhost:3000/tasks/${this.taskNum}/details`,
                 method: 'get',
                 withCredentials: true,
                 headers: {

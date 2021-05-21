@@ -153,7 +153,7 @@ export default {
     },
     created(){
         this.$axios({
-            url: `http://localhost:3000/getUsers`,
+            url: `http://localhost:3000/allUsers`,
             method: 'get',
             withCredentials: true,
             headers: {

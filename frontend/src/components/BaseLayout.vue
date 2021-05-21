@@ -32,7 +32,7 @@
         },
         created(){
             this.$axios({
-                url: 'http://localhost:3000/getUserInfo',
+                url: 'http://localhost:3000/users/info',
                 method: 'get',
                 withCredentials: true,
                 headers: {
@@ -41,7 +41,6 @@
                 credentials: "same-origin"
             }).then(res => {
                 this.user = res.data;
-
             }).catch(err => {
                 console.log("catch");
             });

@@ -78,7 +78,7 @@
                         // 비밀번호, 비밀번호 확인이 일치하는 경우
                         if(this.password === this.password_re){
                             // id가 이미 존재하는 아이디인지 확인.(중복 확인)
-                            this.$axios.get('http://localhost:3000/checkIdExist/'+ this.id
+                            this.$axios.get(`http://localhost:3000/${this.id}/exist`
                             ).then(res => {
                                 // 아이디가 존재하지 않을 때
                                 if(res.data.result == true){
@@ -98,7 +98,7 @@
                                     }
                                     // 비밀번호는 db에 암호화해서 들어가야 한다. 
                                     this.$axios({
-                                        url: 'http://localhost:3000/signUp',
+                                        url: 'http://localhost:3000/users',
                                         method: 'post',
                                         data: formData,
                                         headers: {

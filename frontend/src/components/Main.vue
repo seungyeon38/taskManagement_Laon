@@ -128,7 +128,7 @@ export default {
     },
     created(){
         this.$axios({
-            url: 'http://localhost:3000/getManagers',
+            url: 'http://localhost:3000/allManagers',
             method: 'get',
             withCredentials: true,
             headers: {
@@ -299,7 +299,7 @@ export default {
         // 진행 중인 것을 중요표시 
         changeImportanceTrue(taskNum){
             this.$axios({
-                url: 'http://localhost:3000/taskImportance',
+                url: 'http://localhost:3000/tasks/importance',
                 method: 'post',
                 data: {
                     task_num: taskNum, 
@@ -323,7 +323,7 @@ export default {
         },
         changeImportanceFalse(taskNum){
             this.$axios({
-                url: 'http://localhost:3000/taskImportance',
+                url: 'http://localhost:3000/tasks/importance',
                 method: 'post',
                 data: {
                     task_num: taskNum, 
