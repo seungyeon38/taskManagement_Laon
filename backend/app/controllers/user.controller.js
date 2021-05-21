@@ -76,22 +76,6 @@ exports.getAllUsers = async (req, res) => {
     res.send(promise.data);
 };
 
-exports.getAllManagers = async (req, res) => {
-    const promise = await User.getAllManagerInfo();
-
-    if(promise.err){
-        if(promise.err != "not_found"){
-            res.status(500).send({
-                message: 
-                    err.message || "Some error occurred while retrieving managers."
-            });
-            return;
-        }
-    }
-
-    res.send(promise.data);
-}
-
 exports.getUserInfo = async (req, res) => {
     const promise = await User.getUserById(req.user.id);
     // 못 찾아도 오류 

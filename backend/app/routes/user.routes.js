@@ -42,8 +42,6 @@ module.exports = app => {
     
     app.get("/allUsers", user.getAllUsers);    
 
-    app.get("/allManagers", user.getAllManagers);
-    
     app.get("/users/info", user.getUserInfo);
 
     // 로그인을 할 때 전송받는 부분을 passport의 체계로 바꿔야 한다. 

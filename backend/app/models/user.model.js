@@ -79,26 +79,5 @@ User.getAllUserInfo = () => {
     });
 };
 
-User.getAllManagerInfo = () => {
-    return new Promise(resolve => {
-        sql.query(`SELECT distinct t.manager, u.name, u.id 
-        FROM task AS t
-        LEFT OUTER JOIN user AS u
-        ON t.manager = u.user_num;`, (err, res) => {
-            if(err){
-                console.log("error: ", err);
-                resolve({err: err, data: null});
-                return;
-            }
-            if(res.length){
-                console.log("managers: ", res);
-                resolve({err: null, data: res});
-                return;
-            }
-
-            resolve({err: "not_found", data: res});
-        });
-    });
-};
 
 module.exports = User;
