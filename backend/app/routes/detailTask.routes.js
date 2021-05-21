@@ -1,9 +1,11 @@
 module.exports = app => {
     const detailTask = require("../controllers/detailTask.controller.js");
 
-    app.post("/DetailTasks", detailTask.addDetailTask);
+    app.post("/detailTasks", detailTask.addDetailTask);
 
-    app.get("/DetailTasks/:detailTaskNum", detailTask.getDetailTask);
+    app.get("/detailTasks/:detailTaskNum", detailTask.getDetailTask);
 
-    app.put("/DetailTasks/:detailTaskNum", detailTask.modifyDetailTask);
+    app.put("/detailTasks/:detailTaskNum", detailTask.modifyDetailTask);
+
+    app.delete("/detailTasks/:detailTaskNum", detailTask.deleteDetailTask);
 }

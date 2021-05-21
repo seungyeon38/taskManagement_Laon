@@ -56,5 +56,19 @@ DetailTask.updateDetailTask = (detailTaskNum, detailTaskName, content, updateDat
     });
 }
 
+DetailTask.deleteDetailTask = (detailTaskNum) => {
+    return new Promise(resolve => {
+        sql.query(`DELETE FROM detail_task 
+        WHERE detail_task_num = ${detailTaskNum}`, (err) => {
+            if(err){
+                resolve({err: err});
+                return;
+            }
+
+            resolve({err: null});
+        });
+    });
+}
+
 
 module.exports = DetailTask;

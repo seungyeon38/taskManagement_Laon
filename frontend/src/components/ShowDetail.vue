@@ -4,7 +4,7 @@
             <table style="width: 100%">
                 <tr align="right">
                     <td colspan="2">
-                        <el-button v-if="taskInfo.complete == 0 && taskClosed == 0" id="enroll-detailTask" class="custom-icon"  @click="dialogFormVisible = true" icon="el-icon-plus" type="info"></el-button>
+                        <el-button v-if="taskInfo.complete == 0 && taskClosed == 0" class="enroll-task custom-icon"  @click="dialogFormVisible = true" icon="el-icon-plus" type="info"></el-button>
                         <div v-else style="height: 50px"></div>
                         <el-dialog title="세부업무 등록" :visible.sync="dialogFormVisible" style="text-align: left; font-weight: bolder;" @closed="cancel">
                             <el-form :model="form">
@@ -16,8 +16,8 @@
                                 </el-form-item>
                             </el-form>
                             <span slot="footer" class="dialog-footer">
-                                <el-button @click="dialogFormVisible = false">Cancel</el-button>
-                                <el-button type="primary" @click.native="enrollDetailTask">Confirm</el-button>
+                                <el-button class="btn" @click="dialogFormVisible = false">취소</el-button>
+                                <el-button class="btn" @click.native="enrollDetailTask">확인</el-button>
                             </span>
                         </el-dialog>
                         <!-- 세부업무 수정 -->
@@ -31,8 +31,8 @@
                                 </el-form-item>
                             </el-form>
                             <span slot="footer" class="dialog-footer">
-                                <el-button @click="dialogModifyFormVisible = false">Cancel</el-button>
-                                <el-button type="primary" @click.native="modifyDetailTask">Confirm</el-button>
+                                <el-button @click="dialogModifyFormVisible = false">취소</el-button>
+                                <el-button type="primary" @click.native="modifyDetailTask">확인</el-button>
                             </span>
                         </el-dialog>
                     </td>
@@ -44,19 +44,19 @@
                         <el-select v-model="complete" v-else filterable placeholder="Select" style="width: 220px;" disabled>
                         </el-select>
                     </td>
-                    
+                    <!-- border:1px dashed #acb2bd; margin-top: 30px; margin-bottom: 35px; height: 1px; -->
                     <td style="width: 80%; padding-top: 20px; text-align: justify;">
-                        <div style="text-align: center; font-size: 25px; font-weight: bolder; color: rgb(169, 183, 202);">{{taskInfo.task_name}}</div>
-                        <hr style="border:1px dashed rgb(169, 183, 202); margin-top: 30px; margin-bottom: 35px; height: 1px;">
+                        <div style="text-align: center; font-size: 24px; font-weight: bolder; color: #acb2bd;">{{taskInfo.task_name}}</div>
+                        <hr />
                         <div v-if="detailTask_list.length != 0">
                             <el-timeline>
                                 <el-timeline-item v-for="detailTask in detailTask_list" :key="detailTask.detail_task_num" :timestamp="`${detailTask.report_date}, ${detailTask.workerName} 님`" placement="top">
-                                    <detail-task-users v-if="detailTask.worker == userNum" v-on:showModifyDialog="showModifyDialog" :detail_task_num="detailTask.detail_task_num" :workerName="detailTask.workerName" :detail_task_name="detailTask.detail_task_name" :content="detailTask.content" :report_date="detailTask.report_date" :profile_img="detailTask.profile_img"></detail-task-users>
+                                    <detail-task-users v-if="detailTask.worker == userNum" v-on:showModifyDialog="showModifyDialog" v-on:deleteDetailTask="deleteDetailTask" :detail_task_num="detailTask.detail_task_num" :workerName="detailTask.workerName" :detail_task_name="detailTask.detail_task_name" :content="detailTask.content" :report_date="detailTask.report_date" :profile_img="detailTask.profile_img"></detail-task-users>
                                     <detail-task v-else :workerName="detailTask.workerName" :detail_task_name="detailTask.detail_task_name" :content="detailTask.content" :report_date="detailTask.report_date" :profile_img="detailTask.profile_img"></detail-task>
                                 </el-timeline-item>
                             </el-timeline>
                         </div>
-                        <div v-else style="font-size: 18px; color: gray; padding-top: 70px; text-align: center">
+                        <div v-else style="font-size: 18px; color: #C0C4CC; padding-top: 70px; text-align: center">
                             <span>(등록된 세부 업무가 없습니다.)</span>
                         </div>
                     </td>
@@ -66,41 +66,41 @@
         <template v-slot:aside>
             <div style="display: inline-block; width: 50%;">
                 <div class="label_title">시작일</div>
-                <div style="margin-bottom: 50px;">{{taskInfo.start_date}}</div>
+                <div class="detail_info" style="margin-bottom: 50px;">{{taskInfo.start_date}}</div>
             </div>
             <div style="display: inline-block;">
                 <div class="label_title">마감일</div>
-                <div style="margin-bottom: 50px;">{{taskInfo.end_date}}</div>
+                <div class="detail_info" style="margin-bottom: 50px;">{{taskInfo.end_date}}</div>
             </div>
             <div class="label_title">업무 내용</div>
-            <div style="border: 1px solid #a9b7ca; color: #757575; width: 100%; min-height: 100px;">
-                <div v-if="taskInfo.explanation" style="padding: 10px;">{{taskInfo.explanation}}</div>
+            <div id="explanation">
+                <div v-if="taskInfo.explanation" class="detail_info" style="padding: 10px;">{{taskInfo.explanation}}</div>
                 <div v-else style="padding: 10px;">(업무 내용이 없습니다.)</div>
             </div>
             <div style="margin-top: 40px;"></div>
             <div class="label_title">관리자</div>
-            <div class="task_content">
-                <div style="font-size: 1.2em; margin-bottom: 15px; display:flex; align-items: center;">
-                    <el-avatar v-if="manager.profile_img" :size="45" style="border: 1px solid #a4a7ad;">
+            <div style="margin-left: 10px; margin-top: 30px;">
+                <div style="margin-bottom: 15px; display:flex; align-items: center;">
+                    <el-avatar v-if="manager.profile_img" :size="45" class="img">
                         <img :src="require('../../../backend/uploads/' + manager.profile_img)" />
                     </el-avatar>
                     <el-avatar v-else icon="el-icon-user-solid" :size="45" style="font-size: 1.5rem;"></el-avatar>
                     <div style="margin-right: 20px"></div>
-                    <span style="font-weight: bolder; max-width: 200px;" class="text-overflow">{{manager.name}} </span><span>님</span>
+                    <span class="name text-overflow">{{manager.name}} </span><span>님</span>
                 </div>
-                <div v-if="manager.manager_role != 'undefined'" style="margin-left: 65px">{{manager.manager_role}}</div>
+                <div v-if="manager.manager_role != 'undefined'" class="detail_info" style="margin-left: 65px">{{manager.manager_role}}</div>
             </div>
             <div v-if="workers.length" class="label_title" style="margin-top:40px;">실무담당자</div>
-            <div v-for="worker in workers" :key="worker.user_num" class="task_content"> 
-                <div style="font-size: 1.1em; margin-bottom: 15px; display:flex; align-items: center;">
-                    <el-avatar v-if="worker.profile_img" :size="45" style="border: 1px solid rgb(207, 211, 211);">
+            <div v-for="worker in workers" :key="worker.user_num" style="margin-left: 10px; margin-top: 30px;"> 
+                <div style="margin-bottom: 15px; display:flex; align-items: center;">
+                    <el-avatar v-if="worker.profile_img" :size="45" class="img">
                         <img :src="require('../../../backend/uploads/' + worker.profile_img)" />
                     </el-avatar>
                     <el-avatar v-else icon="el-icon-user-solid" :size="45" style="font-size: 1.5rem;"></el-avatar>
                     <div style="margin-right: 20px"></div>
-                    <span style="font-weight: bolder; max-width: 200px;" class="text-overflow">{{worker.name}} </span><span>님</span>
+                    <span class="name text-overflow">{{worker.name}} </span><span>님</span>
                 </div>
-                <div v-if="worker.personal_role != 'undefined'" style="margin-left: 65px">{{worker.personal_role}}</div>                
+                <div v-if="worker.personal_role != 'undefined'" class="detail_info" style="margin-left: 65px">{{worker.personal_role}}</div>                
             </div>
         </template>
     </base-layout>
@@ -205,7 +205,6 @@ export default {
                 url: `http://localhost:3000/detailTasks/${this.detailTaskNumtoModify}`,
                 method: 'put',
                 data: {
-                    // detail_task_num: this.detailTaskNumtoModify,
                     detail_task_name: this.form.detailTask_name,
                     content: this.form.detailTask_content,
                     update_date: this.$moment().format('YYYY-MM-DDTHH:mm'),
@@ -219,6 +218,24 @@ export default {
                 if(res.data.result == true){
                     alert("세부업무가 수정되었습니다.")
                     this.dialogModifyFormVisible = false;
+                    this.$router.go();
+                }
+            }).catch(err => {
+                console.log("err: ", err)
+            })      
+        },
+        deleteDetailTask(detailTaskNum){
+            this.$axios({
+                url: `http://localhost:3000/detailTasks/${detailTaskNum}`,
+                method: 'delete',
+                withCredentials: true,
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                credentials: "same-origin"
+            }).then(res => {
+                if(res.data.result == true){
+                    alert("세부업무가 삭제되었습니다.");
                     this.$router.go();
                 }
             }).catch(err => {
@@ -309,7 +326,26 @@ export default {
    padding: 10px;
 }
 
-#enroll-detailTask{
+/* .enroll-task{
+    padding: 0px;
+    float: right; 
+    width: 50px; 
+    height: 50px;
+    background-color: #b0b8c4;
+    border: none;
+}
+
+/* .enroll-task:focus{
+    opacity: 1 !important;
+    background-color: #acb2bd;
+} */
+
+/* .enroll-task:hover{
+    opacity: 1 !important;
+    background-color: #acb2bd;
+} */
+
+/* #enroll-detailTask{
     padding: 0px;
     float: right; 
     width: 50px; 
@@ -324,16 +360,62 @@ export default {
 #enroll-detailTask:hover{
     opacity: 1 !important;
     background-color: #a6a9ad;
-}
+} */
 
 .label_title{
-    font-weight: bold; 
-    font-size: 1.05em; 
+    /* font-weight: bold;  */
+    font-size: 1.1em; 
     margin-bottom: 20px;
+    /* color: #585858; */
 }
 
-.task_content{
-    margin-left: 10px;
-    margin-top: 30px;
+#explanation {
+    border: 1px solid rgb(192, 196, 204);
+    color: rgb(192, 196, 204); 
+    width: 100%; 
+    min-height: 100px;
+}
+
+.name {
+    font-size: 1.1rem; 
+    font-weight: bolder; 
+    max-width: 200px;
+}
+
+.img {
+    border: 1px solid #a8a8a8;
+    font-size: 1.2rem;
+}
+
+.detail_info {
+    color: #585858;
+}
+
+
+hr {
+  margin: 1.5em 0;
+  text-align: center;
+  border: none;
+  margin-bottom: 50px;
+}
+
+hr:before {
+  content: '';
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #E4E7ED;
+  margin: 0 0.4em;
+}
+
+hr:after {
+  content: '';
+  display: inline-block;
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  background: #E4E7ED;
+  margin: 0 0.4em;
 }
 </style>

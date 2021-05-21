@@ -48,3 +48,16 @@ exports.modifyDetailTask = async (req, res) => {
 
     res.send({result: true});
 }
+
+exports.deleteDetailTask = async (req, res) => {
+    const promise = await DetailTask.deleteDetailTask(req.params.detailTaskNum);
+    
+    if(promise.err){
+        console.log("err: " + promise.err);
+        res.status(500).send({
+            message: `Error retrieving DetailTask with detail_task_num ${req.params.detailTaskNum}`
+        });
+    }
+
+    res.send({result: true});
+}
