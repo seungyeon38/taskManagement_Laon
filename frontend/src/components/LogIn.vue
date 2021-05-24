@@ -5,7 +5,7 @@
             <br>
             <el-input v-model="id" type="text" name="id" placeholder="아이디" style="width: 250px; border-radius:0px;" required /> 
             <el-input v-model="password" type="password" name="pw" placeholder="비밀번호" style="width: 250px; margin-top: 15px" show-password required /> 
-            <el-button native-type="submit" name="button" style="width: 250px; margin-top:60px;">
+            <el-button class="btn" native-type="submit" name="button" style="width: 250px; margin-top:60px;">
                 로그인
             </el-button>
             <br>
@@ -19,8 +19,8 @@
 export default{
     data(){
         return{
-            id:'',
-            password:'',
+            id: '',
+            password: '',
         }
     },
     methods: {
@@ -75,7 +75,7 @@ export default{
         font-size: smaller;
         color: #606266;
     }
-
+/* 
     button:hover {
         border-color: #cfcfcf; 
         background-color: #fafafa;
@@ -86,6 +86,6 @@ export default{
         border-color: #cfcfcf; 
         background-color: #f5f5f5;
         color: #646464; 
-    }
+    } */
 
 </style>

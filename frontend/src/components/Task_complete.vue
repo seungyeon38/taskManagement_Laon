@@ -2,7 +2,7 @@
     <task id="completedTask" v-on:clickTask="clickTask" :task_name="task_name" :task_num="task_num" :manager="manager" :start_date="start_date" :end_date="end_date" :complete_date="complete_date" :label_color="label_color">
         <tr slot="complete_date" style="border-top: 1px solid #909399;">
             <td class="border_right bold">완료일</td>
-            <td class="date_font_size">
+            <td class="date_font_size" style="color: #585858;">
                 <div>{{this.$moment(complete_date).format('YYYY/MM/DD')}}</div> 
                 <div>{{this.$moment(complete_date).format(`h${": "}mm A`)}}</div>
             </td>
@@ -29,8 +29,8 @@ export default{
 
 <style scoped>
 #completedTask{
-    background-color: #f8f8f8;
-    border: 1px solid #8b8b8b; 
+    background-color: #fafafa;
+    border: 1px solid #a8a8a8; 
     width: 210px; 
     height: 270px;
     border-spacing: 0px; 

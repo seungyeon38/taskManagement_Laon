@@ -12,16 +12,23 @@
                 <span>님</span>
             </div>
             <div>
-                <button @click="showModifyDialog" id="edit_btn" class="el-icon-setting" style="background: none; border: none; padding: 0px; margin-right: 3px; font-size: 1.9em;"/>
+                <el-dropdown size="medium">
+                    <i id="edit_btn" class="el-icon-setting" style="margin-right: 3px; font-size: 1.9em;"></i>
+                    <el-dropdown-menu slot="dropdown">
+                        <el-dropdown-item icon="el-icon-edit" @click.native="showModifyDialog"> 수정</el-dropdown-item>
+                        <el-dropdown-item icon="el-icon-delete" @click.native="deleteDetailTask"> 삭제</el-dropdown-item>
+                    </el-dropdown-menu>
+                </el-dropdown>
+                <!-- <button @click="showModifyDialog" id="edit_btn" class="el-icon-setting" style="background: none; border: none; padding: 0px; margin-right: 3px; font-size: 1.9em;"/> -->
             </div>
         </div>
         <div style="text-align: left; margin-bottom: 2%; font-weight: bolder; font-size: 1.1em;">
             {{detail_task_name}}
         </div>
-        <div v-if="content" class="text-overflow-twoLine" style="text-align: left; margin-bottom: 20px">
+        <div v-if="content" style="text-align: left; margin-bottom: 20px; color: #6f7279">
             {{content}}
         </div>
-        <div v-else class="text-overflow-twoLine" style="text-align: left; margin-bottom: 20px">
+        <div v-else style="text-align: left; margin-bottom: 20px; color: rgb(192, 196, 204);">
             (내용 없음)
         </div>
         <div style="text-align: right; font-size: 0.9em; color: gray;">
@@ -43,6 +50,10 @@ export default{
             console.log("showModifyDialog");
             this.$emit('showModifyDialog', this.detail_task_num);
         },
+        deleteDetailTask(){
+            console.log("deleteDetailTask");
+            this.$emit('deleteDetailTask', this.detail_task_num);
+        }
     }
 }
 </script>
@@ -50,7 +61,7 @@ export default{
 <style scoped>
     #detail_task{
         display:inline-block;
-        border: 1px solid #8b8b8b; 
+        border: 1px solid #a8a8a8; 
         background-color: white;
         width: 700px; 
         border-spacing: 0px;
@@ -61,7 +72,7 @@ export default{
 
     }
 
-    .text-overflow-twoLine{
+    /* .text-overflow-twoLine{
         display: -webkit-box;
         overflow: hidden;
         line-height: 1.2em;
@@ -70,14 +81,14 @@ export default{
         -webkit-line-clamp: 2;
         -webkit-box-orient: vertical;
         word-break:break-all;
-    }
+    } */
 
     #edit_btn{
-        color: #636363
+        color: #a8a8a8
     }
 
     #edit_btn:hover{
-        color: black;
+        color: #646464; 
     }
 
 </style>

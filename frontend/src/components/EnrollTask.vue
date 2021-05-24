@@ -16,7 +16,7 @@
                     <br/>
                     <div>
                         <el-form-item label="시작/마감일 설정" for="duration" style="margin: 0px;">
-                            <table>
+                            <table class="color5">
                                 <tr>
                                     <td>
                                         업무 시작일
@@ -115,7 +115,7 @@
 
                         </el-form-item>
                     </div>
-                    <el-button native-type="submit" id="enrollBtn" name="button" style="width: 200px; margin-top: 100px;">
+                    <el-button native-type="submit" class="btn" name="button" style="width: 200px; margin-top: 100px;">
                         등록하기
                     </el-button>
                 </div>
@@ -353,6 +353,8 @@ export default {
         appearance: none;
     }
 
+
+
     .labelColor{
         border: 1px solid #a8a8a8;
         width: 33px;
@@ -363,16 +365,18 @@ export default {
     }
 
     .labelColor:focus{
-        border-color: #686868 !important;
+        border-color: #606266 !important;
     }
 
     .labelColor:checked{
-        border-color: #686868;
+        border-color: #606266;
     }
 
     .labelColor:hover{
         opacity: 0.7;
     }
+
+
 
     input[type="datetime-local"]:disabled {
         background: #c2c2c2;
@@ -413,7 +417,7 @@ export default {
     #content:hover {
         border-color: #C0C4CC;
     }
-
+/* 
     #enrollBtn:hover {
         border-color: #cfcfcf; 
         background-color: #fafafa;
@@ -424,7 +428,7 @@ export default {
         border-color: #cfcfcf; 
         background-color: #f5f5f5;
         color: #646464; 
-    }
+    } */
     /* .el-input--suffix{
         padding-right: 5px;
     } */

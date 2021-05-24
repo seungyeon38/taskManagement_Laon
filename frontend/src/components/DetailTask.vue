@@ -12,10 +12,10 @@
         <div style="text-align: left; margin-bottom: 2%; font-weight: bolder; font-size: 1.1em;">
             {{detail_task_name}}
         </div>
-        <div v-if="content" class="text-overflow-twoLine" style="text-align: left; margin-bottom: 20px">
+        <div v-if="content" style="text-align: left; margin-bottom: 20px; color: #585858">
             {{content}}
         </div>
-        <div v-else class="text-overflow-twoLine" style="text-align: left; margin-bottom: 20px">
+        <div v-else style="text-align: left; margin-bottom: 20px; color: rgb(192, 196, 204);">
             (내용 없음)
         </div>
         <div style="text-align: right; font-size: 0.9em; color: gray;">
@@ -41,7 +41,7 @@ export default{
 <style scoped>
     #detail_task{
         display:inline-block;
-        border: 1px solid #8b8b8b; 
+        border: 1px solid #a8a8a8; 
         background-color: white;
         width: 700px; 
         border-spacing: 0px;
@@ -52,7 +52,7 @@ export default{
 
     }
 
-    .text-overflow-twoLine{
+    /* .text-overflow-twoLine{
         display: -webkit-box;
         overflow: hidden;
         line-height: 1.2em;
@@ -61,5 +61,5 @@ export default{
         -webkit-line-clamp: 2;
         -webkit-box-orient: vertical;
         word-break:break-all;
-    }
+    } */
 </style>

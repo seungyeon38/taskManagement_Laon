@@ -10,11 +10,11 @@
             
         </el-header>
         <el-container style="min-height: 1000px;">
-            <el-main style="background-color: #f9feff; padding: 50px 120px; margin: 0px auto; min-width: 500px;">
+            <el-main>
                 <slot name="main">
                 </slot>
             </el-main>
-            <el-aside width="380px" style="background-color: #f0f5f5; text-align: left; padding: 30px; padding-top: 60px; ">
+            <el-aside width="380px">
                 <slot name="aside">
                 </slot>
             </el-aside>
@@ -84,13 +84,32 @@
     }
 
     .el-header {
-        background-color: #B3C0D1;
+        background-color: #f0f4fa;
         color: #333;
         line-height: 60px;
+        border-bottom: 1px solid #e4e8eb;
+        /* box-shadow: 0px 6px 6px -12px black inset; */
+        /* box-shadow: 0 1px 3px 0 rgb(0 0 0 / 12%); */
+        /* box-shadow: 0 1px 3px 0 red; */
     }
 
-    .el-main .el-aside{
+    .el-main {
+        background-color: #fff; 
+        padding: 50px 120px; 
+        margin: 0px auto; 
+        min-width: 500px;
+        border-right: 1px solid #e4e8eb;
+    }
+
+    .el-main .el-aside {
         white-space: nowrap;
+    }
+    
+    .el-aside {
+        background-color: #f7fafd; 
+        text-align: left; 
+        padding: 30px; 
+        padding-top: 60px;
     }
     
 </style>

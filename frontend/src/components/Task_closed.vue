@@ -22,8 +22,8 @@ export default{
 
 <style scoped>
 #closedTask{
-    background-color: #f8f8f8;
-    border: 1px solid #8b8b8b; 
+    background-color: #fafafa;
+    border: 1px solid #a8a8a8; 
     width: 210px; 
     height: 270px;
     border-spacing: 0px; 

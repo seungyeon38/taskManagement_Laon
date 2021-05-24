@@ -1,5 +1,5 @@
 <template>
-    <table id="task" @click="clickTask" align="left">
+    <table id="task" :task_name="task_name" :task_num="task_num" :manager="manager" :start_date="start_date" :end_date="end_date" :label_color="label_color" @click="clickTask" align="left">
         <tr style="height: 14px;" :style="{backgroundColor: label_color}">
             <td></td>
         </tr>
@@ -17,23 +17,23 @@
                 <table id="info_table" style="text-align: center;">
                     <tr class="border-bottom" style="height: 28px">
                         <td class="border_right bold">관리자</td>
-                        <td class="text-overflow" style="width: 95%; line-height:20px; margin: 2px;">{{manager}}</td>
+                        <td class="text-overflow" style="width: 95%; line-height:20px; margin: 2px; color: #585858;">{{manager}}</td>
                     </tr>
                     <tr class="border-bottom">
                         <td class="border_right bold">시작일</td>
-                        <td class="date_font_size">
+                        <td class="date_font_size" style="color: #585858;">
                             <div>{{this.$moment(start_date).format('YYYY/MM/DD')}}</div> 
                             <div>{{this.$moment(start_date).format(`h${": "}mm A`)}}</div>
                         </td>
                     </tr>
                     <tr>
                         <td class="border_right bold">마감일</td>
-                        <td class="date_font_size">
+                        <td class="date_font_size" style="color: #585858;">
                             <div>{{this.$moment(end_date).format('YYYY/MM/DD')}}</div> 
                             <div>{{this.$moment(end_date).format(`h${": "}mm A`)}}</div>
                         </td>
                     </tr>
-                    <slot name="complete_date">
+                    <slot name="complete_date"> 
                     </slot>
                 </table> 
                 <slot name="btn">
@@ -66,7 +66,7 @@ export default{
 
 <style scoped>
     #task{
-        border: 1px solid #8b8b8b; 
+        border: 1px solid #a8a8a8; 
         width: 210px; 
         height: 270px;
         border-spacing: 0px; 

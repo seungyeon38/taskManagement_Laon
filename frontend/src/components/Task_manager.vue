@@ -22,7 +22,7 @@
             </tr>
         </template>
         <template slot="btn"> 
-            <el-button id="complete_btn" size="small" @click.stop.native="completeTask" style="margin-top: 10px; border-radius: 0px; width: 100px; height: 30px;">완료</el-button>
+            <el-button class="btn" size="small" @click.stop.native="completeTask" style="margin-top: 10px; border-radius: 0px; width: 100px; height: 30px;">완료</el-button>
         </template>
     </task>
 </template>
