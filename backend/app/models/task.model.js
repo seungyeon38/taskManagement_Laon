@@ -60,17 +60,17 @@ Task.getTaskNumbyTaskName = (taskName) => {
     })
 }
 
-Task.getTasksofWorkersbyUserId = (userId) => {
+Task.getTasksofWorkersbyUserNum = (userNum) => {
     console.log("model selectTasksofWorkers")
     return new Promise(resolve => {
         sql.query(`SELECT 
-        t.task_num, t.task_name, t.explanation, t.start_date, t.end_date, t.manager, tw.importance, t.complete, t.register_date, t.complete_date, t.label_color 
+        t.task_num, t.task_name, t.explanation, t.start_date, t.end_date, t.manager, tw.importance, t.complete, t.register_date, t.complete_date, t.label_color, u.name 
         FROM task_worker as tw
         RIGHT JOIN task as t
         ON tw.task_num = t.task_num AND tw.user_num != t.manager
-        LEFT JOIN user AS u
-        ON tw.user_num = u.user_num   
-        WHERE u.id = '${userId}'`, (err, res) => {
+        LEFT JOIN user as u 
+        ON t.manager = u.user_num
+        WHERE tw.user_num = '${userNum}'`, (err, res) => {
             if(err){
                 resolve({err: err, data: null});
                 return;
@@ -85,15 +85,13 @@ Task.getTasksofWorkersbyUserId = (userId) => {
     })
 }
 
-Task.getTasksofManagerbyUserId = (userId) => {
+Task.getTasksofManagerbyUserId = (userNum) => {
     return new Promise(resolve => {
         sql.query(`SELECT t.task_num, t.task_name, t.explanation, t.start_date, t.end_date, t.manager, tw.importance, t.complete, t.register_date, t.complete_date, t.label_color
-        FROM task as t
-        LEFT JOIN user AS u
-        ON t.manager = u.user_num
-        LEFT JOIN task_worker AS tw
+        FROM task_worker as tw
+        RIGHT JOIN task as t
         ON tw.task_num = t.task_num AND tw.user_num = t.manager
-        WHERE u.id = '${userId}'`, (err, res) => {
+        WHERE t.manager = '${userNum}'`, (err, res) => {
             if(err){
                 resolve({err: err, data: null});
                 return;
@@ -107,23 +105,23 @@ Task.getTasksofManagerbyUserId = (userId) => {
     })
 }
 
-Task.getDetailTasksbyTaskNum = (taskNum) => {
-    return new Promise(resolve => {
-        sql.query(`SELECT * 
-        FROM detail_task 
-        WHERE task_num = ${taskNum}`, (err, res) => {
-            if(err){
-                resolve({err: err, data: null});
-                return;
-            }
-            if(res.length){
-                resolve({err: null, data: res});
-                return;
-            }
-            resolve({err: "not_found", data: res})
-        })
-    })
-}
+// Task.getDetailTasksbyTaskNum = (taskNum) => {
+//     return new Promise(resolve => {
+//         sql.query(`SELECT * 
+//         FROM detail_task 
+//         WHERE task_num = ${taskNum}`, (err, res) => {
+//             if(err){
+//                 resolve({err: err, data: null});
+//                 return;
+//             }
+//             if(res.length){
+//                 resolve({err: null, data: res});
+//                 return;
+//             }
+//             resolve({err: "not_found", data: res})
+//         })
+//     })
+// }
 
 Task.getWorkersbyTaskNum = (taskNum) => {
     return new Promise(resolve => {
@@ -186,13 +184,11 @@ Task.getTaskInfobyTaskNum = (taskNum) => {
     })
 }
 
-
-Task.getImportance = (taskInfo) => {
-    console.log("taskInfo " + JSON.stringify(taskInfo))
+Task.getImportance = (taskNum, userNum) => {
     return new Promise(resolve => {
         sql.query(`SELECT importance 
         FROM task_worker 
-        WHERE task_num = ${taskInfo.task_num} AND user_num = ${taskInfo.user_num}`, (err, res) => {
+        WHERE task_num = ${taskNum} AND user_num = ${userNum}`, (err, res) => {
             if(err){
                 resolve({err: err, data: null});
                 return;

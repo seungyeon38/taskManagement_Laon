@@ -37,7 +37,7 @@ module.exports = () => {
     passport.deserializeUser(async function(userNum, done) {
         console.log('deserializeUser', userNum);
        
-        const promise = await User.getUserInfoByUserNum(userNum);
+        const promise = await User.getUserInfo(userNum);
 
         // console.log("deserializeUser promise.data: " + JSON.stringify(promise.data));
 
@@ -81,14 +81,3 @@ module.exports = () => {
         }
     ));
 }
-
-
-
-// exports.isAuthenticated = function(req, res, next) {
-//     if (req.isAuthenticated()){
-//         console.log("session 있음")
-//         return next();
-//     }
-//     console.log("session 없음")
-//     res.redirect('/');
-// };

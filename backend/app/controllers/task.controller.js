@@ -114,8 +114,8 @@ exports.deleteTask = async (req, res) => {
     res.send({result: true});
 }
 
-exports.getTasksbyUserId = async (req, res) => {
-    const promise1 = await Task.getTasksofWorkersbyUserId(req.user.id);
+exports.getTasks = async (req, res) => {
+    const promise1 = await Task.getTasksofWorkersbyUserNum(req.user.user_num);
 
     if(promise1.err){
         if(promise1.err != "not_found"){
@@ -126,7 +126,7 @@ exports.getTasksbyUserId = async (req, res) => {
         }
     }
 
-    const promise2 = await Task.getTasksofManagerbyUserId(req.user.id);
+    const promise2 = await Task.getTasksofManagerbyUserId(req.user.user_num);
 
     if(promise2.err){
         if(promise2.err != "not_found"){
@@ -137,7 +137,7 @@ exports.getTasksbyUserId = async (req, res) => {
         }
     }
 
-    res.send({tasks_worker: promise1.data, tasks_manager: promise2.data, userNum: req.user.user_num});
+    res.send({tasks_worker: promise1.data, tasks_manager: promise2.data, userName: req.user.name});
 };
 
 exports.completeTask = async (req, res) => {
@@ -154,77 +154,90 @@ exports.completeTask = async (req, res) => {
 }
 
 exports.changeTaskImportance = async (req, res) => {
-    var promise = await Task.updateImportance(req.body.task_num, req.user.user_num, req.body.importance);
+    var promise = await Task.getImportance(req.params.taskNum, req.user.user_num);
 
     if(promise.err){
         res.status(500).send({
-            message: `Error retrieving Task with task_num ${req.body.task_num}`
+            message: `Error retrieving Worker with task_num ${req.params.taskNum}`
         });
         return; 
+    }
+
+    var importance = promise.data; 
+
+    if(importance){
+        promise = await Task.updateImportance(req.params.taskNum, req.user.user_num, false);
+
+        if(promise.err){
+            res.status(500).send({
+                message: `Error retrieving Task with task_num ${req.params.taskNum}`
+            });
+            return; 
+        }
+    }
+    else{
+        promise = await Task.updateImportance(req.params.taskNum, req.user.user_num, true);
+
+        if(promise.err){
+            res.status(500).send({
+                message: `Error retrieving Task with task_num ${req.params.taskNum}`
+            });
+            return; 
+        }
     }
 
     res.send({result: true});
 }
 
-exports.showDetailbyTaskNum = async (req, res) => {
-    var promise1;
-    var promise2;
-    var promise3;
-    var promise4;
+// exports.showDetailbyTaskNum = async (req, res) => {
+//     const promise1 = await Task.getDetailTasksbyTaskNum(req.params.taskNum);
 
-    promise1 = await Task.getDetailTasksbyTaskNum(req.params.taskNum);
+//     if(promise1.err){
+//         if(promise1.err != "not_found"){
+//             res.status(500).send({
+//                 message: `Error retrieving Worker with task_num ${req.params.taskNum}`
+//             });
+//             return; 
+//         }
+//     }
 
-    if(promise1.err){
-        if(promise1.err != "not_found"){
-            res.status(500).send({
-                message: `Error retrieving Worker with task_num ${req.params.taskNum}`
-            });
-            return; 
-        }
-    }
+//     const promise2 = await Task.getManagerbyTaskNum(req.params.taskNum);
 
-    promise2 = await Task.getManagerbyTaskNum(req.params.taskNum);
+//     if(promise2.err){
+//         if(promise2.err != "not_found"){
+//             res.status(500).send({
+//                 message: `Error retrieving Worker with task_num ${req.params.taskNum}`
+//             });
+//             return; 
+//         }
+//     }
 
-    if(promise2.err){
-        if(promise2.err != "not_found"){
-            res.status(500).send({
-                message: `Error retrieving Worker with task_num ${req.params.taskNum}`
-            });
-            return; 
-        }
-    }
+//     const promise3 = await Task.getTaskInfobyTaskNum(req.params.taskNum);
 
-    promise3 = await Task.getTaskInfobyTaskNum(req.params.taskNum);
-
-    if(promise3.err){
-        if(promise3.err != "not_found"){
-            res.status(500).send({
-                message: `Error retrieving Worker with task_num ${req.params.taskNum}`
-            });
-            return; 
-        }
-    }
+//     if(promise3.err){
+//         if(promise3.err != "not_found"){
+//             res.status(500).send({
+//                 message: `Error retrieving Worker with task_num ${req.params.taskNum}`
+//             });
+//             return; 
+//         }
+//     }
     
-    promise4 = await Task.getWorkersbyTaskNum(req.params.taskNum);
+//     const promise4 = await Task.getWorkersbyTaskNum(req.params.taskNum);
 
-    if(promise4.err){
-        if(promise4.err != "not_found"){
-            res.status(500).send({
-                message: `Error retrieving Worker with task_num ${req.params.taskNum}`
-            });
-            return; 
-        }
-    }
+//     if(promise4.err){
+//         if(promise4.err != "not_found"){
+//             res.status(500).send({
+//                 message: `Error retrieving Worker with task_num ${req.params.taskNum}`
+//             });
+//             return; 
+//         }
+//     }
 
-    res.send({detailTasks: promise1.data, manager: promise2.data, info: promise3.data, workers: promise4.data, userNum: req.user.user_num});
-}
+//     res.send({detailTasks: promise1.data, manager: promise2.data, info: promise3.data, workers: promise4.data, userNum: req.user.user_num});
+// }
 
-
-exports.getTaskInfobyTaskNum = async (req, res) => {
-    console.log("getTaskInfobyTaskNum")
-    console.log("req.params.taskNum: " + req.params.taskNum)
-    
-    
+exports.getTaskInfo = async (req, res) => {
     const promise1 = await Task.getTaskInfobyTaskNum(req.params.taskNum);
     
     if(promise1.err){
@@ -254,23 +267,58 @@ exports.getTaskInfobyTaskNum = async (req, res) => {
         }
     }
 
-    const promise4 = await Task.getImportance({task_num: req.params.taskNum, user_num: req.user.user_num});
-
-    if(promise4.err){
-        res.status(500).send({
-            message: `Error retrieving Worker with task_num ${req.params.taskNum}`
-        });
-        return; 
-    }
-
-
-    res.send({info: promise1.data, manager: {manager: promise2.data.manager, personal_role: promise2.data.manager_role}, workers: promise3.data, importance: promise4.data});
+    res.send({info: promise1.data, manager: promise2.data, workers: promise3.data});
 }
+
+// exports.getTaskImportance = async (req, res) => {
+//     // console.log("getTaskInfobyTaskNum")
+//     // console.log("req.params.taskNum: " + req.params.taskNum)
+//     // const promise1 = await Task.getTaskInfobyTaskNum(req.params.taskNum);
+    
+//     // if(promise1.err){
+//     //     res.status(500).send({
+//     //         message: `Error retrieving Worker with task_num ${req.params.taskNum}`
+//     //     });
+//     //     return; 
+//     // }
+
+//     // const promise2 = await Task.getManagerbyTaskNum(req.params.taskNum);
+
+//     // if(promise2.err){
+//     //     res.status(500).send({
+//     //         message: `Error retrieving Worker with task_num ${req.params.taskNum}`
+//     //     });
+//     //     return; 
+//     // }
+
+//     // const promise3 = await Task.getWorkersbyTaskNum(req.params.taskNum);
+
+//     // if(promise3.err){
+//     //     if(promise3.err != "not_found"){
+//     //         res.status(500).send({
+//     //             message: `Error retrieving Worker with task_num ${req.params.taskNum}`
+//     //         });
+//     //         return; 
+//     //     }
+//     // }
+
+//     const promise = await Task.getImportance(req.params.taskNum, req.user.user_num);
+
+//     if(promise.err){
+//         res.status(500).send({
+//             message: `Error retrieving Worker with task_num ${req.params.taskNum}`
+//         });
+//         return; 
+//     }
+
+//     // res.send({info: promise1.data, manager: {manager: promise2.data.manager, personal_role: promise2.data.manager_role}, workers: promise3.data, importance: promise4.data});
+//     res.send({importance: promise.data});
+// }
 
 
 exports.modifyTask = async (req, res) => {
     var promise = await Task.getTaskNumbyTaskName(req.body.info.task_name);
-
+    
     if(promise.err != "not_found" && promise.data != req.body.info.task_num){
         res.send({result: "duplicate"});
         return;

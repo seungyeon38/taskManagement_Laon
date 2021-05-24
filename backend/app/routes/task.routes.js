@@ -16,14 +16,17 @@ module.exports = app => {
 
     app.put("/tasks", task.modifyTask);
     
-    app.get("/tasks", task.getTasksbyUserId);
+    app.get("/tasks", task.getTasks);
 
     app.post("/tasks/:taskNum/complete", task.completeTask);
 
-    app.get("/tasks/:taskNum/details", task.showDetailbyTaskNum);
+    // app.get("/tasks/:taskNum/details", task.showDetailbyTaskNum);
 
-    app.post("/tasks/importance", task.changeTaskImportance);
+    app.post("/tasks/:taskNum/importance", task.changeTaskImportance);
 
-    app.get("/tasks/info/:taskNum", task.getTaskInfobyTaskNum);
+    // app.get("/tasks/info/:taskNum", task.getTaskInfobyTaskNum);
+    app.get("/tasks/info/:taskNum", task.getTaskInfo);
+
+    // app.get("/tasks/:taskNum/importance", task.getTaskImportance);
 
 }

@@ -8,4 +8,7 @@ module.exports = app => {
     app.put("/detailTasks/:detailTaskNum", detailTask.modifyDetailTask);
 
     app.delete("/detailTasks/:detailTaskNum", detailTask.deleteDetailTask);
+
+    app.get("/tasks/:taskNum/detailTasks", detailTask.getDetailTasksbyTaskNum);
+
 }

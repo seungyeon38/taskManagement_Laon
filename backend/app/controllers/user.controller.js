@@ -77,7 +77,7 @@ exports.getAllUsers = async (req, res) => {
 };
 
 exports.getUserInfo = async (req, res) => {
-    const promise = await User.getUserById(req.user.id);
+    const promise = await User.getUserInfo(req.user.user_num);
     // 못 찾아도 오류 
     if(promise.err){
         res.status(500).send({

@@ -39,6 +39,26 @@ DetailTask.getDetailTaskbyNum = (detailTaskNum) => {
     });
 }
 
+DetailTask.getDetailTasksbyTaskNum = (taskNum) => {
+    return new Promise(resolve => {
+        sql.query(`SELECT dt.detail_task_num, dt.task_num, dt.worker, dt.detail_task_name, dt.content, dt.report_date, u.id, u.name, u.email, u.profile_img
+        FROM detail_task AS dt
+        LEFT JOIN user AS u 
+        ON dt.worker = u.user_num
+        WHERE dt.task_num = ${taskNum}`, (err, res) => {
+            if(err){
+                resolve({err: err, data: null});
+                return;
+            }
+            if(res.length){
+                resolve({err: null, data: res});
+                return;
+            }
+            resolve({err: "not_found", data: res})
+        })
+    })
+}
+
 DetailTask.updateDetailTask = (detailTaskNum, detailTaskName, content, updateDate) => {
     return new Promise(resolve => {
         sql.query(`UPDATE detail_task 
@@ -69,6 +89,8 @@ DetailTask.deleteDetailTask = (detailTaskNum) => {
         });
     });
 }
+
+
 
 
 module.exports = DetailTask;

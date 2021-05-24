@@ -39,10 +39,8 @@ User.getUserById = (userId) => {
     });
 };
 
-User.getUserInfoByUserNum = (userNum) => {
+User.getUserInfo = (userNum) => {
     return new Promise(resolve => {
-        console.log("user.model.js findByUserNum");
-
         sql.query(`SELECT user_num, name, id, email, profile_img FROM user WHERE user_num = '${userNum}'`, (err, res) => {
             if(err){
                 console.log("error: ", err);

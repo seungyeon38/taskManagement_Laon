@@ -61,3 +61,21 @@ exports.deleteDetailTask = async (req, res) => {
 
     res.send({result: true});
 }
+
+exports.getDetailTasksbyTaskNum = async (req, res) => {
+    const promise = await DetailTask.getDetailTasksbyTaskNum(req.params.taskNum);
+
+    if(promise.err){
+        if(promise.err != "not_found"){
+            res.status(500).send({
+                message: `Error retrieving Worker with task_num ${req.params.taskNum}`
+            });
+            return; 
+        }
+    }
+
+    // id, name, email, profile_img
+        
+
+    res.send({detailTasks: promise.data, userNum: req.user.user_num});
+}

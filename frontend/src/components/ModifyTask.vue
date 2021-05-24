@@ -16,7 +16,7 @@
                     <br/>
                     <div>
                         <el-form-item label="시작/마감일 설정" for="duration" style="margin: 0px;">
-                            <table>
+                            <table class="color5">
                                 <tr>
                                     <td>
                                         업무 시작일
@@ -67,8 +67,8 @@
                                         </td>
                                         <td>
                                             <div style="margin-left: 30px; width: 370px">
-                                                <el-input type="textarea" v-model="task_form.manager_role" v-if="task_form.manager" id="content" :rows="3" placeholder="해당 관리자의 역할을 적어주세요.(최대 100자)" maxlength= "100" show-word-limit></el-input>
-                                                <el-input type="textarea" v-model="task_form.manager_role" v-else :rows="3" id="content_disabled" placeholder="우선 관리자를 선택해주세요." disabled></el-input>
+                                                <el-input type="textarea" v-model="task_form.manager_role" id="content" :rows="3" placeholder="해당 관리자의 역할을 적어주세요.(최대 100자)" maxlength= "100" show-word-limit></el-input>
+                                                <!-- <el-input type="textarea" v-model="task_form.manager_role" v-else :rows="3" id="content_disabled" placeholder="우선 관리자를 선택해주세요." disabled></el-input> -->
                                             </div>
                                         </td>
                                     </tr>
@@ -101,7 +101,7 @@
 
                         </el-form-item>
                     </div>
-                    <el-button native-type="submit" id="modifyBtn" name="button" style="width: 200px; margin-top: 100px;">
+                    <el-button native-type="submit" class="btn" name="button" style="width: 200px; margin-top: 100px;">
                         수정하기
                     </el-button>
                 </div>
@@ -125,7 +125,7 @@ export default {
                 end_date: '',
                 update_date: '',
                 label_color: '#909399',
-                importance: null,
+                // importance: null,
                 manager: null,
                 manager_role: '',
             },
@@ -170,27 +170,41 @@ export default {
             },
             credentials: "same-origin"    
         }).then(res => {
-            console.log(1)
-
             this.task_form.task_name = res.data.info.task_name;
             this.task_form.explanation = res.data.info.explanation;
             this.task_form.start_date = this.$moment(res.data.info.start_date).format('YYYY-MM-DDTHH:mm');
             this.task_form.end_date = this.$moment(res.data.info.end_date).format('YYYY-MM-DDTHH:mm');
             this.task_form.label_color = res.data.info.label_color;
-            this.task_form.importance = res.data.importance;
+            // this.task_form.importance = res.data.importance;
 
             this.task_form.manager = res.data.manager.manager;
             this.before_manager = res.data.manager.manager;
-            this.task_form.manager_role = res.data.manager.personal_role;
+            this.task_form.manager_role = res.data.manager.manager_role;
 
             for(var i=0; i<res.data.workers.length; i++){
                 this.selected_workers.push(res.data.workers[i]);
                 this.selected_workerNum.push(res.data.workers[i].user_num);
                 this.before_selected_workerNum.push(res.data.workers[i].user_num);
             };
-    }).catch(err => {
-        console.log("err: " + err);
-    });
+
+            // this.$axios({
+            //     url: `http://localhost:3000/tasks/${this.task_form.task_num}/importance`,
+            //     method: 'get',
+            //     withCredentials: true,
+            //     headers: {
+            //         'Content-Type': 'application/json',
+            //     },
+            //     credentials: "same-origin"    
+            // }).then(res => {
+            //     this.task_form.importance = res.data.importance;
+
+            // }).catch(err => {
+            //     console.log("err: " + err);
+            // })
+
+        }).catch(err => {
+            console.log("err: " + err);
+        });
     },
     watch: {
         selected_workerNum: function(newVal, oldVal){
@@ -390,11 +404,11 @@ export default {
     }
 
     .labelColor:focus{
-        border-color: #686868 !important;
+        border-color: #606266 !important;
     }
 
     .labelColor:checked{
-        border-color: #686868;
+        border-color: #606266;
     }
 
     .labelColor:hover{
@@ -424,7 +438,7 @@ export default {
         vertical-align: top;
         border-radius: 3px;
     }
-
+/* 
     #content_disabled{
         border: 1px solid #DCDFE6;
         height: 85px;
@@ -435,13 +449,13 @@ export default {
         box-sizing : border-box;
         vertical-align: top;
         border-radius: 3px;
-    }
+    } */
 
     #content:hover {
         border-color: #C0C4CC;
     }
 
-    #modifyBtn:hover {
+    /* #modifyBtn:hover {
         border-color: #cfcfcf; 
         background-color: #fafafa;
         color: #646464; 
@@ -451,5 +465,5 @@ export default {
         border-color: #cfcfcf; 
         background-color: #f5f5f5;
         color: #646464; 
-    }
+    } */
 </style>

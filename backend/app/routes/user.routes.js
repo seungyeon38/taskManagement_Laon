@@ -33,7 +33,6 @@ module.exports = app => {
     //     res.send({isLoggedIn: true})
     // }
 
-
     app.get("/:userId/exist", user.checkIdExist);
   
     app.post("/users", upload.single('profile_img'), user.addUser); // upload.single('') 이 안의 인자가 input type="file"인 것의 name이어야 된다. 

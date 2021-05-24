@@ -39,9 +39,11 @@
                 </tr>
                 <tr> 
                     <td style="width: 20%; padding-top: 20px;" valign="top">
-                        <el-select v-model="complete" v-if="detailTask_list.length" filterable placeholder="Select" style="width: 220px;">
+                        <el-select v-model="selectOption" v-if="detailTask_list.length" filterable placeholder="Select" style="width: 220px;">
+                            <!-- <el-option :value="1" :label="total"></el-option>
+                            <el-option :value="2" :label="mine"></el-option> -->
                         </el-select>
-                        <el-select v-model="complete" v-else filterable placeholder="Select" style="width: 220px;" disabled>
+                        <el-select v-else filterable placeholder="Select" style="width: 220px;" disabled>
                         </el-select>
                     </td>
                     <!-- border:1px dashed #acb2bd; margin-top: 30px; margin-bottom: 35px; height: 1px; -->
@@ -50,9 +52,9 @@
                         <hr />
                         <div v-if="detailTask_list.length != 0">
                             <el-timeline>
-                                <el-timeline-item v-for="detailTask in detailTask_list" :key="detailTask.detail_task_num" :timestamp="`${detailTask.report_date}, ${detailTask.workerName} 님`" placement="top">
-                                    <detail-task-users v-if="detailTask.worker == userNum" v-on:showModifyDialog="showModifyDialog" v-on:deleteDetailTask="deleteDetailTask" :detail_task_num="detailTask.detail_task_num" :workerName="detailTask.workerName" :detail_task_name="detailTask.detail_task_name" :content="detailTask.content" :report_date="detailTask.report_date" :profile_img="detailTask.profile_img"></detail-task-users>
-                                    <detail-task v-else :workerName="detailTask.workerName" :detail_task_name="detailTask.detail_task_name" :content="detailTask.content" :report_date="detailTask.report_date" :profile_img="detailTask.profile_img"></detail-task>
+                                <el-timeline-item v-for="detailTask in detailTask_list" :key="detailTask.detail_task_num" :timestamp="`${detailTask.report_date}, ${detailTask.name} 님`" placement="top">
+                                    <detail-task-users v-if="detailTask.worker == userNum" v-on:showModifyDialog="showModifyDialog" v-on:deleteDetailTask="deleteDetailTask" :detail_task_num="detailTask.detail_task_num" :workerName="detailTask.name" :detail_task_name="detailTask.detail_task_name" :content="detailTask.content" :report_date="detailTask.report_date" :profile_img="detailTask.profile_img"></detail-task-users>
+                                    <detail-task v-else :workerName="detailTask.name" :detail_task_name="detailTask.detail_task_name" :content="detailTask.content" :report_date="detailTask.report_date" :profile_img="detailTask.profile_img"></detail-task>
                                 </el-timeline-item>
                             </el-timeline>
                         </div>
@@ -86,7 +88,7 @@
                     </el-avatar>
                     <el-avatar v-else icon="el-icon-user-solid" :size="45" style="font-size: 1.5rem;"></el-avatar>
                     <div style="margin-right: 20px"></div>
-                    <span class="name text-overflow">{{manager.name}} </span><span>님</span>
+                    <span class="name text-overflow">{{manager.name}}</span><span>님</span>
                 </div>
                 <div v-if="manager.manager_role != 'undefined'" class="detail_info" style="margin-left: 65px">{{manager.manager_role}}</div>
             </div>
@@ -124,7 +126,8 @@ export default {
             taskInfo: {},
             taskClosed: 0,
             taskNum: null,
-            complete: '',
+            // complete: '',
+            selectOption: 1,
             workers: [],
             users: [],
             manager: {},
@@ -247,7 +250,7 @@ export default {
         this.taskNum = this.$route.params.taskNum;
 
         this.$axios({
-            url: `http://localhost:3000/allUsers`,
+            url: `http://localhost:3000/tasks/info/${this.taskNum}`,
             method: 'get',
             withCredentials: true,
             headers: {
@@ -255,67 +258,48 @@ export default {
             },
             credentials: "same-origin"    
         }).then(res => {
-            this.users = res.data;
+            console.log("res.data: " + JSON.stringify(res.data));
+            this.manager = res.data.manager;
+            this.workers = res.data.workers; 
+            this.taskInfo = res.data.info;
 
-            this.$axios({
-                url: `http://localhost:3000/tasks/${this.taskNum}/details`,
-                method: 'get',
-                withCredentials: true,
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                credentials: "same-origin"    
-            }).then(res => {
-                // "detailTasks": detail_task_num, task_num, worker, detail_task_name, content, report_date
-                // "manager": manager, manager_role, name, id, email, profile_img
-                // "info": task_num, task_name, explanation, start_date, end_date, register_date, complete_date, label_color, complete
-                // "workers": user_num, personal_role, name, id, email, profile_img
-                this.manager = res.data.manager;
-                this.workers = res.data.workers; // 이걸 users로 바꿔야 함 
-                this.taskInfo = res.data.info;
-                
-                this.userNum = res.data.userNum;
+            const now = this.$moment().format('YYYY-MM-DDTHH:mm');
 
-                const now = this.$moment().format('YYYY-MM-DDTHH:mm');
+            if(this.taskInfo.end_date < now){
+                this.taskClosed = 1;
+            }
 
-                if(this.taskInfo.end_date < now){
-                    this.taskClosed = 1;
-                }
+            this.taskInfo.start_date = this.$moment(res.data.info.start_date).format('YYYY/MM/DD h:mm A');
+            this.taskInfo.end_date = this.$moment(res.data.info.end_date).format('YYYY/MM/DD h:mm A');
 
-                this.taskInfo.start_date = this.$moment(res.data.info.start_date).format('YYYY/MM/DD h:mm A');
-                this.taskInfo.end_date = this.$moment(res.data.info.end_date).format('YYYY/MM/DD h:mm A');
-
-                for(var i=0; i< res.data.detailTasks.length; i++){
-                    if(res.data.detailTasks[i].worker == this.manager.manager){
-                        res.data.detailTasks[i].workerId = this.manager.id;
-                        res.data.detailTasks[i].workerName = this.manager.name;
-                        res.data.detailTasks[i].workerEmail = this.manager.email;
-                        res.data.detailTasks[i].profile_img = this.manager.profile_img;
-                    }
-                    else{
-                        for(var j=0; j<this.users.length; j++){
-                            if(res.data.detailTasks[i].worker == this.users[j].user_num){
-                                res.data.detailTasks[i].workerId = this.users[j].id;
-                                res.data.detailTasks[i].workerName = this.users[j].name;
-                                res.data.detailTasks[i].workerEmail = this.users[j].email;
-                                res.data.detailTasks[i].profile_img = this.users[j].profile_img;
-                                break;
-                            }
-                        }
-                    }
-                    res.data.detailTasks[i].report_date = this.$moment(res.data.detailTasks[i].report_date).format(`YYYY/MM/DD h:mm A`);
-
-                    // "detailTasks": detail_task_num, task_num, worker, detail_task_name, content, report_date, workerId, workerName, workerEmail, profile_img
-                    this.detailTask_list.push(res.data.detailTasks[i]);
-                }
-            }).catch(err => {
-                console.log("err: " + err);
-            });
         }).catch(err => {
             console.log("err: " + err);
         });
 
-        
+        this.$axios({
+            url: `http://localhost:3000/tasks/${this.taskNum}/detailTasks`,
+            method: 'get',
+            withCredentials: true,
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            credentials: "same-origin"    
+        }).then(res => {
+            // "detailTasks": detail_task_num, task_num, worker, detail_task_name, content, report_date
+            // "manager": manager, manager_role, name, id, email, profile_img
+            // "info": task_num, task_name, explanation, start_date, end_date, register_date, complete_date, label_color, complete
+            // "workers": user_num, personal_role, name, id, email, profile_img
+            
+            this.userNum = res.data.userNum;    // 이걸 여기다가 넣어도 되는지 모르겠음. 
+
+            for(var i=0; i< res.data.detailTasks.length; i++){
+                res.data.detailTasks[i].report_date = this.$moment(res.data.detailTasks[i].report_date).format(`YYYY/MM/DD h:mm A`);
+                // "detailTasks": detail_task_num, task_num, worker, detail_task_name, content, report_date, id, name, email, profile_img
+                this.detailTask_list.push(res.data.detailTasks[i]);
+            }
+        }).catch(err => {
+            console.log("err: " + err);
+        });
     },
 }
 </script>
