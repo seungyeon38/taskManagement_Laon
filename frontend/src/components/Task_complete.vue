@@ -1,5 +1,5 @@
 <template>
-    <task id="completedTask" v-on:clickTask="clickTask" :task_name="task_name" :task_num="task_num" :manager="manager" :start_date="start_date" :end_date="end_date" :complete_date="complete_date" :label_color="label_color">
+    <task v-on:clickTask="clickTask" :task_name="task_name" :task_num="task_num" :manager="manager" :start_date="start_date" :end_date="end_date" :complete_date="complete_date" :label_color="label_color">
         <tr slot="complete_date" style="border-top: 1px solid #909399;">
             <td class="border_right bold">완료일</td>
             <td class="date_font_size" style="color: #585858;">
@@ -28,17 +28,5 @@ export default{
 </script>
 
 <style scoped>
-#completedTask{
-    background-color: #fafafa;
-    border: 1px solid #a8a8a8; 
-    width: 210px; 
-    height: 270px;
-    border-spacing: 0px; 
-    display: inline-block; 
-    margin-right: 50px; 
-    margin-top: 30px; 
-    box-shadow: 1px 1px #dadada;
-    border-radius: 3px;
-}
 </style>
 

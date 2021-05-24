@@ -1,5 +1,5 @@
 <template>
-    <table id="task" :task_name="task_name" :task_num="task_num" :manager="manager" :start_date="start_date" :end_date="end_date" :label_color="label_color" @click="clickTask" align="left">
+    <table class="task" :task_name="task_name" :task_num="task_num" :manager="manager" :start_date="start_date" :end_date="end_date" :label_color="label_color" @click="clickTask" align="left">
         <tr style="height: 14px;" :style="{backgroundColor: label_color}">
             <td></td>
         </tr>
@@ -49,7 +49,7 @@
 <script>
 export default{
     name: 'task',
-    props:['task_name', 'task_num', 'manager', 'start_date', 'end_date', 'label_color'],
+    props:['task_name', 'task_num', 'manager', 'start_date', 'end_date', 'label_color', 'inProgress'],
     data(){
         return{
             manager_name: '',
@@ -65,7 +65,7 @@ export default{
 </script>
 
 <style scoped>
-    #task{
+    .task{
         border: 1px solid #a8a8a8; 
         width: 210px; 
         height: 270px;
@@ -73,16 +73,16 @@ export default{
         display: inline-block; 
         margin-right: 50px; 
         margin-top: 30px; 
-        background-color: white;
+        background-color: #fafafa;
         box-shadow: 1px 1px #dadada;
         border-radius: 3px;
     }
 
-    #task:hover{
+    .task:hover{
         box-shadow: 3px 3px #dadada;
     }
 
-    #task:active{
+    .task:active{
         box-shadow: 3px 3px #e4e4e4;
     }
 

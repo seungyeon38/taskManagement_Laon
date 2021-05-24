@@ -1,5 +1,5 @@
 <template>
-    <task v-on:clickTask="clickTask" :task_num="task_num" :manager="manager" :start_date="start_date" :end_date="end_date" :label_color="label_color">  
+    <task v-on:clickTask="clickTask" class="white" :task_num="task_num" :manager="manager" :start_date="start_date" :end_date="end_date" :label_color="label_color" :inProgress="true">  
         <template slot="card_header">
             <tr>
                 <td align="right">
@@ -34,7 +34,7 @@ export default{
     components: {
         Task
     },
-    props:['task_name', 'task_num', 'manager', 'start_date', 'end_date', 'label_color', 'importance'],
+    props: ['task_name', 'task_num', 'manager', 'start_date', 'end_date', 'label_color', 'importance'],
     methods: {
         clickTask(taskNum){
             console.log("Task_inProgress taskNum: " + taskNum)
@@ -60,7 +60,12 @@ export default{
         else if(this.importance == false){
             this.star_style.color = offColor;
         }
-        
     }
 }
 </script>
+
+<style scoped>
+    .white{
+        background-color: white !important;
+    }
+</style>

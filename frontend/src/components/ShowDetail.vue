@@ -48,7 +48,7 @@
                     </td>
                     <!-- border:1px dashed #acb2bd; margin-top: 30px; margin-bottom: 35px; height: 1px; -->
                     <td style="width: 80%; padding-top: 20px; text-align: justify;">
-                        <div style="text-align: center; font-size: 24px; font-weight: bolder; color: #acb2bd;">{{taskInfo.task_name}}</div>
+                        <div style="text-align: center; font-size: 24px; font-weight: bolder; color: #636b79;">{{taskInfo.task_name}}</div>
                         <hr />
                         <div v-if="detailTask_list.length != 0">
                             <el-timeline>
@@ -350,6 +350,7 @@ export default {
     /* font-weight: bold;  */
     font-size: 1.1em; 
     margin-bottom: 20px;
+    /* color: #636b79 */
     /* color: #585858; */
 }
 

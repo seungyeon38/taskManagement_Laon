@@ -84,7 +84,8 @@ export default{
     } */
 
     #edit_btn{
-        color: #a8a8a8
+        color: #888888; 
+        /* color: #303133 */
     }
 
     #edit_btn:hover{

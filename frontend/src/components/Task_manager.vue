@@ -1,5 +1,5 @@
 <template>
-    <task v-on:clickTask="clickTask" :task_num="task_num" :manager="manager" :start_date="start_date" :end_date="end_date" :label_color="label_color">
+    <task v-on:clickTask="clickTask" class="white" :task_num="task_num" :manager="manager" :start_date="start_date" :end_date="end_date" :label_color="label_color" :inProgress="true">
         <template slot="card_header"> 
             <tr>
                 <td align="right">
@@ -83,7 +83,16 @@ export default{
 </script>
 
 <style scoped>
-    #edit_btn{
-        color: #636363
+    .white{
+        background-color: white !important;
     }
+
+    #edit_btn{
+        color: #888888; 
+    }
+
+    #edit_btn:hover{
+        color: #646464; 
+    }
+
 </style>
