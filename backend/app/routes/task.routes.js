@@ -20,13 +20,8 @@ module.exports = app => {
 
     app.post("/tasks/:taskNum/complete", task.completeTask);
 
-    // app.get("/tasks/:taskNum/details", task.showDetailbyTaskNum);
-
     app.post("/tasks/:taskNum/importance", task.changeTaskImportance);
 
-    // app.get("/tasks/info/:taskNum", task.getTaskInfobyTaskNum);
     app.get("/tasks/info/:taskNum", task.getTaskInfo);
-
-    // app.get("/tasks/:taskNum/importance", task.getTaskImportance);
 
 }
