@@ -59,6 +59,18 @@ exports.addTask = async (req, res) => {
 
     task_num = promise.data;
 
+    for(let worker of req.body.selected_workers_list){
+        promise = await Task.insertTaskWorker(task_num, worker.user_num, worker.personal_role, false);
+        
+        if(promise.err){
+            res.status(500).send({
+                message:
+                    promise.err.message || "Some error occurred while creating the task."
+            });
+            return;
+        }
+    }
+
     promise = await Task.insertTaskWorker(task_num, req.body.manager, req.body.manager_role, false);
 
     if(promise.err){
