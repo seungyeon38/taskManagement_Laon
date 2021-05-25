@@ -127,7 +127,7 @@ export default {
             taskClosed: 0,
             taskNum: null,
             // complete: '',
-            selectOption: 1,
+            // selectOption: 1,
             workers: [],
             users: [],
             manager: {},

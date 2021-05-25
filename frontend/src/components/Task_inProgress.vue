@@ -5,7 +5,7 @@
                 <td align="right">
                     <div style="margin-top: 5px;">
                     </div>
-                    <button type="button" id="star_btn" v-bind:style="star_style" class="el-icon-star-off" style="border: none; padding: 0px; background: none; font-size:1.7em; margin-right: 5px;" @click.stop="changeStar"></button>
+                    <button type="button" :style="star_style" id="star" class="el-icon-star-off" style="border: none; padding: 0px; background: none; font-size:1.7em; margin-right: 5px;" @click.stop="changeStar"></button>
                 </td>
             </tr>
             <tr>
@@ -21,7 +21,7 @@
 import Task from './Task.vue'
 
 const onColor = '#f8da2d';
-const offColor = '#636363';
+const offColor = '#888888';
 
 export default{
     data(){
@@ -67,5 +67,9 @@ export default{
 <style scoped>
     .white{
         background-color: white !important;
+    }
+
+    #star:hover{
+        color: #646464 !important; 
     }
 </style>

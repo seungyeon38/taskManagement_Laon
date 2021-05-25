@@ -5,7 +5,7 @@
                 <td align="right">
                     <div style="margin-top: 5px;">
                     </div>
-                    <button type="button" v-bind:style="star_style" class="el-icon-star-off" style="border: none; padding: 0px; background: none; font-size:1.7em;" @click.stop="changeImportance"></button>
+                    <button type="button" :style="star_style" id="star" class="el-icon-star-off" style="border: none; padding: 0px; background: none; font-size:1.7em;" @click.stop="changeImportance"></button>
                     <el-dropdown size="medium">
                         <i id="edit_btn" class="el-icon-setting" style="margin-right: 3px; font-size: 1.9em;"></i>
                         <el-dropdown-menu slot="dropdown">
@@ -31,7 +31,7 @@
 import Task from './Task.vue'
 
 const onColor = '#f8da2d';
-const offColor = '#636363';
+const offColor = '#888888';
 
 export default{
     data(){
@@ -94,5 +94,9 @@ export default{
     #edit_btn:hover{
         color: #646464; 
     }
+
+    /* #star:hover{
+        opacity: 1;
+    } */
 
 </style>
