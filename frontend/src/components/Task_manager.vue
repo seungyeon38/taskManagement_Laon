@@ -47,7 +47,7 @@ export default{
     props:['task_name', 'task_num', 'manager', 'start_date', 'end_date', 'label_color', 'importance'],
     methods: {
         completeTask(){
-            this.$emit('completeTask', this.task_num);
+            this.$emit('completeTask', this.task_num, this.task_name);
         },
         clickTask(taskNum){
             this.$emit('clickTask', taskNum);

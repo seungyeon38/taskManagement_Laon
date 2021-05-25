@@ -75,10 +75,28 @@
                 <div class="detail_info" style="margin-bottom: 50px;">{{taskInfo.end_date}}</div>
             </div>
             <div class="label_title">업무 내용</div>
-            <div id="explanation">
+            <div class="border">
                 <div v-if="taskInfo.explanation" class="detail_info" style="padding: 10px;">{{taskInfo.explanation}}</div>
                 <div v-else style="padding: 10px;">(업무 내용이 없습니다.)</div>
             </div>
+            <div style="margin-top: 40px;"></div>
+            <div class="label_title">업무 체크리스트</div>
+
+            <div v-if="manager.manager === userNum && taskInfo.complete == 0 && taskClosed == 0" class="border detail_info" style="padding: 10px 0px">
+                <div v-for="checklist in checklists" :key="checklist.checklist_num" id="checklists" style="padding: 0px 10px;">
+                    <el-checkbox v-if="checklist.completed == false" :label="checklist.content" @change="checklistCheck(checklist.checklist_num)"></el-checkbox>
+                    <el-checkbox v-else :label="checklist.content" @change="checklistCheck(checklist.checklist_num)" checked></el-checkbox>
+                </div>
+            </div>
+            <div v-else class="border detail_info" style="padding: 10px 0px">
+                <div v-for="checklist in checklists" :key="checklist.checklist_num" id="checklists">
+                    <li v-if="checklist.completed == false" style="padding: 0px 10px">{{checklist.content}}</li>
+                    <li v-else style="padding: 0px 10px; text-decoration: line-through; color: rgb(192, 196, 204);">{{checklist.content}}</li>
+                    <!-- <li v-else style="padding: 0px 10px; text-decoration: line-through; color: #888888;">{{checklist.content}}</li> -->
+                </div>
+                <!-- <li v-for="checklist in checklists" :key="checklist.checklist_num" id="checklists" style="padding: 0px 10px">{{checklist.content}}</li> -->
+            </div>
+
             <div style="margin-top: 40px;"></div>
             <div class="label_title">관리자</div>
             <div style="margin-left: 10px; margin-top: 30px;">
@@ -139,7 +157,8 @@ export default {
             },
             formLabelWidth: '120px',
             userNum: null,
-            detailTaskNumtoModify: null
+            detailTaskNumtoModify: null,
+            checklists: []
         }
     },
     methods: {
@@ -244,6 +263,24 @@ export default {
             }).catch(err => {
                 console.log("err: ", err)
             })      
+        },
+        checklistCheck(checklistNum){
+            this.$axios({
+                url: `http://localhost:3000/tasks/${this.taskNum}/checklists/${checklistNum}`,
+                method: 'put',
+                withCredentials: true,
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                credentials: "same-origin"
+            }).then(res => {
+                if(res.data.result == true){
+                    // alert("세부업무가 삭제되었습니다.");
+                    // this.$router.go();
+                }
+            }).catch(err => {
+                console.log("err: ", err)
+            }) 
         }
     },
     created(){
@@ -262,6 +299,7 @@ export default {
             this.manager = res.data.manager;
             this.workers = res.data.workers; 
             this.taskInfo = res.data.info;
+            this.checklists = res.data.checklists;
 
             const now = this.$moment().format('YYYY-MM-DDTHH:mm');
 
@@ -290,13 +328,25 @@ export default {
             // "info": task_num, task_name, explanation, start_date, end_date, register_date, complete_date, label_color, complete
             // "workers": user_num, personal_role, name, id, email, profile_img
             
-            this.userNum = res.data.userNum;    // 이걸 여기다가 넣어도 되는지 모르겠음. 
-
             for(var i=0; i< res.data.detailTasks.length; i++){
                 res.data.detailTasks[i].report_date = this.$moment(res.data.detailTasks[i].report_date).format(`YYYY/MM/DD h:mm A`);
                 // "detailTasks": detail_task_num, task_num, worker, detail_task_name, content, report_date, id, name, email, profile_img
                 this.detailTask_list.push(res.data.detailTasks[i]);
             }
+        }).catch(err => {
+            console.log("err: " + err);
+        });
+
+        this.$axios({
+            url: `http://localhost:3000/users/info`,
+            method: 'get',
+            withCredentials: true,
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            credentials: "same-origin"    
+        }).then(res => {
+            this.userNum = res.data.user_num; 
         }).catch(err => {
             console.log("err: " + err);
         });
@@ -354,9 +404,9 @@ export default {
     /* color: #585858; */
 }
 
-#explanation {
+.border {
     border: 1px solid rgb(192, 196, 204);
-    color: rgb(192, 196, 204); 
+    /* color: rgb(192, 196, 204);  */
     width: 100%; 
     min-height: 100px;
 }
@@ -403,4 +453,28 @@ hr:after {
   background: #E4E7ED;
   margin: 0 0.4em;
 }
+
+.el-checkbox:hover {
+    border-color: #cfcfcf !important; 
+    background-color: #fafafa !important;
+    color: #646464 !important; 
+}
+
+.el-checkbox:focus {
+    border-color: #cfcfcf !important; 
+    background-color: #f5f5f5 !important;
+    color: #646464 !important; 
+}
+
+input[type=checkbox]:checked{
+  text-decoration: line-through;
+}
+
+#checklists:not(:last-child) {
+    margin-bottom: 10px;
+}
+
+/* span.el-checkbox__input.is-checked{
+    color: black !important;
+} */
 </style>

@@ -86,6 +86,7 @@ exports.getUserInfo = async (req, res) => {
         });
         return;
     }
+    
     res.send(promise.data);
 }
 

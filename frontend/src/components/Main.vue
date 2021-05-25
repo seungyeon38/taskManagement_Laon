@@ -5,10 +5,18 @@
                 <tr>
                     <td colspan="2" align="right">
                         <el-button class="enroll-task custom-icon" @click.native="enrollTask" icon="el-icon-plus" type="info"></el-button>
-                        <el-dialog title="업무 삭제" :visible.sync="dialogVisible" width="30%" style="text-align: left; font-weight: bolder;">
+                        <el-dialog title="업무 완료 확인" :visible.sync="completeDialogVisible" width="30%" style="text-align: left; font-weight: bolder;">
+                            <span v-if="allDone">해당 업무('{{completeTaskName}}')를 완료상태로 전환하시겠습니까?</span>
+                            <span v-else>아직 체크리스트를 완료하지 않았습니다. 해당 업무('{{completeTaskName}}')를 완료상태로 전환하시겠습니까?</span>
+                            <span slot="footer" class="dialog-footer">
+                                <el-button @click="completeDialogVisible = false">Cancel</el-button>
+                                <el-button type="primary" @click.native="completeConfirm">Confirm</el-button>
+                            </span>
+                        </el-dialog>
+                        <el-dialog title="업무 삭제" :visible.sync="deleteDialogVisible" width="30%" style="text-align: left; font-weight: bolder;">
                             <span>해당 업무('{{deleteTaskName}}')를 삭제하시겠습니까?</span>
                             <span slot="footer" class="dialog-footer">
-                                <el-button @click="dialogVisible = false">Cancel</el-button>
+                                <el-button @click="deleteDialogVisible = false">Cancel</el-button>
                                 <el-button type="primary" @click.native="deleteConfirm">Confirm</el-button>
                             </span>
                         </el-dialog>
@@ -142,9 +150,13 @@ export default {
             sort: '',
             dialogFormVisible: false,
             formLabelWidth: '200px',
-            dialogVisible: false,
+            deleteDialogVisible: false,
             deleteTaskName: '',
-            deleteTaskNum: null
+            deleteTaskNum: null,
+            completeDialogVisible: false,
+            completeTaskName: '',
+            completeTaskNum: null,
+            allDone: false
         }
     },
     components: {
@@ -186,7 +198,7 @@ export default {
                 }
             };
             for(var i=0; i<res.data.tasks_manager.length; i++){
-                res.data.tasks_manager[i].name = res.data.userName;
+                console.log("main res.data.tasks_manager[i]: " + JSON.stringify(res.data.tasks_manager[i]));
 
                 if(res.data.tasks_manager[i].complete == true){
                     this.taskComplete_list.push(res.data.tasks_manager[i])
@@ -256,12 +268,36 @@ export default {
             this.$router.push({name: 'enrollTask'});
         },
 
-        completeTask(taskNum){            
+        completeTask(taskNum, taskName){            
             console.log("parent complete function")
             console.log("taskNum: " + taskNum)
+            console.log("taskName: " + taskName)
+            
+            this.completeTaskName = taskName;
+            this.completeTaskNum = taskNum;
 
             this.$axios({
-                url: `http://localhost:3000/tasks/${taskNum}/complete`,
+                url: `http://localhost:3000/tasks/${this.completeTaskNum}/checklists/complete`,
+                method: 'get',
+                withCredentials: true,
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                credentials: "same-origin"
+            }).then(res => {
+                if(res.data.result == true){
+                    this.allDone = true;
+                }
+            }).catch(err => {
+                console.log("err: " + err);
+            });
+            
+            console.log("이것");
+            this.completeDialogVisible = true;
+        },
+        completeConfirm(){
+            this.$axios({
+                url: `http://localhost:3000/tasks/${this.completeTaskNum}/complete`,
                 method: 'post',
                 data: {
                     complete_date: this.$moment().format('YYYY-MM-DDTHH:mm')
@@ -273,6 +309,7 @@ export default {
                 credentials: "same-origin"
             }).then(res => {
                 if(res.data.result){
+                    this.completeDialogVisible = false;
                     this.$router.go();
                     // setTimeout(this.$router.go(), 1000);
                 }
@@ -280,7 +317,6 @@ export default {
                 console.log("err: " + err);
             });  
         },
-
         clickTask(taskNum){
             this.$router.push({
                 name: 'showDetail', 
@@ -371,7 +407,7 @@ export default {
         deleteTask(taskNum, taskName){
             this.deleteTaskName = taskName;
             this.deleteTaskNum = taskNum;
-            this.dialogVisible = true;
+            this.deleteDialogVisible = true;
         },
 
         deleteConfirm(){
@@ -385,7 +421,7 @@ export default {
                 credentials: "same-origin"
             }).then(res => {
                 if(res.data.result){
-                    this.dialogVisible = false;
+                    this.deleteDialogVisible = false;
                     this.$router.go();
                 }
             }).catch(err => {

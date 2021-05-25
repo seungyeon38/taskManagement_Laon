@@ -75,7 +75,7 @@ exports.getDetailTasksbyTaskNum = async (req, res) => {
     }
 
     // id, name, email, profile_img
-        
 
-    res.send({detailTasks: promise.data, userNum: req.user.user_num});
+
+    res.send({detailTasks: promise.data});
 }

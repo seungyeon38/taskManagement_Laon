@@ -26,6 +26,7 @@ exports.addTask = async (req, res) => {
     var task_num;
     var promise;
 
+
     // 해당 이름을 가진 task가 존재하는지 확인 
     promise = await Task.getTaskNumbyTaskName(req.body.task_name);
 
@@ -58,18 +59,6 @@ exports.addTask = async (req, res) => {
 
     task_num = promise.data;
 
-    for(let worker of req.body.selected_workers_list){
-        promise = await Task.insertTaskWorker(task_num, worker.user_num, worker.personal_role, false);
-        
-        if(promise.err){
-            res.status(500).send({
-                message:
-                    promise.err.message || "Some error occurred while creating the task."
-            });
-            return;
-        }
-    }
-
     promise = await Task.insertTaskWorker(task_num, req.body.manager, req.body.manager_role, false);
 
     if(promise.err){
@@ -78,6 +67,18 @@ exports.addTask = async (req, res) => {
                 promise.err.message || "Some error occurred while creating the task."
         });
         return;
+    }
+
+    for(let checklist of req.body.checklists){
+        promise = await Task.insertChecklists(task_num, checklist, false);  
+
+        if(promise.err){
+            res.status(500).send({
+                message:
+                    promise.err.message || "Some error occurred while creating the task."
+            });
+            return;
+        }
     }
 
     res.send({result: true});
@@ -111,6 +112,14 @@ exports.deleteTask = async (req, res) => {
         return;
     }
 
+    promise = await Task.deleteChecklists(req.params.taskNum);
+    if(promise.err){
+        res.status(500).send({
+            message: `Error retrieving Task with id ${req.params.taskNum}`
+        });
+        return;
+    }
+
     res.send({result: true});
 }
 
@@ -137,7 +146,7 @@ exports.getTasks = async (req, res) => {
         }
     }
 
-    res.send({tasks_worker: promise1.data, tasks_manager: promise2.data, userName: req.user.name});
+    res.send({tasks_worker: promise1.data, tasks_manager: promise2.data});
 };
 
 exports.completeTask = async (req, res) => {
@@ -219,7 +228,18 @@ exports.getTaskInfo = async (req, res) => {
         }
     }
 
-    res.send({info: promise1.data, manager: promise2.data, workers: promise3.data});
+    const promise4 = await Task.getChecklistsbyTaskNum(req.params.taskNum);
+
+    if(promise4.err){
+        if(promise4.err != "not_found"){
+            res.status(500).send({
+                message: `Error retrieving Worker with task_num ${req.params.taskNum}`
+            });
+            return; 
+        }
+    }
+
+    res.send({info: promise1.data, manager: promise2.data, workers: promise3.data, checklists: promise4.data});
 }
 
 exports.modifyTask = async (req, res) => {
@@ -316,6 +336,88 @@ exports.modifyTask = async (req, res) => {
                     promise.err.message || "Some error occurred while creating the task."
             });
             return;
+        }
+    }
+
+    // 체크리스트는 아예 다 삭제하고 새로 insert
+    promise = await Task.deleteChecklists(req.body.info.task_num);
+
+    for(let checklist of req.body.checklists){
+        promise = await Task.insertChecklists(req.body.info.task_num, checklist, false);  
+
+        if(promise.err){
+            res.status(500).send({
+                message:
+                    promise.err.message || "Some error occurred while creating the task."
+            });
+            return;
+        }
+    }
+
+    res.send({result: true});
+}
+
+exports.checklistCheck = async (req, res) => {
+    console.log("taskNum, checklistNum: " + req.params.taskNum, req.params.checklistNum);
+    var promise = await Task.getChecklistCompleted(req.params.taskNum, req.params.checklistNum);
+
+    if(promise.err){
+        res.status(500).send({
+            message: `Error retrieving Worker with task_num ${req.params.taskNum}`
+        });
+        return; 
+    }
+
+    var completed = promise.data; 
+
+    console.log("checklistCheck completed: " + completed);
+
+    if(completed){
+        promise = await Task.updateChecklistCompleted(req.params.taskNum, req.params.checklistNum, false);
+
+        if(promise.err){
+            res.status(500).send({
+                message: `Error retrieving Task with task_num ${req.params.taskNum}`
+            });
+            return; 
+        }
+    }
+    else{
+        promise = await Task.updateChecklistCompleted(req.params.taskNum, req.params.checklistNum, true);
+
+        if(promise.err){
+            res.status(500).send({
+                message: `Error retrieving Task with task_num ${req.params.taskNum}`
+            });
+            return; 
+        }
+    }
+
+    res.send({result: true});
+}
+
+exports.allChecklistIsDone = async (req, res) => {
+    console.log("저것")
+    var promise = await Task.getChecklistsbyTaskNum(req.params.taskNum);
+
+    if(promise.err){
+        if(promise.err == "not_found"){
+            res.send({result: true});
+        }
+        else{
+            res.status(500).send({
+                message: `Error retrieving Task with task_num ${req.params.taskNum}`
+            });
+        }
+        return; 
+    }
+
+    else{
+        for(var i=0; i < promise.data.length; i++){
+            if(promise.data[i].completed == 0){
+                res.send({result: false});
+                return;
+            }
         }
     }
 

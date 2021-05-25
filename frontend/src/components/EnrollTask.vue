@@ -5,12 +5,23 @@
                 <div style="display: inline-block; text-align: center;">
                     <div>
                         <el-form-item label="업무명" for="task_name">
-                            <el-input v-model="task_name" type="text" name="task_name" placeholder="필수 사항입니다." class="text-overflow" style="width: 250px;" required /> 
+                            <el-input v-model="task_name" type="text" name="task_name" placeholder="필수 사항입니다." class="text-overflow" maxlength= "45" style="width: 250px;" show-word-limit required /> 
                         </el-form-item>
                     </div>
                     <div>
                         <el-form-item label="업무 설명" for="explanation">
                             <el-input v-model="explanation" type="textarea" :rows="4" name="explanation" placeholder="선택 사항입니다." style="width: 100%; min-width: 520px; font-family: inherit;" maxlength= "100" show-word-limit/> 
+                        </el-form-item>
+                    </div>
+                    <div>
+                        <el-form-item label="업무 체크리스트" for="checklists">
+                            <div>
+                                <el-button type="info" size="small" round @click.native="addChecklist" style="margin-bottom: 10px;">항목 추가</el-button>
+                            </div>
+                            <div v-for="i in checklists.length" :key="i" style="margin-bottom: 5px;">
+                                <el-input v-model="checklists[i-1]" type="text" name="checklists" placeholder="항목을 입력해주세요." maxlength= "20" style="width: 250px; margin-right: 15px;" show-word-limit required/> 
+                                <el-button class="btn" icon="el-icon-close" size="medium" circle @click.native="deleteChecklist(i-1)"></el-button>
+                            </div>
                         </el-form-item>
                     </div>
                     <br/>
@@ -145,6 +156,8 @@ export default {
             // users_notManager: [], // manager를 제외한 worker들
             selected_workerNum: [],
             selected_workers: [],
+            checklists: [],
+            numChecklist: 0
         }
     },
     components: {
@@ -257,6 +270,11 @@ export default {
                 return;
             }
 
+            if(this.isDuplicate(this.checklists)){
+                alert("체크리스트가 중복됩니다. 확인해주세요.")
+                return;
+            }
+
             this.$axios({
                 url: `http://localhost:3000/tasks`,
                 method: 'post',
@@ -272,7 +290,8 @@ export default {
                     manager_role: this.managerRole,
                     selected_workers_list: this.selected_workers,
                     complete: false,
-                    update_date: null
+                    update_date: null,
+                    checklists: this.checklists
                 },
                 withCredentials: true,
                 headers: {
@@ -283,6 +302,9 @@ export default {
                 if(res.data.result == "duplicate"){
                     alert("해당 업무명을 가진 업무가 존재합니다. 업무명을 변경해주세요.")
                 }
+                // else if(res.data.result == "checklist duplicate"){
+                //     alert("체크리스트가 중복됩니다. 확인해주세요.")
+                // }
                 else if(res.data.result == true){
                     alert("업무가 등록되었습니다.")
                     this.$router.go(-1)
@@ -292,6 +314,27 @@ export default {
                 console.log("업무 등록 ERROR!!: ", err)
             })           
         },
+        addChecklist(){
+            console.log("before add checklists: " + this.checklists);
+            console.log("before add checklists.length: " + this.checklists.length);
+            this.checklists.push('');
+            console.log("after add checklists: " + this.checklists);
+            console.log("after add checklists.length: " + this.checklists.length);
+        },
+        deleteChecklist(i){
+            console.log("before delete checklists: " + this.checklists);
+            console.log("before delete checklists.length: " + this.checklists.length);
+            this.checklists.splice(i, 1);
+            console.log("after delete checklists: " + this.checklists);
+            console.log("after delete checklists.length: " + this.checklists.length);
+        },
+        isDuplicate(arr)  {
+            const isDup = arr.some(function(x) {
+                return arr.indexOf(x) !== arr.lastIndexOf(x);
+            });
+                                    
+            return isDup;
+        }
     }
 }
 </script>
@@ -353,8 +396,6 @@ export default {
         appearance: none;
     }
 
-
-
     .labelColor{
         border: 1px solid #a8a8a8;
         width: 33px;
@@ -375,8 +416,6 @@ export default {
     .labelColor:hover{
         opacity: 0.7;
     }
-
-
 
     input[type="datetime-local"]:disabled {
         background: #c2c2c2;

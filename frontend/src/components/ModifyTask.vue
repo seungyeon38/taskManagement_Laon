@@ -13,6 +13,17 @@
                             <el-input v-model="task_form.explanation" type="textarea" :rows="4" name="explanation" placeholder="선택 사항입니다." style="width: 100%; min-width: 520px; font-family: inherit;" maxlength= "100" show-word-limit/> 
                         </el-form-item>
                     </div>
+                    <div>
+                        <el-form-item label="업무 체크리스트" for="checklists">
+                            <div>
+                                <el-button type="info" size="small" round @click.native="addChecklist" style="margin-bottom: 10px;">항목 추가</el-button>
+                            </div>
+                            <div v-for="i in checklists.length" :key="i" style="margin-bottom: 5px;">
+                                <el-input v-model="checklists[i-1]" type="text" name="checklists" placeholder="항목을 입력해주세요." maxlength= "20" style="width: 250px; margin-right: 15px;" show-word-limit required/> 
+                                <el-button class="btn" icon="el-icon-close" size="medium" circle @click.native="deleteChecklist(i-1)"></el-button>
+                            </div>
+                        </el-form-item>
+                    </div>
                     <br/>
                     <div>
                         <el-form-item label="시작/마감일 설정" for="duration" style="margin: 0px;">
@@ -134,7 +145,8 @@ export default {
             selected_workerNum: [],
             selected_workers: [],
             before_selected_workerNum: [],
-            before_manager: null
+            before_manager: null,
+            checklists: []
         }
     },
     components: {
@@ -160,7 +172,6 @@ export default {
             console.log("Modify all users ERROR!!: ", err)
         });
 
-
         this.$axios({
             url: `http://localhost:3000/tasks/info/${this.task_form.task_num}`,
             method: 'get',
@@ -175,17 +186,23 @@ export default {
             this.task_form.start_date = this.$moment(res.data.info.start_date).format('YYYY-MM-DDTHH:mm');
             this.task_form.end_date = this.$moment(res.data.info.end_date).format('YYYY-MM-DDTHH:mm');
             this.task_form.label_color = res.data.info.label_color;
+            
             // this.task_form.importance = res.data.importance;
 
             this.task_form.manager = res.data.manager.manager;
             this.before_manager = res.data.manager.manager;
-            this.task_form.manager_role = res.data.manager.manager_role;
+            this.task_form.manager_role = res.data.manager.manager;
 
             for(var i=0; i<res.data.workers.length; i++){
                 this.selected_workers.push(res.data.workers[i]);
                 this.selected_workerNum.push(res.data.workers[i].user_num);
                 this.before_selected_workerNum.push(res.data.workers[i].user_num);
             };
+            
+            for(var i=0; i<res.data.checklists.length; i++){
+                this.checklists.push(res.data.checklists[i].content);
+            }
+           
 
             // this.$axios({
             //     url: `http://localhost:3000/tasks/${this.task_form.task_num}/importance`,
@@ -204,6 +221,24 @@ export default {
 
         }).catch(err => {
             console.log("err: " + err);
+        });
+
+        this.$axios({
+            url: `http://localhost:3000/allUsers`,
+            method: 'get',
+            withCredentials: true,
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            credentials: "same-origin"    
+        }).then(res => {
+            console.log("res.data: " + JSON.stringify(res.data));
+            this.users = res.data;
+            // for(var i=0; i<res.data.length; i++){
+            //     this.users.push(res.data[i])
+            // };
+        }).catch(err => {
+            console.log("EnrollTask_Get all users ERROR!!: ", err)
         });
     },
     watch: {
@@ -283,6 +318,11 @@ export default {
             this.selected_workers[findIndex].personal_role = personalRole.personal_role;
         },
         modifyTask(){
+            if(this.isDuplicate(this.checklists)){
+                alert("체크리스트가 중복됩니다. 확인해주세요.")
+                return;
+            }
+            
             if(this.task_form.duration_check == true){
                 this.task_form.start_date = null;
                 this.task_form.end_date = null;
@@ -323,7 +363,8 @@ export default {
                     existedWorkers_list: existedWorkers_list,
                     deletedWorkerNum_list: deletedWorkerNum_list,
                     sameManager: sameManager,
-                    beforeManager: this.before_manager
+                    beforeManager: this.before_manager,
+                    checklists: this.checklists
                 },
                 withCredentials: true,
                 headers: {
@@ -334,6 +375,9 @@ export default {
                 if(res.data.result == "duplicate"){
                     alert("해당 업무명을 가진 업무가 존재합니다. 업무명을 변경해주세요.")
                 }
+                else if(res.data.result == "checklist duplicate"){
+                    alert("체크리스트가 중복됩니다. 확인해주세요.")
+                }
                 else if(res.data.result == true){
                     alert("업무가 수정되었습니다.")
                     this.$router.go(-1)
@@ -342,6 +386,27 @@ export default {
                 console.log("err: ", err)
             })           
         },
+        addChecklist(){
+            console.log("before add checklists: " + this.checklists);
+            console.log("before add checklists.length: " + this.checklists.length);
+            this.checklists.push('');
+            console.log("after add checklists: " + this.checklists);
+            console.log("after add checklists.length: " + this.checklists.length);
+        },
+        deleteChecklist(i){
+            console.log("before delete checklists: " + this.checklists);
+            console.log("before delete checklists.length: " + this.checklists.length);
+            this.checklists.splice(i, 1);
+            console.log("after delete checklists: " + this.checklists);
+            console.log("after delete checklists.length: " + this.checklists.length);
+        },
+        isDuplicate(arr)  {
+            const isDup = arr.some(function(x) {
+                return arr.indexOf(x) !== arr.lastIndexOf(x);
+            });
+                                    
+            return isDup;
+        }
     }
 }
 </script>

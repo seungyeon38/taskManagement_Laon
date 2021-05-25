@@ -48,7 +48,7 @@ User.getUserInfo = (userNum) => {
                 return;
             }
             if(res.length){
-                console.log("found user: ", res[0]);
+                // console.log("found user: ", res[0]);
                 resolve({err: null, data: res[0]});
                 return;
             }
@@ -67,7 +67,7 @@ User.getAllUserInfo = () => {
                 return;
             }
             if(res.length){
-                console.log("users: ", res);
+                // console.log("users: ", res);
                 resolve({err: null, data: res});
                 return;
             }
