@@ -285,11 +285,11 @@ export default {
                     end_date: this.end_date,
                     manager: this.manager,
                     register_date: this.register_date,
-                    complete_date: null,
+                    completed_date: null,
                     label_color: this.label_color,
                     manager_role: this.managerRole,
                     selected_workers_list: this.selected_workers,
-                    complete: false,
+                    completed: false,
                     update_date: null,
                     checklists: this.checklists
                 },

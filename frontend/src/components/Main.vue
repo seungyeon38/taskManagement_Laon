@@ -6,8 +6,8 @@
                     <td colspan="2" align="right">
                         <el-button class="enroll-task custom-icon" @click.native="enrollTask" icon="el-icon-plus" type="info"></el-button>
                         <el-dialog title="업무 완료 확인" :visible.sync="completeDialogVisible" width="30%" style="text-align: left; font-weight: bolder;">
-                            <span v-if="allDone">해당 업무('{{completeTaskName}}')를 완료상태로 전환하시겠습니까?</span>
-                            <span v-else>아직 체크리스트를 완료하지 않았습니다. 해당 업무('{{completeTaskName}}')를 완료상태로 전환하시겠습니까?</span>
+                            <span v-if="allDone">해당 업무('{{completedTaskName}}')를 완료상태로 전환하시겠습니까?</span>
+                            <span v-else>아직 체크리스트를 완료하지 않았습니다. 해당 업무('{{completedTaskName}}')를 완료상태로 전환하시겠습니까?</span>
                             <span slot="footer" class="dialog-footer">
                                 <el-button @click="completeDialogVisible = false">Cancel</el-button>
                                 <el-button type="primary" @click.native="completeConfirm">Confirm</el-button>
@@ -106,7 +106,7 @@
                     </td>
                 </tr>
                 <tr v-if="taskComplete_list.length">
-                    <task-complete v-for="task in taskComplete_list" :key="task.task_num" v-on:clickTask="clickTask" :task_name="task.task_name" :task_num="task.task_num" :manager="task.name" :start_date="task.start_date" :end_date="task.end_date" :complete_date="task.complete_date" :label_color="task.label_color"></task-complete>
+                    <task-completed v-for="task in taskCompleted_list" :key="task.task_num" v-on:clickTask="clickTask" :task_name="task.task_name" :task_num="task.task_num" :manager="task.name" :start_date="task.start_date" :end_date="task.end_date" :completed_date="task.completed_date" :label_color="task.label_color"></task-completed>
                 </tr>
                 <tr v-else>
                     <div class="noTask">(완료된 업무가 없습니다.)</div>
@@ -130,7 +130,7 @@
 <script>
 import Task from './Task.vue'
 // import TaskClosed from './Task_closed.vue'
-import TaskComplete from './Task_complete.vue'
+import TaskCompleted from './Task_completed.vue'
 import TaskInProgress from './Task_inProgress.vue'
 import TaskManager from './Task_manager.vue'
 import ThisWeekTask from './ThisWeekTask.vue'
@@ -142,8 +142,8 @@ export default {
         return{
             taskImportant_list: [],         // task_inProgress
             taskManagerImportant_list: [],  // task_manager
-            taskComplete_list: [],          // task_complete
-            taskClosed_list: [],            // task_complete(색은 조금더 어둡게 했으면 좋겠음)
+            taskCompleted_list: [],          // task_completed
+            taskClosed_list: [],            // task_completed(색은 조금더 어둡게 했으면 좋겠음)
             taskInProgress_list: [],        // task_inProgress
             taskManagerInProgress_list: [], // task_manager
             tasks_thisWeek: [],  // 마감이나 완료되지 않은 것 중에 마감일이 일주일 이내로 남은 업무들
@@ -154,15 +154,15 @@ export default {
             deleteTaskName: '',
             deleteTaskNum: null,
             completeDialogVisible: false,
-            completeTaskName: '',
-            completeTaskNum: null,
+            completedTaskName: '',
+            completedTaskNum: null,
             allDone: false
         }
     },
     components: {
         Task,
         // TaskClosed,
-        TaskComplete,
+        TaskCompleted,
         TaskInProgress,
         TaskManager,
         BaseLayout,
@@ -183,7 +183,7 @@ export default {
             // console.log("http://localhost:3000/tasks res.data: " + JSON.stringify(res.data));
             for(var i=0; i<res.data.tasks_worker.length; i++){
                 // complete을 넣을지 complete_date가 null이 아닌 경우를 할지는 고민 
-                if(res.data.tasks_worker[i].complete == true){
+                if(res.data.tasks_worker[i].completed == true){
                     this.taskComplete_list.push(res.data.tasks_worker[i])
                 }
                 else if(res.data.tasks_worker[i].end_date < now){
@@ -200,7 +200,7 @@ export default {
             for(var i=0; i<res.data.tasks_manager.length; i++){
                 console.log("main res.data.tasks_manager[i]: " + JSON.stringify(res.data.tasks_manager[i]));
 
-                if(res.data.tasks_manager[i].complete == true){
+                if(res.data.tasks_manager[i].completed == true){
                     this.taskComplete_list.push(res.data.tasks_manager[i])
                 }
                 else if(res.data.tasks_manager[i].end_date < now){
@@ -273,11 +273,11 @@ export default {
             console.log("taskNum: " + taskNum)
             console.log("taskName: " + taskName)
             
-            this.completeTaskName = taskName;
-            this.completeTaskNum = taskNum;
+            this.completedTaskName = taskName;
+            this.completedTaskNum = taskNum;
 
             this.$axios({
-                url: `http://localhost:3000/tasks/${this.completeTaskNum}/checklists/complete`,
+                url: `http://localhost:3000/tasks/${this.completedTaskNum}/checklists/complete`,
                 method: 'get',
                 withCredentials: true,
                 headers: {
@@ -297,10 +297,10 @@ export default {
         },
         completeConfirm(){
             this.$axios({
-                url: `http://localhost:3000/tasks/${this.completeTaskNum}/complete`,
+                url: `http://localhost:3000/tasks/${this.completedTaskNum}/complete`,
                 method: 'post',
                 data: {
-                    complete_date: this.$moment().format('YYYY-MM-DDTHH:mm')
+                    completed_date: this.$moment().format('YYYY-MM-DDTHH:mm')
                 },
                 withCredentials: true,
                 headers: {

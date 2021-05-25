@@ -16,9 +16,9 @@ exports.addTask = async (req, res) => {
         end_date: req.body.end_date,
         manager: req.body.manager,
         manager_role: req.body.manager_role,
-        complete: req.body.complete,
+        completed: req.body.completed,
         register_date: req.body.register_date,
-        complete_date: req.body.complete_date,
+        completed_date: req.body.completed_date,
         label_color: req.body.label_color,
         update_date: req.body.update_date,
     });
@@ -162,7 +162,7 @@ exports.getTasks = async (req, res) => {
 };
 
 exports.completeTask = async (req, res) => {
-    var promise = await Task.updateComplete(req.params.taskNum, true, req.body.complete_date);
+    var promise = await Task.updateComplete(req.params.taskNum, true, req.body.completed_date);
 
     if(promise.err){
         res.status(500).send({

@@ -33,7 +33,7 @@
                             <div>{{this.$moment(end_date).format(`h${": "}mm A`)}}</div>
                         </td>
                     </tr>
-                    <slot name="complete_date"> 
+                    <slot name="completed_date"> 
                     </slot>
                 </table> 
                 <slot name="btn">

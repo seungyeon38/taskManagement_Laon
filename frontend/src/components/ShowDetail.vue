@@ -6,6 +6,7 @@
                     <td colspan="2">
                         <el-button v-if="taskInfo.complete == 0 && taskClosed == 0" class="enroll-task custom-icon"  @click="dialogFormVisible = true" icon="el-icon-plus" type="info"></el-button>
                         <div v-else style="height: 50px"></div>
+                        <!-- 세부업무 등록 -->
                         <el-dialog title="세부업무 등록" :visible.sync="dialogFormVisible" style="text-align: left; font-weight: bolder;" @closed="cancel">
                             <el-form :model="form">
                                 <el-form-item label="세부업무명" :label-width="formLabelWidth">
@@ -13,6 +14,16 @@
                                 </el-form-item>
                                 <el-form-item label="세부업무내용" :label-width="formLabelWidth">
                                     <el-input type="textarea" v-model="form.detailTask_content" :rows="4" name="explanation" placeholder="선택 사항입니다." maxlength= "100" show-word-limit/> 
+                                </el-form-item>
+                                <el-form-item label="관련 체크리스트" :label-width="formLabelWidth">
+                                    <el-select v-model="value1" multiple placeholder="Select">
+                                        <el-option
+                                        v-for="item in options"
+                                        :key="item.value"
+                                        :label="item.label"
+                                        :value="item.value">
+                                        </el-option>
+                                    </el-select>
                                 </el-form-item>
                             </el-form>
                             <span slot="footer" class="dialog-footer">
