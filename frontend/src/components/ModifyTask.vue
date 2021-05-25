@@ -181,6 +181,7 @@ export default {
             },
             credentials: "same-origin"    
         }).then(res => {
+            console.log("res.data: " + JSON.stringify(res.data));
             this.task_form.task_name = res.data.info.task_name;
             this.task_form.explanation = res.data.info.explanation;
             this.task_form.start_date = this.$moment(res.data.info.start_date).format('YYYY-MM-DDTHH:mm');
@@ -191,7 +192,7 @@ export default {
 
             this.task_form.manager = res.data.manager.manager;
             this.before_manager = res.data.manager.manager;
-            this.task_form.manager_role = res.data.manager.manager;
+            this.task_form.manager_role = res.data.manager.manager_role;
 
             for(var i=0; i<res.data.workers.length; i++){
                 this.selected_workers.push(res.data.workers[i]);
@@ -232,7 +233,6 @@ export default {
             },
             credentials: "same-origin"    
         }).then(res => {
-            console.log("res.data: " + JSON.stringify(res.data));
             this.users = res.data;
             // for(var i=0; i<res.data.length; i++){
             //     this.users.push(res.data[i])
@@ -322,7 +322,7 @@ export default {
                 alert("체크리스트가 중복됩니다. 확인해주세요.")
                 return;
             }
-            
+
             if(this.task_form.duration_check == true){
                 this.task_form.start_date = null;
                 this.task_form.end_date = null;
