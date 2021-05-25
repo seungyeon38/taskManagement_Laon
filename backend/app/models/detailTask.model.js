@@ -8,9 +8,22 @@ const DetailTask = function(detailTask){
     this.report_date = detailTask.report_date;
 };
 
-DetailTask.addDetailTask = (detailTask) => {
+DetailTask.insertDetailTask = (detailTask) => {
     return new Promise(resolve => {
         sql.query("INSERT INTO detail_task SET ?", detailTask, (err) => {
+            if(err){
+                resolve({err: err});
+                return;
+            }
+
+            resolve({err: null});
+        })
+    });
+}
+
+DetailTask.insertDetailTaskChecklist = (detailTaskNum, checklistNum) => {
+    return new Promise(resolve => { 
+        sql.query(`INSERT INTO detailtask_checklist(detail_task_num, checklist_num) VALUES(${detailTaskNum}, ${checklistNum})`, (err) => {
             if(err){
                 resolve({err: err});
                 return;
@@ -59,6 +72,45 @@ DetailTask.getDetailTasksbyTaskNum = (taskNum) => {
     })
 }
 
+DetailTask.getRecentDetailTaskNum = (userNum) => {
+    return new Promise(resolve => {
+        sql.query(`SELECT MAX(detail_task_num) FROM detail_task
+        WHERE worker = ${userNum}`, (err, res) => {
+            if(err){
+                resolve({err: err, data: null});
+                return;
+            }
+            if(res.length){
+                resolve({err: null, data: Object.values(res[0])[0]});
+                return;
+            }
+            resolve({err: "not_found", data: res})
+        })
+    })
+}
+
+DetailTask.getChecklistsbyTaskNum = (taskNum) => {
+    return new Promise(resolve => {
+        sql.query(`SELECT dc.detail_task_num, c.content
+        FROM detail_task AS dt
+        LEFT JOIN detailtask_checklist AS dc 
+        ON dt.detail_task_num = dc.detail_task_num
+        RIGHT JOIN checklist AS c
+        ON dc.checklist_num = c.checklist_num
+        WHERE dt.task_num = ${taskNum}`, (err, res) => {
+            if(err){
+                resolve({err: err, data: null});
+                return;
+            }
+            if(res.length){
+                resolve({err: null, data: res});
+                return;
+            }
+            resolve({err: "not_found", data: res})
+        })
+    })
+}
+
 DetailTask.updateDetailTask = (detailTaskNum, detailTaskName, content, updateDate) => {
     return new Promise(resolve => {
         sql.query(`UPDATE detail_task 
@@ -89,6 +141,7 @@ DetailTask.deleteDetailTask = (detailTaskNum) => {
         });
     });
 }
+
 
 
 

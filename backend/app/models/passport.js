@@ -17,7 +17,7 @@ module.exports = () => {
     // 로그인에 성공했을 때 메소드에 인자로 전달된 callback함수가 호출되도록 약속되어있다. 
     // 로그인에 성공했다는 것을 session store에 저장하는 기능을 함. 즉, 로그인시에 딱 한번 호출된다. 
     passport.serializeUser(function(user, done) {
-        console.log('serializeUser', user);
+        // console.log('serializeUser', user);
         // session data의 passport user안으로 간다. (req.session.passport.user에 저장)
         done(null, user.user_num);
         // done(null, user.id);
@@ -35,7 +35,7 @@ module.exports = () => {
     // serializeUser에서 id만 넘겨줬다면 deserializeUser의 첫 번째 매개변수도 id를 받아야 되고...
     // userNum은 req.session.passport.user에 저장된 값. 
     passport.deserializeUser(async function(userNum, done) {
-        console.log('deserializeUser', userNum);
+        // console.log('deserializeUser', userNum);
        
         const promise = await User.getUserInfo(userNum);
 

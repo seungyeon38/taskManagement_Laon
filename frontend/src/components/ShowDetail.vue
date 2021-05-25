@@ -4,7 +4,7 @@
             <table style="width: 100%">
                 <tr align="right">
                     <td colspan="2">
-                        <el-button v-if="taskInfo.complete == 0 && taskClosed == 0" class="enroll-task custom-icon"  @click="dialogFormVisible = true" icon="el-icon-plus" type="info"></el-button>
+                        <el-button v-if="taskInfo.completed == 0 && taskClosed == 0" class="enroll-task custom-icon"  @click="dialogFormVisible = true" icon="el-icon-plus" type="info"></el-button>
                         <div v-else style="height: 50px"></div>
                         <!-- 세부업무 등록 -->
                         <el-dialog title="세부업무 등록" :visible.sync="dialogFormVisible" style="text-align: left; font-weight: bolder;" @closed="cancel">
@@ -16,12 +16,12 @@
                                     <el-input type="textarea" v-model="form.detailTask_content" :rows="4" name="explanation" placeholder="선택 사항입니다." maxlength= "100" show-word-limit/> 
                                 </el-form-item>
                                 <el-form-item label="관련 체크리스트" :label-width="formLabelWidth">
-                                    <el-select v-model="value1" multiple placeholder="Select">
+                                    <el-select v-model="form.detailTask_checklists" multiple placeholder="Select">
                                         <el-option
-                                        v-for="item in options"
-                                        :key="item.value"
-                                        :label="item.label"
-                                        :value="item.value">
+                                        v-for="checklist in checklists"
+                                        :key="checklist.checklist_num"
+                                        :label="checklist.content"
+                                        :value="checklist.checklist_num">
                                         </el-option>
                                     </el-select>
                                 </el-form-item>
@@ -50,12 +50,12 @@
                 </tr>
                 <tr> 
                     <td style="width: 20%; padding-top: 20px;" valign="top">
-                        <el-select v-model="selectOption" v-if="detailTask_list.length" filterable placeholder="Select" style="width: 220px;">
-                            <!-- <el-option :value="1" :label="total"></el-option>
-                            <el-option :value="2" :label="mine"></el-option> -->
+                        <!-- <el-select v-model="selectOption" v-if="detailTask_list.length" filterable placeholder="Select" style="width: 220px;">
+                            <el-option :value="1" :label="total"></el-option>
+                            <el-option :value="2" :label="mine"></el-option>
                         </el-select>
                         <el-select v-else filterable placeholder="Select" style="width: 220px;" disabled>
-                        </el-select>
+                        </el-select> -->
                     </td>
                     <!-- border:1px dashed #acb2bd; margin-top: 30px; margin-bottom: 35px; height: 1px; -->
                     <td style="width: 80%; padding-top: 20px; text-align: justify;">
@@ -64,8 +64,8 @@
                         <div v-if="detailTask_list.length != 0">
                             <el-timeline>
                                 <el-timeline-item v-for="detailTask in detailTask_list" :key="detailTask.detail_task_num" :timestamp="`${detailTask.report_date}, ${detailTask.name} 님`" placement="top">
-                                    <detail-task-users v-if="detailTask.worker == userNum" v-on:showModifyDialog="showModifyDialog" v-on:deleteDetailTask="deleteDetailTask" :detail_task_num="detailTask.detail_task_num" :workerName="detailTask.name" :detail_task_name="detailTask.detail_task_name" :content="detailTask.content" :report_date="detailTask.report_date" :profile_img="detailTask.profile_img"></detail-task-users>
-                                    <detail-task v-else :workerName="detailTask.name" :detail_task_name="detailTask.detail_task_name" :content="detailTask.content" :report_date="detailTask.report_date" :profile_img="detailTask.profile_img"></detail-task>
+                                    <detail-task-users v-if="detailTask.worker == userNum" v-on:showModifyDialog="showModifyDialog" v-on:deleteDetailTask="deleteDetailTask" :detail_task_num="detailTask.detail_task_num" :workerName="detailTask.name" :detail_task_name="detailTask.detail_task_name" :content="detailTask.content" :report_date="detailTask.report_date" :profile_img="detailTask.profile_img" :checklists="detailTask.checklists"></detail-task-users>
+                                    <detail-task v-else :workerName="detailTask.name" :detail_task_name="detailTask.detail_task_name" :content="detailTask.content" :report_date="detailTask.report_date" :profile_img="detailTask.profile_img" :checklists="detailTask.checklists"></detail-task>
                                 </el-timeline-item>
                             </el-timeline>
                         </div>
@@ -91,21 +91,22 @@
                 <div v-else style="padding: 10px;">(업무 내용이 없습니다.)</div>
             </div>
             <div style="margin-top: 40px;"></div>
-            <div class="label_title">업무 체크리스트</div>
-
-            <div v-if="manager.manager === userNum && taskInfo.complete == 0 && taskClosed == 0" class="border detail_info" style="padding: 10px 0px">
-                <div v-for="checklist in checklists" :key="checklist.checklist_num" id="checklists" style="padding: 0px 10px;">
-                    <el-checkbox v-if="checklist.completed == false" :label="checklist.content" @change="checklistCheck(checklist.checklist_num)"></el-checkbox>
-                    <el-checkbox v-else :label="checklist.content" @change="checklistCheck(checklist.checklist_num)" checked></el-checkbox>
+            <div v-if="checklists.length">
+                <div class="label_title">업무 체크리스트</div>
+                <div v-if="manager.manager === userNum && taskInfo.completed == 0 && taskClosed == 0" class="border detail_info" style="padding: 10px 0px">
+                    <div v-for="checklist in checklists" :key="checklist.checklist_num" id="checklists" style="padding: 0px 10px;">
+                        <el-checkbox v-if="checklist.completed == false" :label="checklist.content" @change="checklistCheck(checklist.checklist_num)"></el-checkbox>
+                        <el-checkbox v-else :label="checklist.content" @change="checklistCheck(checklist.checklist_num)" checked></el-checkbox>
+                    </div>
                 </div>
-            </div>
-            <div v-else class="border detail_info" style="padding: 10px 0px">
-                <div v-for="checklist in checklists" :key="checklist.checklist_num" id="checklists">
-                    <li v-if="checklist.completed == false" style="padding: 0px 10px">{{checklist.content}}</li>
-                    <li v-else style="padding: 0px 10px; text-decoration: line-through; color: rgb(192, 196, 204);">{{checklist.content}}</li>
-                    <!-- <li v-else style="padding: 0px 10px; text-decoration: line-through; color: #888888;">{{checklist.content}}</li> -->
+                <div v-else class="border detail_info" style="padding: 10px 0px">
+                    <div v-for="checklist in checklists" :key="checklist.checklist_num" id="checklists">
+                        <li v-if="checklist.completed == false" style="padding: 0px 10px">{{checklist.content}}</li>
+                        <li v-else style="padding: 0px 10px; text-decoration: line-through; color: rgb(192, 196, 204);">{{checklist.content}}</li>
+                        <!-- <li v-else style="padding: 0px 10px; text-decoration: line-through; color: #888888;">{{checklist.content}}</li> -->
+                    </div>
+                    <!-- <li v-for="checklist in checklists" :key="checklist.checklist_num" id="checklists" style="padding: 0px 10px">{{checklist.content}}</li> -->
                 </div>
-                <!-- <li v-for="checklist in checklists" :key="checklist.checklist_num" id="checklists" style="padding: 0px 10px">{{checklist.content}}</li> -->
             </div>
 
             <div style="margin-top: 40px;"></div>
@@ -164,12 +165,13 @@ export default {
             dialogModifyFormVisible: false,
             form: {
                 detailTask_name: '',
-                detailTask_content: ''
+                detailTask_content: '',
+                detailTask_checklists: []
             },
             formLabelWidth: '120px',
             userNum: null,
             detailTaskNumtoModify: null,
-            checklists: []
+            checklists: [],
         }
     },
     methods: {
@@ -186,6 +188,7 @@ export default {
                         detail_task_name: this.form.detailTask_name,
                         content: this.form.detailTask_content,
                         report_date: this.$moment().format('YYYY-MM-DDTHH:mm'),
+                        detailTask_checklists: this.form.detailTask_checklists
                     },
                     withCredentials: true,
                     headers: {
@@ -206,6 +209,7 @@ export default {
         cancel(){
             this.form.detailTask_name = '';
             this.form.detailTask_content = '';
+            this.form.detailTask_checklists = [];
         },
         date_ascending(a, b){
             var dateA = new Date(a['report_date']).getTime();
@@ -298,6 +302,21 @@ export default {
         this.taskNum = this.$route.params.taskNum;
 
         this.$axios({
+            url: `http://localhost:3000/users/info`,
+            method: 'get',
+            withCredentials: true,
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            credentials: "same-origin"    
+        }).then(res => {
+            this.userNum = res.data.user_num; 
+
+        }).catch(err => {
+            console.log("err: " + err);
+        });
+        
+        this.$axios({
             url: `http://localhost:3000/tasks/info/${this.taskNum}`,
             method: 'get',
             withCredentials: true,
@@ -306,12 +325,12 @@ export default {
             },
             credentials: "same-origin"    
         }).then(res => {
-            console.log("res.data: " + JSON.stringify(res.data));
             this.manager = res.data.manager;
             this.workers = res.data.workers; 
             this.taskInfo = res.data.info;
             this.checklists = res.data.checklists;
 
+            // console.log("manager: " + JSON.stringify(this.manager))
             const now = this.$moment().format('YYYY-MM-DDTHH:mm');
 
             if(this.taskInfo.end_date < now){
@@ -336,31 +355,29 @@ export default {
         }).then(res => {
             // "detailTasks": detail_task_num, task_num, worker, detail_task_name, content, report_date
             // "manager": manager, manager_role, name, id, email, profile_img
-            // "info": task_num, task_name, explanation, start_date, end_date, register_date, complete_date, label_color, complete
+            // "info": task_num, task_name, explanation, start_date, end_date, register_date, completed_date, label_color, completed
             // "workers": user_num, personal_role, name, id, email, profile_img
             
+
+            // "checklists":[{"detail_task_num":5,"content":"체크리스트 항목2"}
             for(var i=0; i< res.data.detailTasks.length; i++){
+                res.data.detailTasks[i].checklists = [];
+                for(var j=0; j< res.data.checklists.length; j++){
+                    if(res.data.checklists[j].detail_task_num == res.data.detailTasks[i].detail_task_num){
+                        res.data.detailTasks[i].checklists.push(res.data.checklists[j].content);
+                    }
+                }
+
                 res.data.detailTasks[i].report_date = this.$moment(res.data.detailTasks[i].report_date).format(`YYYY/MM/DD h:mm A`);
                 // "detailTasks": detail_task_num, task_num, worker, detail_task_name, content, report_date, id, name, email, profile_img
                 this.detailTask_list.push(res.data.detailTasks[i]);
             }
+            console.log("this.detailTask_list: " + JSON.stringify(this.detailTask_list));
+
         }).catch(err => {
             console.log("err: " + err);
         });
 
-        this.$axios({
-            url: `http://localhost:3000/users/info`,
-            method: 'get',
-            withCredentials: true,
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            credentials: "same-origin"    
-        }).then(res => {
-            this.userNum = res.data.user_num; 
-        }).catch(err => {
-            console.log("err: " + err);
-        });
     },
 }
 </script>

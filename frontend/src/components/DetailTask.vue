@@ -18,8 +18,16 @@
         <div v-else style="text-align: left; margin-bottom: 20px; color: rgb(192, 196, 204);">
             (내용 없음)
         </div>
-        <div style="text-align: right; font-size: 0.9em; color: gray;">
+        <!-- <div style="text-align: right; font-size: 0.9em; color: gray;">
             {{report_date}}
+        </div> -->
+        <div style="display: flex; justify-content: space-between; font-size: 0.9em; color: gray;">
+            <div>
+                <span v-for="checklist in checklists" :key="checklist">
+                    <span style="border: 1px solid black;">{{checklist}}</span>
+                </span>
+            </div>
+            <div>{{report_date}}</div>
         </div>
     </el-card>
 </template>
@@ -31,7 +39,7 @@ export default{
         return{
         }
     },
-    props:['workerName', 'detail_task_name', 'content', 'report_date', 'profile_img'],
+    props:['workerName', 'detail_task_name', 'content', 'report_date', 'profile_img', 'checklists'],
     created(){
 
     }

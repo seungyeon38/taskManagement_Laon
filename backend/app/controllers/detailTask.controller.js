@@ -11,12 +11,35 @@ exports.addDetailTask = async (req, res) => {
     });
 
     console.log("detailTask: " + JSON.stringify(detailTask))
-    const promise = await DetailTask.addDetailTask(detailTask);
+    var promise = await DetailTask.insertDetailTask(detailTask);
     if(promise.err){
         console.log("err: " + promise.err);
         res.status(500).send({
             message: `Error retrieving DetailTask with task_num ${req.body.task_num}`
         });
+    }
+
+    promise = await DetailTask.getRecentDetailTaskNum(req.user.user_num);
+
+    if(promise.err){
+        console.log("err: " + promise.err);
+        res.status(500).send({
+            message: `Error retrieving DetailTask with task_num ${req.body.task_num}`
+        });
+    }
+
+    const detail_task_num = promise.data;
+
+
+    for(var i=0; i<req.body.detailTask_checklists.length; i++){
+        promise = await DetailTask.insertDetailTaskChecklist(detail_task_num, req.body.detailTask_checklists[i]);
+
+        if(promise.err){
+            console.log("err: " + promise.err);
+            res.status(500).send({
+                message: `Error retrieving DetailTask with task_num ${req.body.task_num}`
+            });
+        }
     }
 
     res.send({result: true});
@@ -63,10 +86,10 @@ exports.deleteDetailTask = async (req, res) => {
 }
 
 exports.getDetailTasksbyTaskNum = async (req, res) => {
-    const promise = await DetailTask.getDetailTasksbyTaskNum(req.params.taskNum);
+    const promise1 = await DetailTask.getDetailTasksbyTaskNum(req.params.taskNum);
 
-    if(promise.err){
-        if(promise.err != "not_found"){
+    if(promise1.err){
+        if(promise1.err != "not_found"){
             res.status(500).send({
                 message: `Error retrieving Worker with task_num ${req.params.taskNum}`
             });
@@ -74,8 +97,19 @@ exports.getDetailTasksbyTaskNum = async (req, res) => {
         }
     }
 
+    const promise2 = await DetailTask.getChecklistsbyTaskNum(req.params.taskNum);
+
+    if(promise2.err){
+        if(promise2.err != "not_found"){
+            res.status(500).send({
+                message: `Error retrieving Worker with task_num ${req.params.taskNum}`
+            });
+            return; 
+        }
+    }
+
+
     // id, name, email, profile_img
 
-
-    res.send({detailTasks: promise.data});
+    res.send({detailTasks: promise1.data, checklists: promise2.data});
 }

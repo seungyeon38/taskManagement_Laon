@@ -105,7 +105,7 @@
                         <hr align= "left"/>
                     </td>
                 </tr>
-                <tr v-if="taskComplete_list.length">
+                <tr v-if="taskCompleted_list.length">
                     <task-completed v-for="task in taskCompleted_list" :key="task.task_num" v-on:clickTask="clickTask" :task_name="task.task_name" :task_num="task.task_num" :manager="task.name" :start_date="task.start_date" :end_date="task.end_date" :completed_date="task.completed_date" :label_color="task.label_color"></task-completed>
                 </tr>
                 <tr v-else>
@@ -184,7 +184,7 @@ export default {
             for(var i=0; i<res.data.tasks_worker.length; i++){
                 // complete을 넣을지 complete_date가 null이 아닌 경우를 할지는 고민 
                 if(res.data.tasks_worker[i].completed == true){
-                    this.taskComplete_list.push(res.data.tasks_worker[i])
+                    this.taskCompleted_list.push(res.data.tasks_worker[i])
                 }
                 else if(res.data.tasks_worker[i].end_date < now){
                     this.taskClosed_list.push(res.data.tasks_worker[i])
@@ -201,7 +201,7 @@ export default {
                 console.log("main res.data.tasks_manager[i]: " + JSON.stringify(res.data.tasks_manager[i]));
 
                 if(res.data.tasks_manager[i].completed == true){
-                    this.taskComplete_list.push(res.data.tasks_manager[i])
+                    this.taskCompleted_list.push(res.data.tasks_manager[i])
                 }
                 else if(res.data.tasks_manager[i].end_date < now){
                     this.taskClosed_list.push(res.data.tasks_manager[i])
