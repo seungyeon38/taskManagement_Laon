@@ -32,7 +32,7 @@ exports.addDetailTask = async (req, res) => {
 
 
     for(var i=0; i<req.body.detailTask_checklists.length; i++){
-        promise = await DetailTask.insertDetailTaskChecklist(detail_task_num, req.body.detailTask_checklists[i]);
+        promise = await DetailTask.insertDetailTaskChecklist(req.body.task_num, detail_task_num, req.body.detailTask_checklists[i]);
 
         if(promise.err){
             console.log("err: " + promise.err);
@@ -55,20 +55,22 @@ exports.getDetailTask = async (req, res) => {
         });
     }
 
-    const promise2 = await DetailTask.getChecklistbyNum(req.params.detailTaskNum);
+    const promise2 = await DetailTask.getChecklistsbyNum(req.params.detailTaskNum);
 
     if(promise2.err){
-        console.log("err: " + promise2.err);
-        res.status(500).send({
-            message: `Error retrieving DetailTask with detail_task_num ${req.params.detailTaskNum}`
-        });
+        if(promise2.err != "not_found"){
+            console.log("err: " + promise2.err);
+            res.status(500).send({
+                message: `Error retrieving DetailTask with detail_task_num ${req.params.detailTaskNum}`
+            });
+        }
     }
 
     res.send({detailTask: promise1.data, checklists: promise2.data});
 }
 
 exports.modifyDetailTask = async (req, res) => {
-    const promise = await DetailTask.updateDetailTask(req.params.detailTaskNum, req.body.detail_task_name, req.body.content, req.body.update_date);
+    var promise = await DetailTask.updateDetailTask(req.params.detailTaskNum, req.body.detail_task_name, req.body.content, req.body.update_date);
     
     if(promise.err){
         console.log("err: " + promise.err);
@@ -77,11 +79,31 @@ exports.modifyDetailTask = async (req, res) => {
         });
     }
 
+
+
+    promise = await DetailTask.updateDetailTaskChecklist(req.params.detailTaskNum, );
+    
+    if(promise.err){
+        console.log("err: " + promise.err);
+        res.status(500).send({
+            message: `Error retrieving DetailTask with detail_task_num ${req.params.detailTaskNum}`
+        });
+    }
+    
     res.send({result: true});
 }
 
 exports.deleteDetailTask = async (req, res) => {
-    const promise = await DetailTask.deleteDetailTask(req.params.detailTaskNum);
+    var promise = await DetailTask.deleteDetailTask(req.params.detailTaskNum);
+    
+    if(promise.err){
+        console.log("err: " + promise.err);
+        res.status(500).send({
+            message: `Error retrieving DetailTask with detail_task_num ${req.params.detailTaskNum}`
+        });
+    }
+
+    promise = await DetailTask.deleteDetailTaskChecklists(req.params.detailTaskNum);
     
     if(promise.err){
         console.log("err: " + promise.err);
@@ -91,32 +113,4 @@ exports.deleteDetailTask = async (req, res) => {
     }
 
     res.send({result: true});
-}
-
-exports.getDetailTasksbyTaskNum = async (req, res) => {
-    const promise1 = await DetailTask.getDetailTasksbyTaskNum(req.params.taskNum);
-
-    if(promise1.err){
-        if(promise1.err != "not_found"){
-            res.status(500).send({
-                message: `Error retrieving Worker with task_num ${req.params.taskNum}`
-            });
-            return; 
-        }
-    }
-
-    const promise2 = await DetailTask.getChecklistsbyTaskNum(req.params.taskNum);
-
-    if(promise2.err){
-        if(promise2.err != "not_found"){
-            res.status(500).send({
-                message: `Error retrieving Worker with task_num ${req.params.taskNum}`
-            });
-            return; 
-        }
-    }
-
-    // id, name, email, profile_img
-    
-    res.send({detailTasks: promise1.data, checklists: promise2.data});
 }

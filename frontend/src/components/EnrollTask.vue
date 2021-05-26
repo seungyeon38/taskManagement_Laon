@@ -270,10 +270,10 @@ export default {
                 return;
             }
 
-            if(this.isDuplicate(this.checklists)){
-                alert("체크리스트가 중복됩니다. 확인해주세요.")
-                return;
-            }
+            // if(this.isDuplicate(this.checklists)){
+            //     alert("체크리스트가 중복됩니다. 확인해주세요.")
+            //     return;
+            // }
 
             this.$axios({
                 url: `http://localhost:3000/tasks`,

@@ -40,7 +40,18 @@
                                 <el-form-item label="세부업무내용" :label-width="formLabelWidth">
                                     <el-input type="textarea" v-model="form.detailTask_content" :rows="4" name="explanation" placeholder="선택 사항입니다." maxlength= "100" show-word-limit/> 
                                 </el-form-item>
+                                <el-form-item label="관련 체크리스트" :label-width="formLabelWidth">
+                                    <el-select v-model="form.detailTask_checklists" multiple placeholder="Select">
+                                        <el-option
+                                        v-for="checklist in checklists"
+                                        :key="checklist.checklist_num"
+                                        :label="checklist.content"
+                                        :value="checklist.checklist_num">
+                                        </el-option>
+                                    </el-select>
+                                </el-form-item>
                             </el-form>
+                            
                             <span slot="footer" class="dialog-footer">
                                 <el-button @click="dialogModifyFormVisible = false">취소</el-button>
                                 <el-button type="primary" @click.native="modifyDetailTask">확인</el-button>
@@ -230,7 +241,12 @@ export default {
             }).then(res => {
                 this.form.detailTask_name = res.data.detailTask.detail_task_name;
                 this.form.detailTask_content = res.data.detailTask.content;
+                for(var i=0; i<res.data.checklists.length; i++){
+                    console.log(res.data.checklists[i].checklist_num);
+                    this.form.detailTask_checklists.push(res.data.checklists[i].checklist_num);
+                }
 
+                // console.log("this.form.detailTask_checklists: " + JSON.stringify(this.form.detailTask_checklists));
             }).catch(err => {
                 console.log("err: ", err)
             })      
@@ -245,6 +261,7 @@ export default {
                     detail_task_name: this.form.detailTask_name,
                     content: this.form.detailTask_content,
                     update_date: this.$moment().format('YYYY-MM-DDTHH:mm'),
+                    detail_task_checklist: this.form.detailTask_checklists
                 },
                 withCredentials: true,
                 headers: {
@@ -317,7 +334,7 @@ export default {
         });
         
         this.$axios({
-            url: `http://localhost:3000/tasks/info/${this.taskNum}`,
+            url: `http://localhost:3000/tasks/${this.taskNum}/info`,
             method: 'get',
             withCredentials: true,
             headers: {
@@ -367,7 +384,6 @@ export default {
                         res.data.detailTasks[i].checklists.push(res.data.checklists[j].content);
                     }
                 }
-
                 res.data.detailTasks[i].report_date = this.$moment(res.data.detailTasks[i].report_date).format(`YYYY/MM/DD h:mm A`);
                 // "detailTasks": detail_task_num, task_num, worker, detail_task_name, content, report_date, id, name, email, profile_img
                 this.detailTask_list.push(res.data.detailTasks[i]);

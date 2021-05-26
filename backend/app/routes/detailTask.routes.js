@@ -9,6 +9,6 @@ module.exports = app => {
 
     app.delete("/detailTasks/:detailTaskNum", detailTask.deleteDetailTask);
 
-    app.get("/tasks/:taskNum/detailTasks", detailTask.getDetailTasksbyTaskNum);
-
+    // app.get("/tasks/:taskNum/detailTasks", detailTask.getDetailTasksbyTaskNum);
+    // Task로 옮김
 }

@@ -18,9 +18,18 @@
                             <div>
                                 <el-button type="info" size="small" round @click.native="addChecklist" style="margin-bottom: 10px;">항목 추가</el-button>
                             </div>
+                            <!-- <div v-for="checklist in checklists" :key="checklist.checklist_num" style="margin-bottom: 5px;">
+                                <el-input v-model="checklist.content" type="text" name="checklists" placeholder="항목을 입력해주세요." maxlength= "20" style="width: 250px; margin-right: 15px;" show-word-limit required/> 
+                                <el-button class="btn" icon="el-icon-close" size="medium" circle @click.native="deleteChecklist(checklist)"></el-button>
+                            </div> -->
                             <div v-for="i in checklists.length" :key="i" style="margin-bottom: 5px;">
-                                <el-input v-model="checklists[i-1]" type="text" name="checklists" placeholder="항목을 입력해주세요." maxlength= "20" style="width: 250px; margin-right: 15px;" show-word-limit required/> 
+                                <el-input v-model="checklists[i-1].content" type="text" name="checklists" placeholder="항목을 입력해주세요." maxlength= "20" style="width: 250px; margin-right: 15px;" show-word-limit required/> 
                                 <el-button class="btn" icon="el-icon-close" size="medium" circle @click.native="deleteChecklist(i-1)"></el-button>
+                            </div>
+                            <div v-for="checklist in completedChecklists" :key="checklist.checklist_num" style="margin-bottom: 5px;">
+                                <el-input v-model="checklist.content" type="text" name="completedChecklists" style="width: 250px; margin-right: 15px;" disabled/> 
+                            </div>
+                            <div>
                             </div>
                         </el-form-item>
                     </div>
@@ -140,13 +149,16 @@ export default {
                 manager: null,
                 manager_role: '',
             },
-
             users: [],
             selected_workerNum: [],
             selected_workers: [],
             before_selected_workerNum: [],
             before_manager: null,
-            checklists: []
+            checklists: [],
+            completedChecklists: [],
+            before_checklists: []
+            // checklists_num: [],
+            // completedChecklists_num: [],
         }
     },
     components: {
@@ -173,7 +185,7 @@ export default {
         });
 
         this.$axios({
-            url: `http://localhost:3000/tasks/info/${this.task_form.task_num}`,
+            url: `http://localhost:3000/tasks/${this.task_form.task_num}/info`,
             method: 'get',
             withCredentials: true,
             headers: {
@@ -181,7 +193,7 @@ export default {
             },
             credentials: "same-origin"    
         }).then(res => {
-            console.log("res.data: " + JSON.stringify(res.data));
+            // console.log("res.data: " + JSON.stringify(res.data));
             this.task_form.task_name = res.data.info.task_name;
             this.task_form.explanation = res.data.info.explanation;
             this.task_form.start_date = this.$moment(res.data.info.start_date).format('YYYY-MM-DDTHH:mm');
@@ -200,10 +212,25 @@ export default {
                 this.before_selected_workerNum.push(res.data.workers[i].user_num);
             };
             
+            console.log("res.data.checklists: " + JSON.stringify(res.data.checklists));
+
             for(var i=0; i<res.data.checklists.length; i++){
-                this.checklists.push(res.data.checklists[i].content);
+                if(res.data.checklists[i].completed != false){
+                    this.completedChecklists.push(res.data.checklists[i]);
+                    // this.completedChecklists_num.push(res.data.checklists[i].checklist_num);
+                }
+                else{
+                    this.checklists.push(res.data.checklists[i]);
+                    this.before_checklists.push(res.data.checklists[i]);
+                    // this.checklists_num.push(res.data.checklists[i].checklist_num);
+                }
             }
-           
+
+            // console.log("this.checklists: " + JSON.stringify(this.checklists));
+            // console.log("this.completedChecklists: " + JSON.stringify(this.completedChecklists)); 
+            // console.log("this.checklists_num: " + JSON.stringify(this.checklists_num));
+            // console.log("this.completedChecklists_num: " + JSON.stringify(this.completedChecklists_num));
+
 
             // this.$axios({
             //     url: `http://localhost:3000/tasks/${this.task_form.task_num}/importance`,
@@ -224,22 +251,6 @@ export default {
             console.log("err: " + err);
         });
 
-        this.$axios({
-            url: `http://localhost:3000/allUsers`,
-            method: 'get',
-            withCredentials: true,
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            credentials: "same-origin"    
-        }).then(res => {
-            this.users = res.data;
-            // for(var i=0; i<res.data.length; i++){
-            //     this.users.push(res.data[i])
-            // };
-        }).catch(err => {
-            console.log("EnrollTask_Get all users ERROR!!: ", err)
-        });
     },
     watch: {
         selected_workerNum: function(newVal, oldVal){
@@ -318,10 +329,10 @@ export default {
             this.selected_workers[findIndex].personal_role = personalRole.personal_role;
         },
         modifyTask(){
-            if(this.isDuplicate(this.checklists)){
-                alert("체크리스트가 중복됩니다. 확인해주세요.")
-                return;
-            }
+            // if(this.isDuplicate(this.checklists)){
+            //     alert("체크리스트가 중복됩니다. 확인해주세요.")
+            //     return;
+            // }
 
             if(this.task_form.duration_check == true){
                 this.task_form.start_date = null;
@@ -333,7 +344,7 @@ export default {
             var sameManager = false;
 
             if(this.before_manager === this.task_form.manager){
-                console.log("this.before_manager === this.task_form.manager")
+                // console.log("this.before_manager === this.task_form.manager")
                 sameManager = true;    
             }
 
@@ -350,6 +361,29 @@ export default {
                 }
             }
 
+            // [{"task_num":7,"checklist_num":19,"content":"d","completed":"0"},{"content":"werwef"},{"content":""}]
+       
+
+            const addedChecklists = this.checklists.filter(checklist => typeof checklist.checklist_num === 'undefined');
+
+            const deletedChecklists = this.before_checklists.filter(checklist => this.checklists.indexOf(checklist) == -1);
+
+            const existedChecklists = this.before_checklists.filter(checklist => deletedChecklists.indexOf(checklist) == -1);
+
+            // console.log("addedChecklists: " + JSON.stringify(addedChecklists));      // [{"content":"1"},{"content":"2"}]
+            // console.log("deletedChecklists: " + JSON.stringify(deletedChecklists));  // [{"task_num":1,"checklist_num":3,"content":"ㅁ","completed":"0"}]
+            // console.log("existedChecklists: " + JSON.stringify(existedChecklists));  // [{"task_num":1,"checklist_num":1,"content":"ㅇ","completed":"0"},{"task_num":1,"checklist_num":2,"content":"ㄴㅇㅀㄴㅇㄹ","completed":"0"}]
+            
+
+            // for(var i=0; i<this.selected_workers.length; i++){
+            //     // 원래 있던 실무담당자                 
+            //     if(addedWorkers_list.filter(worker => worker.user_num == this.selected_workers[i].user_num).length == 0){
+            //         existedWorkers_list.push(this.selected_workers[i]); 
+            //     }
+            // }
+
+
+
             // manager가 바뀌었는지 유무 
             // 실무담당자에서   없어진 사용자 
             //                새로 생긴 사용자 
@@ -358,13 +392,16 @@ export default {
                 url: `http://localhost:3000/tasks`,
                 method: 'put',
                 data: {
-                    info: Object.assign(this.task_form),
+                    // info: Object.assign(this.task_form),
+                    info: this.task_form,
                     addedWorkers_list: addedWorkers_list,
                     existedWorkers_list: existedWorkers_list,
                     deletedWorkerNum_list: deletedWorkerNum_list,
                     sameManager: sameManager,
                     beforeManager: this.before_manager,
-                    checklists: this.checklists
+                    addedChecklists: addedChecklists,
+                    deletedChecklists: deletedChecklists,
+                    existedChecklists: existedChecklists,
                 },
                 withCredentials: true,
                 headers: {
@@ -387,20 +424,21 @@ export default {
             })           
         },
         addChecklist(){
-            console.log("before add checklists: " + this.checklists);
-            console.log("before add checklists.length: " + this.checklists.length);
-            this.checklists.push('');
-            console.log("after add checklists: " + this.checklists);
-            console.log("after add checklists.length: " + this.checklists.length);
+            console.log("before add checklists: " + JSON.stringify(this.checklists));
+            console.log("before add checklists.length: " + JSON.stringify(this.checklists.length));
+            this.checklists.push({'content': ''});
+            console.log("after add checklists: " + JSON.stringify(this.checklists));
+            console.log("after add checklists.length: " + JSON.stringify(this.checklists.length));
         },
         deleteChecklist(i){
-            console.log("before delete checklists: " + this.checklists);
-            console.log("before delete checklists.length: " + this.checklists.length);
+            console.log("before delete checklists: " + JSON.stringify(this.checklists));
+            console.log("before delete checklists.length: " + JSON.stringify(this.checklists.length));
+            // console.log("this.checklists.indexOf(checklist): " + JSON.stringify(this.checklists.indexOf(checklist)));
             this.checklists.splice(i, 1);
-            console.log("after delete checklists: " + this.checklists);
-            console.log("after delete checklists.length: " + this.checklists.length);
+            console.log("after delete checklists: " + JSON.stringify(this.checklists));
+            console.log("after delete checklists.length: " + JSON.stringify(this.checklists.length));
         },
-        isDuplicate(arr)  {
+        isDuplicate(arr) {
             const isDup = arr.some(function(x) {
                 return arr.indexOf(x) !== arr.lastIndexOf(x);
             });

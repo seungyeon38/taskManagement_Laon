@@ -124,7 +124,15 @@ exports.deleteTask = async (req, res) => {
         return;
     }
 
-    promise = await Task.deleteChecklists(req.params.taskNum);
+    promise = await Task.deleteChecklistsbyTaskNum(req.params.taskNum);
+    if(promise.err){
+        res.status(500).send({
+            message: `Error retrieving Task with id ${req.params.taskNum}`
+        });
+        return;
+    }
+
+    promise = await Task.deleteDetailTaskChecklistsbyTaskNum(req.parmas.taskNum);
     if(promise.err){
         res.status(500).send({
             message: `Error retrieving Task with id ${req.params.taskNum}`
@@ -351,11 +359,44 @@ exports.modifyTask = async (req, res) => {
         }
     }
 
-    // 체크리스트는 아예 다 삭제하고 새로 insert
-    promise = await Task.deleteChecklists(req.body.info.task_num);
+    // 이전에 등록했던 체크리스트를 삭제할 수 있고, 삭제된 체크리스트는 이전에 등록했던 세부업무에서 체크를 한 경우에도 그냥 삭제된다.
 
-    for(let checklist of req.body.checklists){
-        promise = await Task.insertChecklists(req.body.info.task_num, checklist, false);  
+    for(let checklist of req.body.deletedChecklists){
+        promise = await Task.deleteChecklists(checklist.checklist_num);
+
+        if(promise.err){
+            res.status(500).send({
+                message:
+                    promise.err.message || "Some error occurred while creating the task."
+            });
+            return;
+        }
+
+        promise = await Task.deleteDetailTaskChecklists(checklist.checklist_num);
+
+        if(promise.err){
+            res.status(500).send({
+                message:
+                    promise.err.message || "Some error occurred while creating the task."
+            });
+            return;
+        }
+    }
+
+    for(let checklist of req.body.existedChecklists){
+        promise = await Task.updateChecklists(checklist.checklist_num, checklist.content);
+
+        if(promise.err){
+            res.status(500).send({
+                message:
+                    promise.err.message || "Some error occurred while creating the task."
+            });
+            return;
+        }
+    }
+
+    for(let checklist of req.body.addedChecklists){
+        promise = await Task.insertChecklists(req.body.info.task_num, checklist.content, false);  
 
         if(promise.err){
             res.status(500).send({
@@ -370,7 +411,6 @@ exports.modifyTask = async (req, res) => {
 }
 
 exports.checklistCheck = async (req, res) => {
-    console.log("taskNum, checklistNum: " + req.params.taskNum, req.params.checklistNum);
     var promise = await Task.getChecklistCompleted(req.params.taskNum, req.params.checklistNum);
 
     if(promise.err){
@@ -382,10 +422,9 @@ exports.checklistCheck = async (req, res) => {
 
     var completed = promise.data; 
 
-    console.log("checklistCheck completed: " + completed);
 
-    if(completed){
-        promise = await Task.updateChecklistCompleted(req.params.taskNum, req.params.checklistNum, false);
+    if(completed == true){
+        promise = await Task.updateChecklistCompleted(req.params.checklistNum, false);
 
         if(promise.err){
             res.status(500).send({
@@ -447,7 +486,7 @@ exports.getDetailTasks = async (req, res) => {
         }
     }
 
-    const promise2 = await Task.getChecklistsbyTaskNum(req.params.taskNum);
+    const promise2 = await Task.getChecklists(req.params.taskNum);
 
     if(promise2.err){
         if(promise2.err != "not_found"){

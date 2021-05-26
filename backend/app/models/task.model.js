@@ -234,7 +234,7 @@ Task.getDetailTasksbyTaskNum = (taskNum) => {
     })
 }
 
-Task.getChecklistsbyTaskNum = (taskNum) => {
+Task.getChecklists = (taskNum) => {
     return new Promise(resolve => {
         sql.query(`SELECT dc.detail_task_num, c.content, c.completed
         FROM detail_task AS dt
@@ -256,22 +256,22 @@ Task.getChecklistsbyTaskNum = (taskNum) => {
     })
 }
 
-// Task.getChecklistsbyTaskNum = (taskNum) => {
-//     return new Promise(resolve => {
-//         sql.query(`SELECT * FROM checklist WHERE task_num = ${taskNum}`, (err, res) => {
-//             if(err){
-//                 resolve({err: err, data: null});
-//                 return;
-//             }
-//             if(res.length){
-//                 resolve({err: null, data: res});
-//                 return;
-//             }
+Task.getChecklistsbyTaskNum = (taskNum) => {
+    return new Promise(resolve => {
+        sql.query(`SELECT * FROM checklist WHERE task_num = ${taskNum}`, (err, res) => {
+            if(err){
+                resolve({err: err, data: null});
+                return;
+            }
+            if(res.length){
+                resolve({err: null, data: res});
+                return;
+            }
 
-//             resolve({err: "not_found", data: res})
-//         })
-//     })
-// }
+            resolve({err: "not_found", data: res})
+        })
+    })
+}
 
 Task.getChecklistCompleted = (taskNum, checklistNum) => {
     return new Promise(resolve => {
@@ -347,10 +347,52 @@ Task.deleteDetailTasksbyTaskNum = (taskNum) => {
     })
 }
 
-Task.deleteChecklists = (taskNum) => {
+Task.deleteChecklistsbyTaskNum = (taskNum) => {
     return new Promise(resolve => {
         sql.query(`DELETE FROM checklist
         WHERE task_num = '${taskNum}'`,  (err) => {
+            if(err){
+                resolve({err: err});
+                return;
+            }
+
+            resolve({err: null});
+        });
+    })
+}
+
+Task.deleteDetailTaskChecklistsbyTaskNum = (taskNum) => {
+    return new Promise(resolve => {
+        sql.query(`DELETE FROM detailtask_checklist
+        WHERE task_num = '${taskNum}'`,  (err) => {
+            if(err){
+                resolve({err: err});
+                return;
+            }
+
+            resolve({err: null});
+        });
+    })
+}
+
+Task.deleteChecklists = (checklistNum) => {
+    return new Promise(resolve => {
+        sql.query(`DELETE FROM checklist
+        WHERE checklist_num = '${checklistNum}'`,  (err) => {
+            if(err){
+                resolve({err: err});
+                return;
+            }
+
+            resolve({err: null});
+        });
+    })
+}
+
+Task.deleteDetailTaskChecklists = (checklistNum) => {
+    return new Promise(resolve => {
+        sql.query(`DELETE FROM detailtask_checklist
+        WHERE checklist_num = '${checklistNum}'`,  (err) => {
             if(err){
                 resolve({err: err});
                 return;
@@ -438,11 +480,28 @@ Task.updateTaskWorker = (taskNum, userNum, personalRole) => {
     })
 }
 
-Task.updateChecklistCompleted = (taskNum, checklistNum, completed) => {
+Task.updateChecklistCompleted = (checklistNum, completed) => {
     return new Promise(resolve => {
         sql.query(`UPDATE checklist
         SET completed = ${completed}
-        WHERE task_num = ${taskNum} AND checklist_num = ${checklistNum}`, (err) => {
+        WHERE checklist_num = ${checklistNum}`, (err) => {
+            if(err){
+                console.log(err)
+                resolve({err: err});
+                return;
+            }
+
+            resolve({err: null});
+            return;
+        })
+    })
+}
+
+Task.updateChecklists = (checklistNum, content) => {
+    return new Promise(resolve => {
+        sql.query(`UPDATE checklist
+        SET content = '${content}'
+        WHERE checklist_num = ${checklistNum}`, (err) => {
             if(err){
                 console.log(err)
                 resolve({err: err});
