@@ -24,7 +24,10 @@ module.exports = app => {
 
     app.get("/tasks/info/:taskNum", task.getTaskInfo);
 
+    app.get("/tasks/:taskNum/detailTasks", task.getDetailTasks);
+
     app.put("/tasks/:taskNum/checklists/:checklistNum", task.checklistCheck);
 
     app.get("/tasks/:taskNum/checklists/complete", task.allChecklistIsDone);
+
 }

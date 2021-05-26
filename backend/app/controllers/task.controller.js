@@ -409,7 +409,6 @@ exports.checklistCheck = async (req, res) => {
 }
 
 exports.allChecklistIsDone = async (req, res) => {
-    console.log("저것")
     var promise = await Task.getChecklistsbyTaskNum(req.params.taskNum);
 
     if(promise.err){
@@ -434,4 +433,30 @@ exports.allChecklistIsDone = async (req, res) => {
     }
 
     res.send({result: true});
+}
+
+exports.getDetailTasks = async (req, res) => {
+    const promise1 = await Task.getDetailTasksbyTaskNum(req.params.taskNum);
+
+    if(promise1.err){
+        if(promise1.err != "not_found"){
+            res.status(500).send({
+                message: `Error retrieving Worker with task_num ${req.params.taskNum}`
+            });
+            return; 
+        }
+    }
+
+    const promise2 = await Task.getChecklistsbyTaskNum(req.params.taskNum);
+
+    if(promise2.err){
+        if(promise2.err != "not_found"){
+            res.status(500).send({
+                message: `Error retrieving Worker with task_num ${req.params.taskNum}`
+            });
+            return; 
+        }
+    }
+
+    res.send({detailTasks: promise1.data, checklists: promise2.data});
 }

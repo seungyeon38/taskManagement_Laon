@@ -46,20 +46,28 @@ exports.addDetailTask = async (req, res) => {
 };
 
 exports.getDetailTask = async (req, res) => {
-    const promise = await DetailTask.getDetailTaskbyNum(req.params.detailTaskNum);
+    const promise1 = await DetailTask.getDetailTaskbyNum(req.params.detailTaskNum);
 
-    if(promise.err){
-        console.log("err: " + promise.err);
+    if(promise1.err){
+        console.log("err: " + promise1.err);
         res.status(500).send({
             message: `Error retrieving DetailTask with detail_task_num ${req.params.detailTaskNum}`
         });
     }
 
-    res.send({detailTask: promise.data});
+    const promise2 = await DetailTask.getChecklistbyNum(req.params.detailTaskNum);
+
+    if(promise2.err){
+        console.log("err: " + promise2.err);
+        res.status(500).send({
+            message: `Error retrieving DetailTask with detail_task_num ${req.params.detailTaskNum}`
+        });
+    }
+
+    res.send({detailTask: promise1.data, checklists: promise2.data});
 }
 
 exports.modifyDetailTask = async (req, res) => {
-    console.log("modifyDetailTask req.body: " + JSON.stringify(req.body));
     const promise = await DetailTask.updateDetailTask(req.params.detailTaskNum, req.body.detail_task_name, req.body.content, req.body.update_date);
     
     if(promise.err){
@@ -108,8 +116,7 @@ exports.getDetailTasksbyTaskNum = async (req, res) => {
         }
     }
 
-
     // id, name, email, profile_img
-
+    
     res.send({detailTasks: promise1.data, checklists: promise2.data});
 }
