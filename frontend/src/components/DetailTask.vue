@@ -21,10 +21,11 @@
         <!-- <div style="text-align: right; font-size: 0.9em; color: gray;">
             {{report_date}}
         </div> -->
+        <div style="height:10px;"></div>
         <div style="display: flex; justify-content: space-between; font-size: 0.9em; color: gray;">
             <div>
                 <span v-for="checklist in checklists" :key="checklist">
-                    <span style="border: 1px solid black;">{{checklist}}</span>
+                    <span style="background-color: #f4f7fa; border: 1px solid rgb(192, 196, 204); border-radius: 4px; padding:0px 10px; margin-right: 10px;">{{checklist}}</span>
                 </span>
             </div>
             <div>{{report_date}}</div>

@@ -106,7 +106,8 @@
     }
     
     .el-aside {
-        background-color: #f7fafd; 
+        /* background-color: #f7fafd;  */
+        background-color: #f4f7fa; 
         text-align: left; 
         padding: 30px; 
         padding-top: 60px;
