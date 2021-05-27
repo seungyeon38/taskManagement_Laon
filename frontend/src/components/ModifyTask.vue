@@ -16,8 +16,10 @@
                     <div>
                         <el-form-item label="업무 체크리스트" for="checklists">
                             <div>
-                                <el-button type="info" size="small" round @click.native="addChecklist" style="margin-bottom: 10px;">항목 추가</el-button>
+                                <el-button type="info" size="small" round @click.native="addChecklist">항목 추가</el-button>
+                                <!-- <span style="font-size: 12px;">※ 항목을 삭제 시에 이전에 등록한 세부업무의 체크리스트에서 같이 삭제됩니다.</span> -->
                             </div>
+                            <div style="font-size: 12px; color: #ddad94;">※ 체크리스트 항목을 삭제 시, 이전에 등록한 세부업무의 체크리스트에서도 삭제됩니다.</div>
                             <!-- <div v-for="checklist in checklists" :key="checklist.checklist_num" style="margin-bottom: 5px;">
                                 <el-input v-model="checklist.content" type="text" name="checklists" placeholder="항목을 입력해주세요." maxlength= "20" style="width: 250px; margin-right: 15px;" show-word-limit required/> 
                                 <el-button class="btn" icon="el-icon-close" size="medium" circle @click.native="deleteChecklist(checklist)"></el-button>
@@ -28,8 +30,6 @@
                             </div>
                             <div v-for="checklist in completedChecklists" :key="checklist.checklist_num" style="margin-bottom: 5px;">
                                 <el-input v-model="checklist.content" type="text" name="completedChecklists" style="width: 250px; margin-right: 15px;" disabled/> 
-                            </div>
-                            <div>
                             </div>
                         </el-form-item>
                     </div>
@@ -433,7 +433,6 @@ export default {
         deleteChecklist(i){
             console.log("before delete checklists: " + JSON.stringify(this.checklists));
             console.log("before delete checklists.length: " + JSON.stringify(this.checklists.length));
-            // console.log("this.checklists.indexOf(checklist): " + JSON.stringify(this.checklists.indexOf(checklist)));
             this.checklists.splice(i, 1);
             console.log("after delete checklists: " + JSON.stringify(this.checklists));
             console.log("after delete checklists.length: " + JSON.stringify(this.checklists.length));
@@ -512,6 +511,7 @@ export default {
 
     .labelColor:checked{
         border-color: #606266;
+        /* color: #ddad94; */
     }
 
     .labelColor:hover{

@@ -97,17 +97,23 @@
                 <div class="detail_info" style="margin-bottom: 50px;">{{taskInfo.end_date}}</div>
             </div>
             <div class="label_title">업무 내용</div>
-            <div class="border">
+            <!-- <div class="border"> -->
                 <div v-if="taskInfo.explanation" class="detail_info" style="padding: 10px;">{{taskInfo.explanation}}</div>
                 <div v-else style="padding: 10px;">(업무 내용이 없습니다.)</div>
-            </div>
+            <!-- </div> -->
             <div style="margin-top: 40px;"></div>
             <div v-if="checklists.length">
                 <div class="label_title">업무 체크리스트</div>
-                <div v-if="manager.manager === userNum && taskInfo.completed == 0 && taskClosed == 0" class="border detail_info" style="padding: 10px 0px">
+                <div v-if="manager.manager === userNum && taskInfo.completed == 0 && taskClosed == 0" class="border detail_info" style="padding: 10px 0px;">
                     <div v-for="checklist in checklists" :key="checklist.checklist_num" id="checklists" style="padding: 0px 10px;">
-                        <el-checkbox v-if="checklist.completed == false" :label="checklist.content" @change="checklistCheck(checklist.checklist_num)"></el-checkbox>
-                        <el-checkbox v-else :label="checklist.content" @change="checklistCheck(checklist.checklist_num)" checked></el-checkbox>
+                        <div v-if="checklist.completed == false">
+                            <input type="checkbox" name="checklists" :label="checklist.content" @change="checklistCheck(checklist.checklist_num)" style="margin-right: 10px;"><label>{{checklist.content}}</label>
+                        </div>
+                        <div v-else>
+                            <input type="checkbox" name="checklists" :label="checklist.content" @change="checklistCheck(checklist.checklist_num)" style="margin-right: 10px;" checked><label>{{checklist.content}}</label>
+                        </div>
+                        <!-- <el-checkbox v-if="checklist.completed == false" :label="checklist.content" @change="checklistCheck(checklist.checklist_num)"></el-checkbox>
+                        <el-checkbox v-else :label="checklist.content" @change="checklistCheck(checklist.checklist_num)" checked></el-checkbox> -->
                     </div>
                 </div>
                 <div v-else class="border detail_info" style="padding: 10px 0px">
@@ -119,7 +125,6 @@
                     <!-- <li v-for="checklist in checklists" :key="checklist.checklist_num" id="checklists" style="padding: 0px 10px">{{checklist.content}}</li> -->
                 </div>
             </div>
-
             <div style="margin-top: 40px;"></div>
             <div class="label_title">관리자</div>
             <div style="margin-left: 10px; margin-top: 30px;">
@@ -192,10 +197,10 @@ export default {
             }
             else{
                 this.$axios({
-                    url: 'http://localhost:3000/detailTasks',
+                    url: `http://localhost:3000/tasks/${this.taskNum}/detailTasks`,
                     method: 'post',
                     data: {
-                        task_num: this.taskNum,
+                        // task_num: this.taskNum,
                         detail_task_name: this.form.detailTask_name,
                         content: this.form.detailTask_content,
                         report_date: this.$moment().format('YYYY-MM-DDTHH:mm'),
@@ -231,7 +236,7 @@ export default {
             this.detailTaskNumtoModify = detailTaskNum;
 
             this.$axios({
-                url: `http://localhost:3000/detailTasks/${detailTaskNum}`,
+                url: `http://localhost:3000/tasks/${this.taskNum}/detailTasks/${detailTaskNum}`,
                 method: 'get',
                 withCredentials: true,
                 headers: {
@@ -255,13 +260,13 @@ export default {
         },
         modifyDetailTask(){
             this.$axios({
-                url: `http://localhost:3000/detailTasks/${this.detailTaskNumtoModify}`,
+                url: `http://localhost:3000/tasks/${this.taskNum}/detailTasks/${this.detailTaskNumtoModify}`,
                 method: 'put',
                 data: {
                     detail_task_name: this.form.detailTask_name,
                     content: this.form.detailTask_content,
                     update_date: this.$moment().format('YYYY-MM-DDTHH:mm'),
-                    detail_task_checklist: this.form.detailTask_checklists
+                    detailTask_checklists: this.form.detailTask_checklists
                 },
                 withCredentials: true,
                 headers: {
@@ -280,7 +285,7 @@ export default {
         },
         deleteDetailTask(detailTaskNum){
             this.$axios({
-                url: `http://localhost:3000/detailTasks/${detailTaskNum}`,
+                url: `http://localhost:3000/tasks/${this.taskNum}/detailTasks/${detailTaskNum}`,
                 method: 'delete',
                 withCredentials: true,
                 headers: {
@@ -297,6 +302,7 @@ export default {
             })      
         },
         checklistCheck(checklistNum){
+            console.log("checklistCheck " + checklistNum)
             this.$axios({
                 url: `http://localhost:3000/tasks/${this.taskNum}/checklists/${checklistNum}`,
                 method: 'put',
@@ -375,8 +381,8 @@ export default {
             // "info": task_num, task_name, explanation, start_date, end_date, register_date, completed_date, label_color, completed
             // "workers": user_num, personal_role, name, id, email, profile_img
             
-
-            // "checklists":[{"detail_task_num":5,"content":"체크리스트 항목2"}
+            // console.log("res.data.checklists: " + JSON.stringify(res.data.checklists));
+            // "checklists": [{"detail_task_num":2,"content":"항목1","completed":"1"},{"detail_task_num":1,"content":"항목2","completed":"0"},{"detail_task_num":2,"content":"항목2","completed":"0"}]
             for(var i=0; i< res.data.detailTasks.length; i++){
                 res.data.detailTasks[i].checklists = [];
                 for(var j=0; j< res.data.checklists.length; j++){
@@ -498,7 +504,7 @@ hr:after {
   margin: 0 0.4em;
 }
 
-.el-checkbox:hover {
+/* .el-checkbox:hover {
     border-color: #cfcfcf !important; 
     background-color: #fafafa !important;
     color: #646464 !important; 
@@ -508,17 +514,32 @@ hr:after {
     border-color: #cfcfcf !important; 
     background-color: #f5f5f5 !important;
     color: #646464 !important; 
-}
+} */
 
-input[type=checkbox]:checked{
-  text-decoration: line-through;
+input[type=checkbox]:checked + label{
+    text-decoration: line-through;
 }
 
 #checklists:not(:last-child) {
     margin-bottom: 10px;
 }
 
+/* 
+.el-checkbox__label {
+    font-size: 20px !important;
+}
+
+.el-checkbox__input.is-checked {
+    color: black !important;
+} */
+
 /* span.el-checkbox__input.is-checked{
     color: black !important;
 } */
+
+/* .el-checkbox__input.is-checked .el-checkbox__inner, .el-checkbox__input.is-indeterminate .el-checkbox__inner {
+    background-color: red !important;
+    border-color: red !important;
+} */
+
 </style>

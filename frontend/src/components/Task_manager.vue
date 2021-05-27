@@ -7,7 +7,7 @@
                     </div>
                     <button type="button" :style="star_style" id="star" class="el-icon-star-off" style="border: none; padding: 0px; background: none; font-size:1.7em;" @click.stop="changeImportance"></button>
                     <el-dropdown size="medium">
-                        <i id="edit_btn" class="el-icon-setting" style="margin-right: 3px; font-size: 1.9em;"></i>
+                        <i id="edit_btn" class="el-icon-setting" style="margin-right: 3px; font-size: 1.9em;" @click.stop></i>
                         <el-dropdown-menu slot="dropdown">
                             <el-dropdown-item icon="el-icon-edit" @click.stop.native="taskModify"> 수정</el-dropdown-item>
                             <el-dropdown-item icon="el-icon-delete" @click.stop.native="taskDelete"> 삭제</el-dropdown-item>

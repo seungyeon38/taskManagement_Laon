@@ -16,7 +16,7 @@ module.exports = app => {
 
     app.put("/tasks", task.modifyTask);
     
-    app.get("/tasks", task.getTasks);
+    app.get("/tasks", task.getTasksofUser);
 
     app.post("/tasks/:taskNum/complete", task.completeTask);
 
@@ -28,6 +28,6 @@ module.exports = app => {
 
     app.put("/tasks/:taskNum/checklists/:checklistNum", task.checklistCheck);
 
-    app.get("/tasks/:taskNum/checklists/complete", task.allChecklistIsDone);
+    app.get("/tasks/:taskNum/checklists/allComplete", task.allChecklistIsDone);
 
 }

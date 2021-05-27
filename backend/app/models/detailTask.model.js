@@ -8,6 +8,7 @@ const DetailTask = function(detailTask){
     this.report_date = detailTask.report_date;
 };
 
+// insert
 DetailTask.insertDetailTask = (detailTask) => {
     return new Promise(resolve => {
         sql.query("INSERT INTO detail_task SET ?", detailTask, (err) => {
@@ -34,6 +35,7 @@ DetailTask.insertDetailTaskChecklist = (taskNum, detailTaskNum, checklistNum) =>
     });
 }
 
+// get
 DetailTask.getDetailTaskbyNum = (detailTaskNum) => {
     return new Promise(resolve => {
         sql.query(`SELECT * FROM detail_task 
@@ -90,7 +92,7 @@ DetailTask.getRecentDetailTaskNum = (userNum) => {
 //     })
 // }
 
-DetailTask.getChecklistsbyNum = (detailTaskNum) => {
+DetailTask.getChecklistNumsbyNum = (detailTaskNum) => {
     return new Promise(resolve => {
         sql.query(`SELECT checklist_num FROM detailtask_checklist
         WHERE detail_task_num = ${detailTaskNum}`, (err, res) => {
@@ -108,6 +110,7 @@ DetailTask.getChecklistsbyNum = (detailTaskNum) => {
     }) 
 }
 
+// update
 DetailTask.updateDetailTask = (detailTaskNum, detailTaskName, content, updateDate) => {
     return new Promise(resolve => {
         sql.query(`UPDATE detail_task 
@@ -125,6 +128,7 @@ DetailTask.updateDetailTask = (detailTaskNum, detailTaskName, content, updateDat
     });
 }
 
+// delete
 DetailTask.deleteDetailTask = (detailTaskNum) => {
     return new Promise(resolve => {
         sql.query(`DELETE FROM detail_task 

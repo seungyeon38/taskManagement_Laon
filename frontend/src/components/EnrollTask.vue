@@ -38,7 +38,7 @@
                                 </tr>
                                 <tr>
                                     <td>
-                                        <input v-model="start_date" @change="dateChenge" type="datetime-local" placeholder="업무 시작일" style="margin-right: 10px;" required/>
+                                        <input v-model="start_date" @change="dateChange" type="datetime-local" placeholder="업무 시작일" style="margin-right: 10px;" required/>
                                     </td>
                                     <td>
                                         <input v-model="end_date" type="datetime-local" placeholder="업무 마감일" :min= "start_date" required/>
@@ -126,7 +126,7 @@
 
                         </el-form-item>
                     </div>
-                    <el-button native-type="submit" class="btn" name="button" style="width: 200px; margin-top: 100px;">
+                    <el-button native-type="submit" class="btn" name="button" style="width: 200px; margin-top: 70px;">
                         등록하기
                     </el-button>
                 </div>
@@ -199,7 +199,7 @@ export default {
         },
     },
     methods: {
-        dateChenge(){
+        dateChange(){
             console.log("start_date: " + this.start_date);
         },
         notManager(element){
@@ -359,7 +359,34 @@ export default {
     .el-form-item{
         text-align: left;
         white-space: nowrap;
-        margin-bottom: 35px;
+        margin-bottom: 25px;
+    }
+
+    input[type="radio"] {
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        appearance: none;
+    }
+
+    .labelColor{
+        border: 1px solid #a8a8a8;
+        width: 33px;
+        height: 33px;
+        border-radius: 50%;
+        margin: 0px 7px;
+        vertical-align: middle;
+    }
+
+    .labelColor:focus{
+        border-color: #606266 !important;
+    }
+
+    .labelColor:checked{
+        border-color: #606266;
+    }
+
+    .labelColor:hover{
+        opacity: 0.7;
     }
 
     input[type="datetime-local"]{
@@ -390,44 +417,17 @@ export default {
         font: 400 13.3333px Arial;
     }
 
-    input[type="radio"] {
-        -webkit-appearance: none;
-        -moz-appearance: none;
-        appearance: none;
-    }
-
-    .labelColor{
-        border: 1px solid #a8a8a8;
-        width: 33px;
-        height: 33px;
-        border-radius: 50%;
-        margin: 0px 7px;
-        vertical-align: middle;
-    }
-
-    .labelColor:focus{
-        border-color: #606266 !important;
-    }
-
-    .labelColor:checked{
-        border-color: #606266;
-    }
-
-    .labelColor:hover{
-        opacity: 0.7;
-    }
-
     input[type="datetime-local"]:disabled {
         background: #c2c2c2;
+    }
+
+    input[type="datetime-local" i]{
+        font-family: inherit !important;
     }
 
     .el-input__inner{
         padding-right: 5px;
     }
-
-    input[type="datetime-local" i]{
-         font-family: inherit !important;
-     }
 
     #content{
         border: 1px solid #DCDFE6;

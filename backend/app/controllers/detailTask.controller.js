@@ -3,7 +3,7 @@ const DetailTask = require("../models/detailTask.model.js");
 
 exports.addDetailTask = async (req, res) => {
     const detailTask = new DetailTask({
-        task_num: req.body.task_num,
+        task_num: req.params.taskNum,
         worker: req.user.user_num,
         detail_task_name: req.body.detail_task_name,
         content: req.body.content,
@@ -15,7 +15,7 @@ exports.addDetailTask = async (req, res) => {
     if(promise.err){
         console.log("err: " + promise.err);
         res.status(500).send({
-            message: `Error retrieving DetailTask with task_num ${req.body.task_num}`
+            message: `Error retrieving DetailTask with task_num ${req.params.taskNum}`
         });
     }
 
@@ -24,26 +24,26 @@ exports.addDetailTask = async (req, res) => {
     if(promise.err){
         console.log("err: " + promise.err);
         res.status(500).send({
-            message: `Error retrieving DetailTask with task_num ${req.body.task_num}`
+            message: `Error retrieving DetailTask with task_num ${req.params.taskNum}`
         });
     }
 
     const detail_task_num = promise.data;
 
 
-    for(var i=0; i<req.body.detailTask_checklists.length; i++){
-        promise = await DetailTask.insertDetailTaskChecklist(req.body.task_num, detail_task_num, req.body.detailTask_checklists[i]);
+    for(let detailTask_checklist of req.body.detailTask_checklists){
+        promise = await DetailTask.insertDetailTaskChecklist(req.params.taskNum, detail_task_num, detailTask_checklist);
 
         if(promise.err){
             console.log("err: " + promise.err);
             res.status(500).send({
-                message: `Error retrieving DetailTask with task_num ${req.body.task_num}`
+                message: `Error retrieving DetailTask with task_num ${req.params.taskNum}`
             });
         }
     }
 
     res.send({result: true});
-};
+}
 
 exports.getDetailTask = async (req, res) => {
     const promise1 = await DetailTask.getDetailTaskbyNum(req.params.detailTaskNum);
@@ -55,7 +55,7 @@ exports.getDetailTask = async (req, res) => {
         });
     }
 
-    const promise2 = await DetailTask.getChecklistsbyNum(req.params.detailTaskNum);
+    const promise2 = await DetailTask.getChecklistNumsbyNum(req.params.detailTaskNum);
 
     if(promise2.err){
         if(promise2.err != "not_found"){
@@ -79,17 +79,29 @@ exports.modifyDetailTask = async (req, res) => {
         });
     }
 
+    promise = await DetailTask.deleteDetailTaskChecklists(req.params.detailTaskNum)
 
-
-    promise = await DetailTask.updateDetailTaskChecklist(req.params.detailTaskNum, );
-    
     if(promise.err){
         console.log("err: " + promise.err);
         res.status(500).send({
             message: `Error retrieving DetailTask with detail_task_num ${req.params.detailTaskNum}`
         });
     }
-    
+
+    console.log("req.body.detailTask_checklists: " + JSON.stringify(req.body.detailTask_checklists))
+
+    for(let detailTask_checklist of req.body.detailTask_checklists){
+        promise = await DetailTask.insertDetailTaskChecklist(req.params.taskNum, req.params.detailTaskNum, detailTask_checklist);
+
+        if(promise.err){
+            console.log("err: " + promise.err);
+            res.status(500).send({
+                message: `Error retrieving DetailTask with task_num ${req.params.taskNum}`
+            });
+        }
+    }
+
+
     res.send({result: true});
 }
 

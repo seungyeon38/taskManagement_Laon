@@ -16,7 +16,6 @@ const Task = function(task){
     this.update_date = task.update_date;
 };
 
-
 // insert
 Task.insertTask = (newTask) =>{
     return new Promise(resolve => {
@@ -95,7 +94,7 @@ Task.getTasksofWorkersbyUserNum = (userNum) => {
     })
 }
 
-Task.getTasksofManagerbyUserId = (userNum) => {
+Task.getTasksofManagerbyUserNum = (userNum) => {
     return new Promise(resolve => {
         sql.query(`SELECT t.task_num, t.task_name, t.explanation, t.start_date, t.end_date, t.manager, tw.importance, t.completed, t.registered_date, t.completed_date, t.label_color, u.name
         FROM task_worker as tw
@@ -178,7 +177,7 @@ Task.getTaskInfobyTaskNum = (taskNum) => {
     })
 }
 
-Task.getImportance = (taskNum, userNum) => {
+Task.getImportancebyTaskNumUserNum = (taskNum, userNum) => {
     return new Promise(resolve => {
         sql.query(`SELECT importance 
         FROM task_worker 
@@ -236,7 +235,7 @@ Task.getDetailTasksbyTaskNum = (taskNum) => {
 
 Task.getChecklists = (taskNum) => {
     return new Promise(resolve => {
-        sql.query(`SELECT dc.detail_task_num, c.content, c.completed
+        sql.query(`SELECT dc.detail_task_num, c.checklist_num, c.content, c.completed
         FROM detail_task AS dt
         LEFT JOIN detailtask_checklist AS dc 
         ON dt.detail_task_num = dc.detail_task_num

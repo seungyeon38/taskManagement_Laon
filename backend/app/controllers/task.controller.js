@@ -1,7 +1,6 @@
 const Task = require("../models/task.model.js");
 
 
-
 exports.addTask = async (req, res) => {
     if(!req.body){
         res.status(400).send({
@@ -94,7 +93,7 @@ exports.addTask = async (req, res) => {
     }
 
     res.send({result: true});
-};
+}
 
 exports.deleteTask = async (req, res) => {
     var promise;
@@ -141,125 +140,6 @@ exports.deleteTask = async (req, res) => {
     }
 
     res.send({result: true});
-}
-
-exports.getTasks = async (req, res) => {
-    const promise1 = await Task.getTasksofWorkersbyUserNum(req.user.user_num);
-
-    if(promise1.err){
-        if(promise1.err != "not_found"){
-            res.status(500).send({
-                message: `Error retrieving Task with id ${req.user.id}`
-            });
-            return;
-        }
-    }
-
-    const promise2 = await Task.getTasksofManagerbyUserId(req.user.user_num);
-
-    if(promise2.err){
-        if(promise2.err != "not_found"){
-            res.status(500).send({
-                message: `Error retrieving Task with id ${req.user.id}`
-            });
-            return;
-        }
-    }
-
-    res.send({tasks_worker: promise1.data, tasks_manager: promise2.data});
-};
-
-exports.completeTask = async (req, res) => {
-    var promise = await Task.updateComplete(req.params.taskNum, true, req.body.completed_date);
-
-    if(promise.err){
-        res.status(500).send({
-            message: `Error retrieving Task with task_num ${req.params.taskNum}`
-        });
-        return;
-    }
-
-    res.send({result: true});
-}
-
-exports.changeTaskImportance = async (req, res) => {
-    var promise = await Task.getImportance(req.params.taskNum, req.user.user_num);
-
-    if(promise.err){
-        res.status(500).send({
-            message: `Error retrieving Worker with task_num ${req.params.taskNum}`
-        });
-        return; 
-    }
-
-    var importance = promise.data; 
-
-    if(importance){
-        promise = await Task.updateImportance(req.params.taskNum, req.user.user_num, false);
-
-        if(promise.err){
-            res.status(500).send({
-                message: `Error retrieving Task with task_num ${req.params.taskNum}`
-            });
-            return; 
-        }
-    }
-    else{
-        promise = await Task.updateImportance(req.params.taskNum, req.user.user_num, true);
-
-        if(promise.err){
-            res.status(500).send({
-                message: `Error retrieving Task with task_num ${req.params.taskNum}`
-            });
-            return; 
-        }
-    }
-
-    res.send({result: true});
-}
-
-exports.getTaskInfo = async (req, res) => {
-    const promise1 = await Task.getTaskInfobyTaskNum(req.params.taskNum);
-    
-    if(promise1.err){
-        res.status(500).send({
-            message: `Error retrieving Worker with task_num ${req.params.taskNum}`
-        });
-        return; 
-    }
-
-    const promise2 = await Task.getManagerbyTaskNum(req.params.taskNum);
-
-    if(promise2.err){
-        res.status(500).send({
-            message: `Error retrieving Worker with task_num ${req.params.taskNum}`
-        });
-        return; 
-    }
-
-    const promise3 = await Task.getWorkersbyTaskNum(req.params.taskNum);
-
-    if(promise3.err){
-        if(promise3.err != "not_found"){
-            res.status(500).send({
-                message: `Error retrieving Worker with task_num ${req.params.taskNum}`
-            });
-            return; 
-        }
-    }
-
-    const promise4 = await Task.getChecklistsbyTaskNum(req.params.taskNum);
-
-    if(promise4.err){
-        if(promise4.err != "not_found"){
-            res.status(500).send({
-                message: `Error retrieving Worker with task_num ${req.params.taskNum}`
-            });
-            return; 
-        }
-    }
-
-    res.send({info: promise1.data, manager: promise2.data, workers: promise3.data, checklists: promise4.data});
 }
 
 exports.modifyTask = async (req, res) => {
@@ -360,7 +240,6 @@ exports.modifyTask = async (req, res) => {
     }
 
     // 이전에 등록했던 체크리스트를 삭제할 수 있고, 삭제된 체크리스트는 이전에 등록했던 세부업무에서 체크를 한 경우에도 그냥 삭제된다.
-
     for(let checklist of req.body.deletedChecklists){
         promise = await Task.deleteChecklists(checklist.checklist_num);
 
@@ -410,6 +289,151 @@ exports.modifyTask = async (req, res) => {
     res.send({result: true});
 }
 
+exports.completeTask = async (req, res) => {
+    var promise = await Task.updateComplete(req.params.taskNum, true, req.body.completed_date);
+
+    if(promise.err){
+        res.status(500).send({
+            message: `Error retrieving Task with task_num ${req.params.taskNum}`
+        });
+        return;
+    }
+
+    res.send({result: true});
+}
+
+exports.changeTaskImportance = async (req, res) => {
+    var promise = await Task.getImportancebyTaskNumUserNum(req.params.taskNum, req.user.user_num);
+
+    if(promise.err){
+        res.status(500).send({
+            message: `Error retrieving Worker with task_num ${req.params.taskNum}`
+        });
+        return; 
+    }
+
+    var importance = promise.data; 
+
+    if(importance){
+        promise = await Task.updateImportance(req.params.taskNum, req.user.user_num, false);
+
+        if(promise.err){
+            res.status(500).send({
+                message: `Error retrieving Task with task_num ${req.params.taskNum}`
+            });
+            return; 
+        }
+    }
+    else{
+        promise = await Task.updateImportance(req.params.taskNum, req.user.user_num, true);
+
+        if(promise.err){
+            res.status(500).send({
+                message: `Error retrieving Task with task_num ${req.params.taskNum}`
+            });
+            return; 
+        }
+    }
+
+    res.send({result: true});
+}
+
+exports.getTasksofUser = async (req, res) => {
+    const promise1 = await Task.getTasksofWorkersbyUserNum(req.user.user_num);
+
+    if(promise1.err){
+        if(promise1.err != "not_found"){
+            res.status(500).send({
+                message: `Error retrieving Task with id ${req.user.id}`
+            });
+            return;
+        }
+    }
+
+    const promise2 = await Task.getTasksofManagerbyUserNum(req.user.user_num);
+
+    if(promise2.err){
+        if(promise2.err != "not_found"){
+            res.status(500).send({
+                message: `Error retrieving Task with id ${req.user.id}`
+            });
+            return;
+        }
+    }
+
+    res.send({tasks_worker: promise1.data, tasks_manager: promise2.data});
+}
+
+exports.getTaskInfo = async (req, res) => {
+    const promise1 = await Task.getTaskInfobyTaskNum(req.params.taskNum);
+    
+    if(promise1.err){
+        res.status(500).send({
+            message: `Error retrieving Worker with task_num ${req.params.taskNum}`
+        });
+        return; 
+    }
+
+    const promise2 = await Task.getManagerbyTaskNum(req.params.taskNum);
+
+    if(promise2.err){
+        res.status(500).send({
+            message: `Error retrieving Worker with task_num ${req.params.taskNum}`
+        });
+        return; 
+    }
+
+    const promise3 = await Task.getWorkersbyTaskNum(req.params.taskNum);
+
+    if(promise3.err){
+        if(promise3.err != "not_found"){
+            res.status(500).send({
+                message: `Error retrieving Worker with task_num ${req.params.taskNum}`
+            });
+            return; 
+        }
+    }
+
+    const promise4 = await Task.getChecklistsbyTaskNum(req.params.taskNum);
+
+    if(promise4.err){
+        if(promise4.err != "not_found"){
+            res.status(500).send({
+                message: `Error retrieving Worker with task_num ${req.params.taskNum}`
+            });
+            return; 
+        }
+    }
+
+    res.send({info: promise1.data, manager: promise2.data, workers: promise3.data, checklists: promise4.data});
+}
+
+exports.getDetailTasks = async (req, res) => {
+    const promise1 = await Task.getDetailTasksbyTaskNum(req.params.taskNum);
+
+    if(promise1.err){
+        if(promise1.err != "not_found"){
+            res.status(500).send({
+                message: `Error retrieving Worker with task_num ${req.params.taskNum}`
+            });
+            return; 
+        }
+    }
+
+    const promise2 = await Task.getChecklists(req.params.taskNum);
+
+    if(promise2.err){
+        if(promise2.err != "not_found"){
+            res.status(500).send({
+                message: `Error retrieving Worker with task_num ${req.params.taskNum}`
+            });
+            return; 
+        }
+    }
+
+    res.send({detailTasks: promise1.data, checklists: promise2.data});
+}
+
 exports.checklistCheck = async (req, res) => {
     var promise = await Task.getChecklistCompleted(req.params.taskNum, req.params.checklistNum);
 
@@ -422,6 +446,7 @@ exports.checklistCheck = async (req, res) => {
 
     var completed = promise.data; 
 
+    console.log("completed " + completed);
 
     if(completed == true){
         promise = await Task.updateChecklistCompleted(req.params.checklistNum, false);
@@ -434,7 +459,7 @@ exports.checklistCheck = async (req, res) => {
         }
     }
     else{
-        promise = await Task.updateChecklistCompleted(req.params.taskNum, req.params.checklistNum, true);
+        promise = await Task.updateChecklistCompleted(req.params.checklistNum, true);
 
         if(promise.err){
             res.status(500).send({
@@ -474,28 +499,3 @@ exports.allChecklistIsDone = async (req, res) => {
     res.send({result: true});
 }
 
-exports.getDetailTasks = async (req, res) => {
-    const promise1 = await Task.getDetailTasksbyTaskNum(req.params.taskNum);
-
-    if(promise1.err){
-        if(promise1.err != "not_found"){
-            res.status(500).send({
-                message: `Error retrieving Worker with task_num ${req.params.taskNum}`
-            });
-            return; 
-        }
-    }
-
-    const promise2 = await Task.getChecklists(req.params.taskNum);
-
-    if(promise2.err){
-        if(promise2.err != "not_found"){
-            res.status(500).send({
-                message: `Error retrieving Worker with task_num ${req.params.taskNum}`
-            });
-            return; 
-        }
-    }
-
-    res.send({detailTasks: promise1.data, checklists: promise2.data});
-}

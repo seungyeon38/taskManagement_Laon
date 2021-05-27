@@ -69,7 +69,7 @@ export default{
         background-color: white !important;
     }
 
-    #star:hover{
+    /* #star:hover{
         color: #646464 !important; 
-    }
+    } */
 </style>

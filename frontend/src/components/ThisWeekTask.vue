@@ -36,8 +36,10 @@ export default{
     #simple_card{
         width: 300px;
         height: 90px;
-        border: 1px solid #585858;
+        border: 1px solid #e7e7e7;
+        /* border-bottom: 1px solid #a8a8a8; */
         border-spacing: 0px; 
         background-color: white;
+        margin-bottom: 2px;
     }
 </style>

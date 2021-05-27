@@ -132,7 +132,6 @@ html { overflow-y:scroll; }
     background-color: #acb2bd;
 }
 
-
 /* .el-container{
   justify-content: center;
 } */
