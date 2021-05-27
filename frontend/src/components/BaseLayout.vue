@@ -1,13 +1,14 @@
 <template>
     <el-container>
         <el-header style="height: 60px; line-height: 60px; display:flex; align-items: center; justify-content: flex-end;">
-            <span id="logOutRouter" @click="logOut" style="color: #333; text-decoration: none; cursor: default">Logout</span>
-            <span class="text-overflow" style="margin-left: 30px; max-width: 100px">{{user.name}}</span><span style=" margin-right: 20px;"> 님</span>
+            <button type="button" id="home" class="el-icon-s-home" style="color: rgb(94, 94, 94); border: none; padding: 0px; background: none; font-size:1.7em; margin-right: 5px;" @click="goHome"></button>
+            <span style="margin-right: 20px;"></span>
+            <span id="logOutRouter" @click="logOut" style="color: rgb(94, 94, 94); text-decoration: none; cursor: default">Logout</span>
+            <span class="text-overflow" style="margin-left: 30px; max-width: 100px">{{user.name}}</span><span style="margin-right: 20px;"> 님</span>
             <el-avatar v-if="user.profile_img" :size="50" style="border: 1px solid #a4a7ad">
                 <img :src="require('../../../backend/uploads/' + user.profile_img)" />
             </el-avatar>
             <el-avatar v-else icon="el-icon-user-solid" :size="50" style="font-size: 2rem; border: 1px solid #a4a7ad;"></el-avatar>
-            
         </el-header>
         <el-container style="min-height: 1000px;">
             <el-main>
@@ -69,6 +70,9 @@
                 }).catch(err => {
                     alert("로그아웃 실패")
                 });
+            },
+            goHome(){
+                this.$router.push({name: 'main'})
             }
         }
     };
@@ -76,12 +80,13 @@
 
 <style scoped>
     #logOutRouter:hover{
-        color: rgb(85, 85, 85) !important;
+        color: rgb(122, 122, 122) !important;
+        text-decoration: underline !important;
     }
-
+/* 
     #logOutRouter:active{
         color: #333 !important;
-    }
+    } */
 
     .el-header {
         background-color: #f0f4fa;
@@ -111,6 +116,10 @@
         text-align: left; 
         padding: 30px; 
         padding-top: 60px;
+        /* color: rgb(94, 94, 94); */
     }
     
+    #home:hover{
+        color: rgb(122, 122, 122) !important;
+    }
 </style>
