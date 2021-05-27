@@ -339,10 +339,10 @@ exports.changeTaskImportance = async (req, res) => {
 }
 
 exports.getTasksofUser = async (req, res) => {
-    const promise1 = await Task.getTasksofWorkersbyUserNum(req.user.user_num);
+    const promise = await Task.getTasksbyUserNum(req.user.user_num);
 
-    if(promise1.err){
-        if(promise1.err != "not_found"){
+    if(promise.err){
+        if(promise.err != "not_found"){
             res.status(500).send({
                 message: `Error retrieving Task with id ${req.user.id}`
             });
@@ -350,18 +350,20 @@ exports.getTasksofUser = async (req, res) => {
         }
     }
 
-    const promise2 = await Task.getTasksofManagerbyUserNum(req.user.user_num);
+    const tasks_worker = [];
+    const tasks_manager = [];
 
-    if(promise2.err){
-        if(promise2.err != "not_found"){
-            res.status(500).send({
-                message: `Error retrieving Task with id ${req.user.id}`
-            });
-            return;
+    for(let task of promise.data){
+        if(task.manager == req.user.user_num){
+            tasks_manager.push(task);
+        }
+        else{
+            tasks_worker.push(task);
         }
     }
 
-    res.send({tasks_worker: promise1.data, tasks_manager: promise2.data});
+
+    res.send({tasks_worker: tasks_worker, tasks_manager: tasks_manager});
 }
 
 exports.getTaskInfo = async (req, res) => {
