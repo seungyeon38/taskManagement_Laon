@@ -5,7 +5,7 @@
                 <tr>
                     <td colspan="2" align="right">
                         <el-button class="enroll-task custom-icon" @click.native="enrollTask" icon="el-icon-plus" type="info"></el-button>
-                        <el-dialog title="업무 완료 확인" :visible.sync="completeDialogVisible" width="30%" style="text-align: left; font-weight: bolder;">
+                        <el-dialog title="업무 완료 확인" :visible.sync="completeDialogVisible" width="40%" style="text-align: left; font-weight: bolder;">
                             <span v-if="allDone">해당 업무('{{completedTaskName}}')를 완료상태로 전환하시겠습니까?</span>
                             <span v-else>아직 체크리스트를 완료하지 않았습니다. 해당 업무('{{completedTaskName}}')를 완료상태로 전환하시겠습니까?</span>
                             <span slot="footer" class="dialog-footer">
@@ -14,7 +14,8 @@
                             </span>
                         </el-dialog>
                         <el-dialog title="업무 삭제" :visible.sync="deleteDialogVisible" width="30%" style="text-align: left; font-weight: bolder;">
-                            <span>해당 업무('{{deleteTaskName}}')를 삭제하시겠습니까?</span>
+                            <div>업무 삭제시, 모든 실무담당자에게서 해당 업무가 삭제됩니다.</div> 
+                            <div>해당 업무('{{deleteTaskName}}')를 삭제하시겠습니까?</div>
                             <span slot="footer" class="dialog-footer">
                                 <el-button @click="deleteDialogVisible = false">Cancel</el-button>
                                 <el-button type="primary" @click.native="deleteConfirm">Confirm</el-button>
@@ -114,13 +115,27 @@
             </table>
         </template>
         <template v-slot:aside>
-            
-            <div class="label_title">이번주 업무</div>
+            <div style="margin-bottom: 10px;">
+                <el-select v-model="taskSelectOption" placeholder="옵션 선택" style="width: 200px;">
+                    <el-option :value="1" :label="'일주일 내 '"></el-option>
+                    <el-option :value="2" :label="'한 달 내'"></el-option>
+                    <el-option :value="3" :label="'직접 설정'"></el-option>
+                </el-select>
+            </div>
+            <div v-if="taskSelectOption == 3">
+                <input v-model="first_date" type="date" @change="setFirstDate" />
+                <input v-model="second_date" type="date" :min="first_date" @change="setSecondDate" />
+            </div>
+            <div style="margin-bottom: 20px;"></div>
+            <!-- <div v-else style="margin-bottom: 30px;">
+                <input v-model="first_date" type="date" disabled/>
+                <input v-model="second_date" type="date" :min= "first_date" disabled/>
+            </div> -->
             <div v-if="tasks_thisWeek.length">
                 <this-week-task v-for="task in tasks_thisWeek" :key="task.task_num" :task_name="task.task_name" :manager="task.name" :start_date="task.start_date" :end_date="task.end_date" :label_color="task.label_color"></this-week-task>
             </div>
             <div v-else class="noTask">
-                (이번주에 완료해야할 업무가 없습니다.) 
+                (해당하는 업무가 없습니다.) 
             </div>
         </template>
 
@@ -156,7 +171,10 @@ export default {
             completeDialogVisible: false,
             completedTaskName: '',
             completedTaskNum: null,
-            allDone: false
+            allDone: false,
+            taskSelectOption: 1,
+            first_date: '',
+            second_date: ''
         }
     },
     components: {
@@ -228,8 +246,6 @@ export default {
             // console.log("taskManagerInProgress_list")
             // console.log(this.taskManagerInProgress_list)
 
-            const weekAfter = this.$moment().add(7, 'days').format()
-
             // for(var i=0; i<this.taskManagerImportant_list.length; i++){
             //     if(this.taskManagerImportant_list[i].end_date < weekAfter){
             //         this.tasks_thisWeek.push(this.taskManagerImportant_list[i]);
@@ -240,6 +256,9 @@ export default {
             //         this.tasks_thisWeek.push(this.taskImportant_list[i]);
             //     }
             // }
+
+            const weekAfter = this.$moment().add(7, 'd').format()
+
             for(var i=0; i<this.taskManagerInProgress_list.length; i++){
                 if(this.taskManagerInProgress_list[i].end_date < weekAfter){
                     this.tasks_thisWeek.push(this.taskManagerInProgress_list[i]);
@@ -277,7 +296,7 @@ export default {
             this.completedTaskNum = taskNum;
 
             this.$axios({
-                url: `http://localhost:3000/tasks/${this.completedTaskNum}/checklists/complete`,
+                url: `http://localhost:3000/tasks/${this.completedTaskNum}/checklists/allComplete`,
                 method: 'get',
                 withCredentials: true,
                 headers: {
@@ -292,7 +311,6 @@ export default {
                 console.log("err: " + err);
             });
             
-            console.log("이것");
             this.completeDialogVisible = true;
         },
         completeConfirm(){
@@ -428,14 +446,120 @@ export default {
                 console.log("err: " + err);
             });  
         },
-
         modifyTask(taskNum){
             this.$router.push({
                 name: 'modifyTask', 
                 params: {taskNum: taskNum}
             })
         },
+        setFirstDate(){
+            console.log("setFirstDate")
+            this.tasks_thisWeek = [];
+            if(this.second_date){
+                for(var i=0; i<this.taskManagerInProgress_list.length; i++){
+                    if(this.first_date <= this.taskManagerInProgress_list[i].start_date && this.taskManagerInProgress_list[i].end_date <= this.second_date){
+                        this.tasks_thisWeek.push(this.taskManagerInProgress_list[i]);
+                    }
+                }
+                for(var i=0; i<this.taskInProgress_list.length; i++){
+                    if(this.first_date <= this.taskInProgress_list[i].start_date && this.taskInProgress_list[i].end_date <= this.second_date){
+                        this.tasks_thisWeek.push(this.taskInProgress_list[i]);
+                    }
+                }
+            }
+
+            else{
+                 for(var i=0; i<this.taskManagerInProgress_list.length; i++){
+                    if(this.first_date <= this.taskManagerInProgress_list[i].start_date){
+                        this.tasks_thisWeek.push(this.taskManagerInProgress_list[i]);
+                    }
+                }
+                for(var i=0; i<this.taskInProgress_list.length; i++){
+                    if(this.first_date <= this.taskInProgress_list[i].start_date){
+                        this.tasks_thisWeek.push(this.taskInProgress_list[i]);
+                    }
+                }
+            }
+
+            this.tasks_thisWeek.sort(this.date_ascending);
+        },
+        setSecondDate(){
+            console.log("setSecondDate")
+            this.tasks_thisWeek = [];
+
+            if(this.first_date){
+                for(var i=0; i<this.taskManagerInProgress_list.length; i++){
+                    if(this.first_date <= this.taskManagerInProgress_list[i].start_date && this.taskManagerInProgress_list[i].end_date <= this.second_date){
+                        this.tasks_thisWeek.push(this.taskManagerInProgress_list[i]);
+                    }
+                }
+                for(var i=0; i<this.taskInProgress_list.length; i++){
+                    if(this.first_date <= this.taskInProgress_list[i].start_date && this.taskInProgress_list[i].end_date <= this.second_date){
+                        this.tasks_thisWeek.push(this.taskInProgress_list[i]);
+                    }
+                }
+            }
+            else{
+                for(var i=0; i<this.taskManagerInProgress_list.length; i++){
+                    if(this.taskManagerInProgress_list[i].end_date <= this.second_date){
+                        this.tasks_thisWeek.push(this.taskManagerInProgress_list[i]);
+                    }
+                }
+                for(var i=0; i<this.taskInProgress_list.length; i++){
+                    if(this.taskInProgress_list[i].end_date <= this.second_date){
+                        this.tasks_thisWeek.push(this.taskInProgress_list[i]);
+                    }
+                }
+            }
+            
+            this.tasks_thisWeek.sort(this.date_ascending);
+        }
     },
+    watch: {
+        taskSelectOption: function(val){
+            console.log("taskSelectOption: " + val);
+            this.tasks_thisWeek = [];
+            this.first_date = '';
+            this.second_date = '';
+
+            if(val == 1){
+                const weekAfter = this.$moment().add(7, 'd').format();
+
+                for(var i=0; i<this.taskManagerInProgress_list.length; i++){
+                    if(this.taskManagerInProgress_list[i].end_date <= weekAfter){
+                        this.tasks_thisWeek.push(this.taskManagerInProgress_list[i]);
+                    }
+                }
+                for(var i=0; i<this.taskInProgress_list.length; i++){
+                    if(this.taskInProgress_list[i].end_date <= weekAfter){
+                        this.tasks_thisWeek.push(this.taskInProgress_list[i]);
+                    }
+                }
+
+                this.tasks_thisWeek.sort(this.date_ascending);
+            }
+            else if(val == 2){
+                const weekAfter = this.$moment().add(1, 'M').format();
+
+                for(var i=0; i<this.taskManagerInProgress_list.length; i++){
+                    if(this.taskManagerInProgress_list[i].end_date <= weekAfter){
+                        this.tasks_thisWeek.push(this.taskManagerInProgress_list[i]);
+                    }
+                }
+                for(var i=0; i<this.taskInProgress_list.length; i++){
+                    if(this.taskInProgress_list[i].end_date <= weekAfter){
+                        this.tasks_thisWeek.push(this.taskInProgress_list[i]);
+                    }
+                }
+
+                this.tasks_thisWeek.sort(this.date_ascending);
+            }
+            else if(val == 3){
+
+
+            }
+        }
+    }
 }
 </script>
 
@@ -498,4 +622,44 @@ hr {
     background-image: linear-gradient(to right, #ccc, #333, #ccc); 
     /* border: 1px solid #a8a8a8; */
 }
+
+input[type="date"]{
+    -webkit-appearance: none;
+    background-color: #FFF;
+    background-image: none;
+    border-radius: 4px;
+    border: 1px solid #DCDFE6;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    color: #606266;
+    display: inline-block;
+    font-size: inherit;
+    height: 40px;
+    line-height: 40px;
+    /* height: 30px;
+    line-height: 30px; */
+    width: 45%;
+    outline: 0;
+    padding: 0 5px;
+    text-rendering: auto;
+    letter-spacing: normal;
+    word-spacing: normal;
+    text-transform: none;
+    text-indent: 0px;
+    text-shadow: none;
+    text-align: start;
+    -webkit-rtl-ordering: logical;
+    cursor: text;
+    margin: 0em;
+    font: 400 13.3333px Arial;
+}
+
+input[type="date"]:disabled {
+    background: #c2c2c2;
+}
+
+input[type="date" i]{
+    font-family: inherit !important;
+}
+
 </style>
