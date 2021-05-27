@@ -9,16 +9,16 @@
                             <span v-if="allDone">해당 업무('{{completedTaskName}}')를 완료상태로 전환하시겠습니까?</span>
                             <span v-else>아직 체크리스트를 완료하지 않았습니다. 해당 업무('{{completedTaskName}}')를 완료상태로 전환하시겠습니까?</span>
                             <span slot="footer" class="dialog-footer">
-                                <el-button @click="completeDialogVisible = false">Cancel</el-button>
-                                <el-button type="primary" @click.native="completeConfirm">Confirm</el-button>
+                                <el-button class="btn" @click="completeDialogVisible = false">취소</el-button>
+                                <el-button class="btn2" type="primary" @click.native="completeConfirm">확인</el-button>
                             </span>
                         </el-dialog>
                         <el-dialog title="업무 삭제" :visible.sync="deleteDialogVisible" width="30%" style="text-align: left; font-weight: bolder;">
                             <div>업무 삭제시, 모든 실무담당자에게서 해당 업무가 삭제됩니다.</div> 
                             <div>해당 업무('{{deleteTaskName}}')를 삭제하시겠습니까?</div>
                             <span slot="footer" class="dialog-footer">
-                                <el-button @click="deleteDialogVisible = false">Cancel</el-button>
-                                <el-button type="primary" @click.native="deleteConfirm">Confirm</el-button>
+                                <el-button class="btn" @click="deleteDialogVisible = false">취소</el-button>
+                                <el-button class="btn2" type="primary" @click.native="deleteConfirm">확인</el-button>
                             </span>
                         </el-dialog>
                     </td>
@@ -27,6 +27,10 @@
                     <td colspan="2" align="left">
                         <div style="height: 20px;"></div>
                         <div class="label">중요 업무</div>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
                         <hr align= "left"/>
                     </td>
                 </tr>
@@ -41,7 +45,7 @@
                     <td align="left">
                         <div class="label">진행 중인 업무</div>
                     </td>
-                    <td align="right" valign="bottom">
+                    <!-- <td align="right" valign="bottom">
                         <el-select v-model="sort" @change.native="sortProgressTask($event)" placeholder="정렬방법" style="width: 200px;">
                             <el-option :value="1">등록일 오름차순</el-option>
                             <el-option :value="2">등록일 내림차순</el-option>
@@ -50,10 +54,10 @@
                             <el-option :value="5">마감일 오름차순</el-option>
                             <el-option :value="6">마감일 오름차순</el-option>
                         </el-select>
-                    </td>
+                    </td> -->
                 </tr>
                 <tr>
-                    <td colspan="2">
+                    <td>
                         <hr align= "left"/>
                     </td>
                 </tr>
@@ -68,17 +72,17 @@
                     <td align="left">
                         <div class="label">마감된 업무</div>
                     </td>
-                    <td align="right" valign="bottom">
+                    <!-- <td align="right" valign="bottom">
                         <el-select v-model="sort" @change.native="sortClosedTask($event)" placeholder="정렬방법" style="width: 200px;">
                             <el-option :value="1">최근 일주일내</el-option>
                             <el-option :value="2">최근 한달내</el-option>
                             <el-option :value="3">완료일 오름차순</el-option>
                             <el-option :value="4">완료일 내림차순</el-option>
                         </el-select>
-                    </td>
+                    </td> -->
                 </tr>
                 <tr>
-                    <td colspan="2">
+                    <td>
                         <hr align= "left"/>
                     </td>
                 </tr>
@@ -92,17 +96,17 @@
                     <td align="left">
                         <div class="label">완료된 업무</div>
                     </td>
-                    <td align="right" valign="bottom">
+                    <!-- <td align="right" valign="bottom">
                         <el-select v-model="sort" @change.native="sortCompletedTask($event)" placeholder="정렬방법" style="width: 200px;">
                             <el-option :value="1">최근 일주일내</el-option>
                             <el-option :value="2">최근 한달내</el-option>
                             <el-option :value="3">완료일 오름차순</el-option>
                             <el-option :value="4">완료일 내림차순</el-option>
                         </el-select>
-                    </td>
+                    </td> -->
                 </tr>
                 <tr>
-                    <td colspan="2">
+                    <td>
                         <hr align= "left"/>
                     </td>
                 </tr>
@@ -131,8 +135,8 @@
                 <input v-model="first_date" type="date" disabled/>
                 <input v-model="second_date" type="date" :min= "first_date" disabled/>
             </div> -->
-            <div v-if="tasks_thisWeek.length">
-                <this-week-task v-for="task in tasks_thisWeek" :key="task.task_num" :task_name="task.task_name" :manager="task.name" :start_date="task.start_date" :end_date="task.end_date" :label_color="task.label_color"></this-week-task>
+            <div v-if="filteredTasks.length">
+                <filtered-task v-for="task in filteredTasks" :key="task.task_num" v-on:clickTask="clickTask" :task_num="task.task_num" :task_name="task.task_name" :manager="task.name" :start_date="task.start_date" :end_date="task.end_date" :label_color="task.label_color"></filtered-task>
             </div>
             <div v-else class="noTask">
                 (해당하는 업무가 없습니다.) 
@@ -148,7 +152,7 @@ import Task from './Task.vue'
 import TaskCompleted from './Task_completed.vue'
 import TaskInProgress from './Task_inProgress.vue'
 import TaskManager from './Task_manager.vue'
-import ThisWeekTask from './ThisWeekTask.vue'
+import FilteredTask from './FilteredTask.vue'
 import BaseLayout from '../components/BaseLayout.vue'
 
 
@@ -161,7 +165,7 @@ export default {
             taskClosed_list: [],            // task_completed(색은 조금더 어둡게 했으면 좋겠음)
             taskInProgress_list: [],        // task_inProgress
             taskManagerInProgress_list: [], // task_manager
-            tasks_thisWeek: [],  // 마감이나 완료되지 않은 것 중에 마감일이 일주일 이내로 남은 업무들
+            filteredTasks: [],     // 마감이나 완료되지 않은 것 중
             sort: '',
             dialogFormVisible: false,
             formLabelWidth: '200px',
@@ -184,8 +188,7 @@ export default {
         TaskInProgress,
         TaskManager,
         BaseLayout,
-        ThisWeekTask
-        
+        FilteredTask
     },
     created(){
         this.$axios({
@@ -216,8 +219,6 @@ export default {
                 }
             };
             for(var i=0; i<res.data.tasks_manager.length; i++){
-                console.log("main res.data.tasks_manager[i]: " + JSON.stringify(res.data.tasks_manager[i]));
-
                 if(res.data.tasks_manager[i].completed == true){
                     this.taskCompleted_list.push(res.data.tasks_manager[i])
                 }
@@ -248,29 +249,16 @@ export default {
 
             // for(var i=0; i<this.taskManagerImportant_list.length; i++){
             //     if(this.taskManagerImportant_list[i].end_date < weekAfter){
-            //         this.tasks_thisWeek.push(this.taskManagerImportant_list[i]);
+            //         this.filteredTasks.push(this.taskManagerImportant_list[i]);
             //     }
             // }
             // for(var i=0; i<this.taskImportant_list.length; i++){
             //     if(this.taskImportant_list[i].end_date < weekAfter){
-            //         this.tasks_thisWeek.push(this.taskImportant_list[i]);
+            //         this.filteredTasks.push(this.taskImportant_list[i]);
             //     }
             // }
 
-            const weekAfter = this.$moment().add(7, 'd').format()
-
-            for(var i=0; i<this.taskManagerInProgress_list.length; i++){
-                if(this.taskManagerInProgress_list[i].end_date < weekAfter){
-                    this.tasks_thisWeek.push(this.taskManagerInProgress_list[i]);
-                }
-            }
-            for(var i=0; i<this.taskInProgress_list.length; i++){
-                if(this.taskInProgress_list[i].end_date < weekAfter){
-                    this.tasks_thisWeek.push(this.taskInProgress_list[i]);
-                }
-            }
-
-            this.tasks_thisWeek.sort(this.date_ascending);
+            this.thisWeekTasks();
 
         }).catch(err => {
             console.log("err: " + err);
@@ -341,64 +329,6 @@ export default {
                 params: {taskNum: taskNum}
             })
         },
-
-        sortProgressTask(event){
-            // <el-option :value="1">등록일 오름차순</el-option>
-            // <el-option :value="2">등록일 내림차순</el-option>
-            // <el-option :value="3">시작일 오름차순</el-option>
-            // <el-option :value="4">시작일 내림차순</el-option>
-            // <el-option :value="5">마감일 오름차순</el-option>
-            // <el-option :value="6">마감일 오름차순</el-option>
-            if(event.target.value == 1){    
-                
-            }
-            else if(event.target.value == 2){
-
-            }
-            else if(event.target.value == 3){
-
-            }
-            else if(event.target.value == 4){
-
-            }
-            else if(event.target.value == 5){
-
-            }
-            else if(event.target.value == 6){
-
-            }
-        },
-        
-        sortClosedTask(event){
-            if(event.target.value == 1){
-
-            }
-            else if(event.target.value == 2){
-
-            }
-            else if(event.target.value == 3){
-
-            }
-            else if(event.target.value == 4){
-
-            }
-        },
-
-        sortCompletedTask(event){
-            if(event.target.value == 1){
-
-            }
-            else if(event.target.value == 2){
-
-            }
-            else if(event.target.value == 3){
-
-            }
-            else if(event.target.value == 4){
-
-            }
-        },
-
         // 진행 중인 것을 중요표시 
         changeImportance(taskNum){
             this.$axios({
@@ -427,7 +357,6 @@ export default {
             this.deleteTaskNum = taskNum;
             this.deleteDialogVisible = true;
         },
-
         deleteConfirm(){
             this.$axios({
                 url: `http://localhost:3000/tasks/${this.deleteTaskNum}`,
@@ -452,18 +381,50 @@ export default {
                 params: {taskNum: taskNum}
             })
         },
+        thisWeekTasks(){
+            const weekAfter = this.$moment().add(7, 'd').format()
+
+            for(var i=0; i<this.taskManagerInProgress_list.length; i++){
+                if(this.taskManagerInProgress_list[i].end_date < weekAfter){
+                    this.filteredTasks.push(this.taskManagerInProgress_list[i]);
+                }
+            }
+            for(var i=0; i<this.taskInProgress_list.length; i++){
+                if(this.taskInProgress_list[i].end_date < weekAfter){
+                    this.filteredTasks.push(this.taskInProgress_list[i]);
+                }
+            }
+
+            this.filteredTasks.sort(this.date_ascending);
+        },
+        thisMonthTasks(){
+            const weekAfter = this.$moment().add(1, 'M').format();
+
+            for(var i=0; i<this.taskManagerInProgress_list.length; i++){
+                if(this.taskManagerInProgress_list[i].end_date <= weekAfter){
+                    this.filteredTasks.push(this.taskManagerInProgress_list[i]);
+                }
+            }
+            for(var i=0; i<this.taskInProgress_list.length; i++){
+                if(this.taskInProgress_list[i].end_date <= weekAfter){
+                    this.filteredTasks.push(this.taskInProgress_list[i]);
+                }
+            }
+
+            this.filteredTasks.sort(this.date_ascending);
+        },
         setFirstDate(){
             console.log("setFirstDate")
-            this.tasks_thisWeek = [];
+            this.filteredTasks = [];
             if(this.second_date){
                 for(var i=0; i<this.taskManagerInProgress_list.length; i++){
                     if(this.first_date <= this.taskManagerInProgress_list[i].start_date && this.taskManagerInProgress_list[i].end_date <= this.second_date){
-                        this.tasks_thisWeek.push(this.taskManagerInProgress_list[i]);
+                        this.filteredTasks.push(this.taskManagerInProgress_list[i]);
                     }
                 }
                 for(var i=0; i<this.taskInProgress_list.length; i++){
                     if(this.first_date <= this.taskInProgress_list[i].start_date && this.taskInProgress_list[i].end_date <= this.second_date){
-                        this.tasks_thisWeek.push(this.taskInProgress_list[i]);
+                        this.filteredTasks.push(this.taskInProgress_list[i]);
                     }
                 }
             }
@@ -471,93 +432,66 @@ export default {
             else{
                  for(var i=0; i<this.taskManagerInProgress_list.length; i++){
                     if(this.first_date <= this.taskManagerInProgress_list[i].start_date){
-                        this.tasks_thisWeek.push(this.taskManagerInProgress_list[i]);
+                        this.filteredTasks.push(this.taskManagerInProgress_list[i]);
                     }
                 }
                 for(var i=0; i<this.taskInProgress_list.length; i++){
                     if(this.first_date <= this.taskInProgress_list[i].start_date){
-                        this.tasks_thisWeek.push(this.taskInProgress_list[i]);
+                        this.filteredTasks.push(this.taskInProgress_list[i]);
                     }
                 }
             }
 
-            this.tasks_thisWeek.sort(this.date_ascending);
+            this.filteredTasks.sort(this.date_ascending);
         },
         setSecondDate(){
             console.log("setSecondDate")
-            this.tasks_thisWeek = [];
+            this.filteredTasks = [];
 
             if(this.first_date){
                 for(var i=0; i<this.taskManagerInProgress_list.length; i++){
                     if(this.first_date <= this.taskManagerInProgress_list[i].start_date && this.taskManagerInProgress_list[i].end_date <= this.second_date){
-                        this.tasks_thisWeek.push(this.taskManagerInProgress_list[i]);
+                        this.filteredTasks.push(this.taskManagerInProgress_list[i]);
                     }
                 }
                 for(var i=0; i<this.taskInProgress_list.length; i++){
                     if(this.first_date <= this.taskInProgress_list[i].start_date && this.taskInProgress_list[i].end_date <= this.second_date){
-                        this.tasks_thisWeek.push(this.taskInProgress_list[i]);
+                        this.filteredTasks.push(this.taskInProgress_list[i]);
                     }
                 }
             }
             else{
                 for(var i=0; i<this.taskManagerInProgress_list.length; i++){
                     if(this.taskManagerInProgress_list[i].end_date <= this.second_date){
-                        this.tasks_thisWeek.push(this.taskManagerInProgress_list[i]);
+                        this.filteredTasks.push(this.taskManagerInProgress_list[i]);
                     }
                 }
                 for(var i=0; i<this.taskInProgress_list.length; i++){
                     if(this.taskInProgress_list[i].end_date <= this.second_date){
-                        this.tasks_thisWeek.push(this.taskInProgress_list[i]);
+                        this.filteredTasks.push(this.taskInProgress_list[i]);
                     }
                 }
             }
             
-            this.tasks_thisWeek.sort(this.date_ascending);
+            this.filteredTasks.sort(this.date_ascending);
         }
     },
     watch: {
         taskSelectOption: function(val){
             console.log("taskSelectOption: " + val);
-            this.tasks_thisWeek = [];
+            this.filteredTasks = [];
             this.first_date = '';
             this.second_date = '';
 
             if(val == 1){
-                const weekAfter = this.$moment().add(7, 'd').format();
-
-                for(var i=0; i<this.taskManagerInProgress_list.length; i++){
-                    if(this.taskManagerInProgress_list[i].end_date <= weekAfter){
-                        this.tasks_thisWeek.push(this.taskManagerInProgress_list[i]);
-                    }
-                }
-                for(var i=0; i<this.taskInProgress_list.length; i++){
-                    if(this.taskInProgress_list[i].end_date <= weekAfter){
-                        this.tasks_thisWeek.push(this.taskInProgress_list[i]);
-                    }
-                }
-
-                this.tasks_thisWeek.sort(this.date_ascending);
+                this.thisWeekTasks();
             }
             else if(val == 2){
-                const weekAfter = this.$moment().add(1, 'M').format();
-
-                for(var i=0; i<this.taskManagerInProgress_list.length; i++){
-                    if(this.taskManagerInProgress_list[i].end_date <= weekAfter){
-                        this.tasks_thisWeek.push(this.taskManagerInProgress_list[i]);
-                    }
-                }
-                for(var i=0; i<this.taskInProgress_list.length; i++){
-                    if(this.taskInProgress_list[i].end_date <= weekAfter){
-                        this.tasks_thisWeek.push(this.taskInProgress_list[i]);
-                    }
-                }
-
-                this.tasks_thisWeek.sort(this.date_ascending);
+                this.thisMonthTasks();
             }
-            else if(val == 3){
+            // else if(val == 3){
 
-
-            }
+            // }
         }
     }
 }

@@ -131,7 +131,7 @@ exports.deleteTask = async (req, res) => {
         return;
     }
 
-    promise = await Task.deleteDetailTaskChecklistsbyTaskNum(req.parmas.taskNum);
+    promise = await Task.deleteDetailTaskChecklistsbyTaskNum(req.params.taskNum);
     if(promise.err){
         res.status(500).send({
             message: `Error retrieving Task with id ${req.params.taskNum}`

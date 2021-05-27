@@ -100,25 +100,43 @@ html { overflow-y:scroll; }
 }
 
 .btn:hover {
-    border-color: #cfcfcf !important; 
-    background-color: #fafafa !important;
-    color: #646464 !important; 
+  border-color: #cfcfcf !important; 
+  background-color: #fafafa !important;
+  color: #646464 !important; 
 }
 
 .btn:focus {
-    border-color: #cfcfcf !important; 
-    background-color: #f5f5f5 !important;
-    color: #646464 !important; 
+  border-color: #cfcfcf !important; 
+  background-color: #f5f5f5 !important;
+  color: #646464 !important; 
 }
 
+.btn2{
+  /* background-color: #cfcfcf !important;  */
+  background-color: #f0f0f0 !important; 
+  color: #646464 !important;
+  border-color: #DCDFE6 !important;
+}
+ 
+.btn2:hover {
+  border-color: #cfcfcf !important; 
+  background-color: #e7e7e7 !important;
+  color: #646464 !important; 
+}
+
+.btn2:focus {
+  border-color: #cfcfcf !important; 
+  background-color: #f5f5f5 !important;
+  color: #646464 !important; 
+}
 
 .enroll-task{
-    padding: 0px;
-    float: right; 
-    width: 45px; 
-    height: 45px;
-    background-color: #b0b8c4;
-    border: none;
+  padding: 0px;
+  float: right; 
+  width: 45px; 
+  height: 45px;
+  background-color: #b0b8c4;
+  border: none;
 }
 
 /* .enroll-task:focus{

@@ -1,5 +1,5 @@
 <template>
-    <table id="simple_card">
+    <table @click="clickTask" id="simple_card">
         <tr>
             <td style="background-color: red; width: 12px;" :style="{backgroundColor: label_color}">           
             </td>
@@ -21,13 +21,16 @@
 <script>
 export default{
     name: 'thisWeekTask',
-    props:['task_name', 'manager', 'start_date', 'end_date', 'label_color'],
+    props:['task_num', 'task_name', 'manager', 'start_date', 'end_date', 'label_color'],
     data(){
         return{
         }
     },
     methods:{
-       
+        clickTask(){
+            console.log(this.task_num);
+            this.$emit('clickTask', this.task_num);
+        },
     }
 }
 </script>
@@ -41,5 +44,9 @@ export default{
         border-spacing: 0px; 
         background-color: white;
         margin-bottom: 2px;
+    }
+
+    #simple_card:hover{
+        border: 1px solid #c5c5c5;
     }
 </style>
