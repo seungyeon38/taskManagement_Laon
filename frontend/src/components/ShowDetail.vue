@@ -28,7 +28,7 @@
                             </el-form>
                             <span slot="footer" class="dialog-footer">
                                 <el-button class="btn" @click="dialogFormVisible = false">취소</el-button>
-                                <el-button class="btn" @click.native="enrollDetailTask">확인</el-button>
+                                <el-button class="btn2" @click.native="enrollDetailTask">확인</el-button>
                             </span>
                         </el-dialog>
                         <!-- 세부업무 수정 -->
@@ -51,10 +51,16 @@
                                     </el-select>
                                 </el-form-item>
                             </el-form>
-                            
                             <span slot="footer" class="dialog-footer">
-                                <el-button @click="dialogModifyFormVisible = false">취소</el-button>
-                                <el-button type="primary" @click.native="modifyDetailTask">확인</el-button>
+                                <el-button class="btn" @click="dialogModifyFormVisible = false">취소</el-button>
+                                <el-button class="btn2" type="primary" @click.native="modifyDetailTask">확인</el-button>
+                            </span>
+                        </el-dialog>
+                        <el-dialog title="세부업무 삭제" :visible.sync="deleteDialogVisible" width="30%" style="text-align: left; font-weight: bolder;">
+                            <div>해당 세부업무를 삭제하시겠습니까?</div>
+                            <span slot="footer" class="dialog-footer">
+                                <el-button class="btn" @click="deleteDialogVisible = false">취소</el-button>
+                                <el-button class="btn2" type="primary" @click.native="deleteConfirm">확인</el-button>
                             </span>
                         </el-dialog>
                     </td>
@@ -179,6 +185,7 @@ export default {
             manager: {},
             dialogFormVisible: false,
             dialogModifyFormVisible: false,
+            deleteDialogVisible: false,
             form: {
                 detailTask_name: '',
                 detailTask_content: '',
@@ -188,6 +195,7 @@ export default {
             userNum: null,
             detailTaskNumtoModify: null,
             checklists: [],
+            deleteDetailTaskNum: ''
         }
     },
     methods: {
@@ -284,8 +292,13 @@ export default {
             })      
         },
         deleteDetailTask(detailTaskNum){
+            console.log("deleteDetailTask: " + detailTaskNum)
+            this.deleteDetailTaskNum = detailTaskNum;
+            this.deleteDialogVisible = true;
+        },
+        deleteConfirm(){
             this.$axios({
-                url: `http://localhost:3000/tasks/${this.taskNum}/detailTasks/${detailTaskNum}`,
+                url: `http://localhost:3000/tasks/${this.taskNum}/detailTasks/${this.deleteDetailTaskNum}`,
                 method: 'delete',
                 withCredentials: true,
                 headers: {
@@ -299,7 +312,9 @@ export default {
                 }
             }).catch(err => {
                 console.log("err: ", err)
-            })      
+            });
+
+            this.deleteDialogVisible = false;      
         },
         checklistCheck(checklistNum){
             console.log("checklistCheck " + checklistNum)
