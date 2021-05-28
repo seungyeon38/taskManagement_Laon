@@ -92,6 +92,8 @@
 
   + **bcrypt 사용**: 현업에서 많이 사용하고 있는 패스워드 암호화 알고리즘
 
+<br />
+
 * Passport 모듈 (passport-local)
   
   Session을 사용한 로그인. 
