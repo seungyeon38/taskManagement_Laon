@@ -90,13 +90,16 @@
 #### 로그인
 * 비밀번호 암호화
 
-  + bcrypt 사용: 현업에서 많이 사용하고 있는 패스워드 암호화 알고리즘
+  + **bcrypt 사용**: 현업에서 많이 사용하고 있는 패스워드 암호화 알고리즘
 
 * Passport 모듈 (passport-local)
   
   Session을 사용한 로그인. 
   
-  + post /login 
+  + **post /login** 
+  
+  <br />
+  
     ```javascript
     app.post("/login",
     // 앞(local)은 전략
@@ -107,13 +110,14 @@
         }), 
     );
     ```
+  <br />
   
-   + LocalStrategy 
+   + **LocalStrategy** 
    
-    로그인 시에 사용자가 입력한 id, pw에 일치하는 사용자가 있는지 확인. 
+      로그인 시에 사용자가 입력한 id, pw에 일치하는 사용자가 있는지 확인. 
 
-    일치하는 사용자가 존재하지 않는 경우, error message 전달 (flash 이용)<br />
-    일치하는 사용자가 존재하는 경우, 유저의 정보를 serialuser callback함수의 인자로 보냄. 
+      일치하는 사용자가 존재하지 않는 경우, error message 전달 (flash 이용)<br />
+      일치하는 사용자가 존재하는 경우, 유저의 정보를 serialuser callback함수의 인자로 보냄. 
     
   ```javascript
   passport.use(new LocalStrategy({
@@ -144,11 +148,12 @@
       }
   ));
   ```
-  
-  + serializeUser
+  <br />
+
+  + **serializeUser**
    
-   로그인에 성공했을 때, 딱 한번 호출된다.<br />
-   로그인에 성공했다는 것을, session store에 저장하는 기능을 한다. 즉, req.session.passport.user에 저장할 것을 지정한다.
+     로그인에 성공했을 때, 딱 한번 호출된다.<br />
+     로그인에 성공했다는 것을, session store에 저장하는 기능을 한다. 즉, req.session.passport.user에 저장할 것을 지정한다.
     
   ```javascript
   passport.serializeUser(function(user, done) {
@@ -156,8 +161,10 @@
     done(null, user.user_num);
   });
   ```
+
+  <br />
   
-  + deserializeUser
+  + **deserializeUser**
   
     실제 서버로 들어오는 요청마다 serializeUser에서 저장된 세션 정보와 비교. serializeUser에서 done으로 넘겨주는 user가 deserializeUser의 첫번째 매개변수로 전달된다. 따라서 둘의 타입이 항상 일치해야 한다. 
     
