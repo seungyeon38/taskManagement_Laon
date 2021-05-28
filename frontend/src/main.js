@@ -36,18 +36,15 @@ export function requireAuth(to, from, next) {
     },
     credentials: "same-origin"    
   }).then(res => {
-      // console.log("requireAuth res.data: " + JSON.stringify(res.data))
       if(res.data.auth){
-        // console.log("requireAuth if")
         return next();
       }
       else{
-        // console.log("requireAuth else")
         alert("로그인해주세요!")
         next('/login');
       }
   }).catch((ex) => {
-      console.log("ERROR!!!: ", ex)
+      console.log("err: ", ex)
   })
 }
 
@@ -69,6 +66,6 @@ export function isLoggedIn(to, from, next) {
         next('/main');
       }
   }).catch((ex) => {
-      console.log("ERROR!!!: ", ex)
+      console.log("err: ", ex)
   })
 }

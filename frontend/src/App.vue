@@ -153,4 +153,9 @@ html { overflow-y:scroll; }
 /* .el-container{
   justify-content: center;
 } */
+
+.el-dropdown-menu__item:hover{
+  background-color: #f5f5f5 !important;
+  color: #646464 !important;
+}
 </style>

@@ -2,7 +2,7 @@ const cors = require('cors');
 const express = require("express");
 const bodyParser = require("body-parser");
 const passport = require('passport');
-const passportConfig = require("./app/models/passport"); 
+const passportConfig = require("./app/controllers/passport"); 
 const session = require('express-session');
 const MySQLStore = require('express-mysql-session')(session);
 const flash = require('connect-flash');
@@ -45,9 +45,9 @@ app.use(
     //   httpOnly: true, // javascript로 cookie에 접근하지 못하게 하는 옵션
     //   secure: false, // https 프로토콜만 허락하는 지 여부
     // },
-    // cookie: {
-    //   maxAge: 1000 * 60 * 30 // 쿠키 유효시간 30분  
-    // }
+    cookie: {
+      maxAge: 1000 * 60 * 30 // 쿠키 유효시간 30분  
+    }
   })
 );
 
@@ -64,8 +64,6 @@ require("./app/routes/task.routes.js")(app);
 require("./app/routes/detailTask.routes.js")(app);
 
 app.get("/session", function(req, res){
-  console.log("req.isAuthenticated(): " + req.isAuthenticated())
-  console.log("session req.session: " + JSON.stringify(req.session));
   if (req.isAuthenticated()){
       console.log("session 있음");
       res.send({auth: true});

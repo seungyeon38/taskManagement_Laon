@@ -23,7 +23,7 @@ module.exports = () => {
         // done(null, user.id);
     });
 
-    const User = require('./user.model');
+    const User = require("../models/user.model.js");
 
     // 페이지에 방문할 때마다 deserializeUser의 callback이 호출되도록 약속되어있다. 
     // 호출될 때마다, 사용자에 대한 정보가 저장되어있는 곳에서 사용자의 실제 데이터를 조회해서 가져온다. 
@@ -57,7 +57,6 @@ module.exports = () => {
         },
         // done이라는 함수를 어떻게 호출하느냐에 따라서 로그인의 성공, 실패를 passport에게 알려줄 수 있다. 
         async function(id, pw, done) {
-            // 여기에서밖에 안 쓰임 
             const promise = await User.getUserById(id);
             if(promise.err){ 
                 if(promise.err === "not_found"){

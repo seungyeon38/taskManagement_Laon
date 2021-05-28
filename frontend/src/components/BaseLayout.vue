@@ -2,6 +2,7 @@
     <el-container>
         <el-header style="height: 60px; line-height: 60px; display:flex; align-items: center; justify-content: flex-end;">
             <button type="button" id="home" class="el-icon-s-home" style="color: rgb(94, 94, 94); border: none; padding: 0px; background: none; font-size:1.7em; margin-right: 5px;" @click="goHome"></button>
+            <button type="button" id="home" class="el-icon-s-home" style="color: rgb(94, 94, 94); border: none; padding: 0px; background: none; font-size:1.7em; margin-right: 5px;" @click="goHome"></button>
             <span style="margin-right: 20px;"></span>
             <span id="logOutRouter" @click="logOut" style="color: rgb(94, 94, 94); text-decoration: none; cursor: default">Logout</span>
             <span class="text-overflow" style="margin-left: 30px; max-width: 100px">{{user.name}}</span><span style="margin-right: 20px;"> 님</span>

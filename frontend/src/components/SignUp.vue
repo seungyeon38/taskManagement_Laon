@@ -32,8 +32,12 @@
                         <el-form-item label="비밀번호 확인" for="password_re">
                             <el-input v-model="password_re" type="password" name="password_re" show-password required />
                         </el-form-item>
-                        <el-form-item label="이메일" for="email">
-                            <el-input v-model="email" type="email" name="email" required />
+                        <el-form-item label="이메일" for="email" style="display: inline-block">
+                            <el-input v-model="email" name="email" required />
+                            <!-- <span id="email_box">
+                                <el-input v-model="email" name="email" style="width: 50%" required />
+                                <span>@gmail.com</span>
+                            </span> -->
                         </el-form-item>
                         <br>
                         <br>
