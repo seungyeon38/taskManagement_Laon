@@ -1,4 +1,5 @@
 const User = require("../models/user.model.js");
+const {validationResult} = require('express-validator');
 const bcrypt = require('bcrypt')
 
 exports.addUser = async (req, res) => {
@@ -8,7 +9,7 @@ exports.addUser = async (req, res) => {
         });
     }
 
-    const encryptedPassword = bcrypt.hashSync(req.body.password, 10)
+    const encryptedPassword = bcrypt.hashSync(req.body.password, 10);
     
     var filename;
 
@@ -19,24 +20,31 @@ exports.addUser = async (req, res) => {
         filename = req.file.filename;
     }
 
-    const user = new User({
-        name: req.body.name,
-        id: req.body.id,
-        password: encryptedPassword,
-        email: req.body.email,
-        profile_img: filename
-    });
+    const errors = validationResult(req);
 
-    const promise = await User.insertUser(user);
-    if(promise.err){
-        res.status(500).send({
-            message:
-                err.message || "Some error occurred while creating the user."
+    if(!errors.errors.length){
+        const user = new User({
+            name: req.body.name,
+            id: req.body.id,
+            password: encryptedPassword,
+            email: req.body.email,
+            profile_img: filename
         });
-        return;
+    
+        const promise = await User.insertUser(user);
+        if(promise.err){
+            res.status(500).send({
+                message:
+                    err.message || "Some error occurred while creating the user."
+            });
+            return;
+        }
+    
+        res.send({result: true});
     }
-
-    res.send({result: true});
+    else {
+        res.send({result: false, error: errors.errors[0].msg});
+    }
 };
 
 // 회원가입: 해당 아이디를 가진 사용자가 존재하지 않을 경우와 존재하는 경우의 구분만 해주면 됨. 
@@ -60,7 +68,6 @@ exports.checkIdExist = async (req, res) => {
 };
 
 exports.getAllUsers = async (req, res) => {
-
     const promise = await User.getAllUserInfo();
 
     if(promise.err){

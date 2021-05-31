@@ -1,4 +1,6 @@
 const passport = require('passport');
+const {body} = require('express-validator');
+
 // const isAuthenticated = require('isAuthenticated');
 var multer  = require('multer');
 var _storage = multer.diskStorage({
@@ -6,7 +8,7 @@ var _storage = multer.diskStorage({
     destination: function (req, file, cb) {
         cb(null, 'uploads/')
     },
-    // 그 디렉토리에 저장할 파일의 이름을 어떻게 할 것인가. 
+    // 그 디렉토리에 저장할 파일의 이름을 어떻게 할 것인가. s
     filename: function (req, file, cb) {
         cb(null, Date.now() + '_' + file.originalname)
     }
@@ -19,6 +21,20 @@ var upload = multer({ storage: _storage }); // 사용자가 업로드한 파일�
 // multer라는 모듈이 사실은 함수. 이렇게 옵션(설정)을 줘서 실행을 시키면 이 함수는 unload를 받아낼 수 있는 미들웨어라고 하는 것을 return해주게 된다. 
 // upload라는 것을 통해서 여러가지 제어작업을 할 수 있게 된다. 
 
+var type_numOrEng = /^[a-zA-Z0-9]{8,12}$/;
+var type_includeNumEngSpe = /^(?=.*[a-zA-Z])(?=.*?[#?!@$%^&*-])(?=.*[0-9]).{8,12}$/;
+
+const check = [
+    // 유효성 검사 
+    body('name', '이름은 10자 이내로 적어주세요.')
+    .isLength({ max: 10 }),
+    body('id', '아이디는 대소문자나 숫자(최소 8자, 최대 12자)로 구성하여야 합니다.')
+    .matches(type_numOrEng),
+    body('password', '비밀번호는 대소문자, 숫자, 특수문자(!@#$%^*)를 포함하여 최소 8자, 최대 12자로 구성하여야 합니다.')
+    .matches(type_includeNumEngSpe),
+    body('email', '이메일 형식이 올바르지 않습니다.')
+    .isEmail()
+]
 
 module.exports = app => {
     const user = require("../controllers/user.controller.js");
@@ -35,7 +51,8 @@ module.exports = app => {
 
     app.get("/:userId/exist", user.checkIdExist);
   
-    app.post("/users", upload.single('profile_img'), user.addUser); // upload.single('') 이 안의 인자가 input type="file"인 것의 name이어야 된다. 
+
+    app.post("/users", upload.single('profile_img'), check, user.addUser); // upload.single('') 이 안의 인자가 input type="file"인 것의 name이어야 된다. 
     // 두 번째 인자로 multer를 통해서 만든 모듈을 미들웨어라는 것을 이렇게 갖다놓게 되면 뒤에 있는 function이 실행되기 전에 이게 먼저 실행이 된다. 
     // 얘가 하는 역할은 사용자가 전달한 데이터에서 file이 포함되어있다면 그 파일을 가공해서 request객체에 file이라는 property를 암시적으로 추가하도록 약속되어있는 미들웨어
     
