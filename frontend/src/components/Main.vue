@@ -489,9 +489,6 @@ export default {
             else if(val == 2){
                 this.thisMonthTasks();
             }
-            // else if(val == 3){
-
-            // }
         }
     }
 }

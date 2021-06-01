@@ -67,27 +67,33 @@
                 </tr>
                 <tr> 
                     <td style="width: 20%; padding-top: 20px;" valign="top">
-                        <!-- <el-select v-model="selectOption" v-if="detailTask_list.length" filterable placeholder="Select" style="width: 220px;">
-                            <el-option :value="1" :label="total"></el-option>
-                            <el-option :value="2" :label="mine"></el-option>
+                        <el-select v-model="selectChecklistOption" v-if="detailTasks.length && checklists.length" filterable placeholder="체크리스트 전체보기" style="width: 220px;" multiple>
+                            <el-option v-for="checklist in checklists" :key="checklist.checklist_num" :value="checklist.checklist_num" :label="checklist.content"></el-option>
                         </el-select>
                         <el-select v-else filterable placeholder="Select" style="width: 220px;" disabled>
-                        </el-select> -->
+                        </el-select>
+
+                        <el-select v-model="selectUserOption" v-if="detailTasks.length" filterable placeholder="Select" style="width: 220px;">
+                            <el-option :value="0" :label="'전체 사용자 세부업무 보기'"></el-option>
+                            <el-option :value="1" :label="'내 세부업무만 보기'"></el-option>
+                        </el-select>
+                        <el-select v-else filterable placeholder="Select" style="width: 220px;" disabled>
+                        </el-select>
                     </td>
                     <!-- border:1px dashed #acb2bd; margin-top: 30px; margin-bottom: 35px; height: 1px; -->
                     <td style="width: 80%; padding-top: 20px; text-align: justify;">
                         <div style="text-align: center; font-size: 24px; font-weight: bolder; color: #636b79;">{{taskInfo.task_name}}</div>
                         <hr />
-                        <div v-if="detailTask_list.length != 0">
+                        <div v-if="selectedDetailTasks.length != 0">
                             <el-timeline>
-                                <el-timeline-item v-for="detailTask in detailTask_list" :key="detailTask.detail_task_num" :timestamp="`${detailTask.report_date}, ${detailTask.name} 님`" placement="top">
+                                <el-timeline-item v-for="detailTask in selectedDetailTasks" :key="detailTask.detail_task_num" :timestamp="`${detailTask.report_date}, ${detailTask.name} 님`" placement="top">
                                     <detail-task-users v-if="detailTask.worker == userNum" v-on:showModifyDialog="showModifyDialog" v-on:deleteDetailTask="deleteDetailTask" :detail_task_num="detailTask.detail_task_num" :workerName="detailTask.name" :detail_task_name="detailTask.detail_task_name" :content="detailTask.content" :report_date="detailTask.report_date" :profile_img="detailTask.profile_img" :checklists="detailTask.checklists"></detail-task-users>
                                     <detail-task v-else :workerName="detailTask.name" :detail_task_name="detailTask.detail_task_name" :content="detailTask.content" :report_date="detailTask.report_date" :profile_img="detailTask.profile_img" :checklists="detailTask.checklists"></detail-task>
                                 </el-timeline-item>
                             </el-timeline>
                         </div>
                         <div v-else style="font-size: 18px; color: #C0C4CC; padding-top: 70px; text-align: center">
-                            <span>(등록된 세부 업무가 없습니다.)</span>
+                            <span>(해당하는 세부 업무가 없습니다.)</span>
                         </div>
                     </td>
                 </tr>
@@ -174,12 +180,13 @@ export default {
     },
     data(){
         return{
-            detailTask_list: [],
+            detailTasks: [],
             taskInfo: {},
             taskClosed: 0,
             taskNum: null,
             // complete: '',
-            // selectOption: 1,
+            selectChecklistOption: null,
+            selectUserOption: 0,
             workers: [],
             users: [],
             manager: {},
@@ -195,7 +202,8 @@ export default {
             userNum: null,
             detailTaskNumtoModify: null,
             checklists: [],
-            deleteDetailTaskNum: ''
+            deleteDetailTaskNum: '',
+            selectedDetailTasks: [],
         }
     },
     methods: {
@@ -334,6 +342,63 @@ export default {
             }).catch(err => {
                 console.log("err: ", err)
             }) 
+        },
+        selectDetailTasks(checklistNum, mine){
+            this.selectedDetailTasks = [];
+
+            if(checklistNum == null){
+                if(mine == 0){
+                    this.selectedDetailTasks = this.detailTasks;
+                }
+                else if(mine == 1){
+                    this.selectedDetailTasks = this.detailTasks.filter((element) => { return element.worker == this.userNum});
+                }
+            }
+
+            else if(mine == 0){
+                this.selectedDetailTasks = this.detailTasks.filter(function(detailTask){
+                    var exist = 0;
+                    console.log(checklistNum === null)
+                    for(var i=0; i < checklistNum.length; i++){
+                        for(var j=0; j < detailTask.checklists.length; j++){
+                            if(detailTask.checklists[j].checklist_num == checklistNum[i]){
+                                exist = 1;
+                                break;
+                            }
+                        }
+                        if(exist == 0){
+                            return false; 
+                        }
+                        else{
+                            exist = 0;
+                        }
+                    }
+                    return true; 
+                });
+            }
+
+            else {
+                this.selectedDetailTasks = this.detailTasks.filter(function(detailTask){
+                    var exist = 0;
+                    for(var i=0; i < checklistNum.length; i++){
+                        for(var j=0; j < detailTask.checklists.length; j++){
+                            if(detailTask.checklists[j].checklist_num == checklistNum[i]){
+                                exist = 1;
+                                break;
+                            }
+                        }
+                        if(exist == 0){
+                            return false; 
+                        }
+                        else{
+                            exist = 0;
+                        }
+                    }
+                    return true; 
+                });
+
+                this.selectedDetailTasks = this.selectedDetailTasks.filter((element) => { return element.worker == this.userNum});
+            }
         }
     },
     created(){
@@ -368,7 +433,6 @@ export default {
             this.taskInfo = res.data.info;
             this.checklists = res.data.checklists;
 
-            // console.log("manager: " + JSON.stringify(this.manager))
             const now = this.$moment().format('YYYY-MM-DDTHH:mm');
 
             if(this.taskInfo.end_date < now){
@@ -396,26 +460,40 @@ export default {
             // "info": task_num, task_name, explanation, start_date, end_date, register_date, completed_date, label_color, completed
             // "workers": user_num, personal_role, name, id, email, profile_img
             
-            // console.log("res.data.checklists: " + JSON.stringify(res.data.checklists));
+        
             // "checklists": [{"detail_task_num":2,"content":"항목1","completed":"1"},{"detail_task_num":1,"content":"항목2","completed":"0"},{"detail_task_num":2,"content":"항목2","completed":"0"}]
             for(var i=0; i< res.data.detailTasks.length; i++){
                 res.data.detailTasks[i].checklists = [];
                 for(var j=0; j< res.data.checklists.length; j++){
                     if(res.data.checklists[j].detail_task_num == res.data.detailTasks[i].detail_task_num){
-                        res.data.detailTasks[i].checklists.push(res.data.checklists[j].content);
+                        res.data.detailTasks[i].checklists.push(res.data.checklists[j]);
                     }
                 }
                 res.data.detailTasks[i].report_date = this.$moment(res.data.detailTasks[i].report_date).format(`YYYY/MM/DD h:mm A`);
                 // "detailTasks": detail_task_num, task_num, worker, detail_task_name, content, report_date, id, name, email, profile_img
-                this.detailTask_list.push(res.data.detailTasks[i]);
-            }
-            console.log("this.detailTask_list: " + JSON.stringify(this.detailTask_list));
+                this.detailTasks.push(res.data.detailTasks[i]);
 
+                this.selectedDetailTasks = this.detailTasks;
+            }
+            // [
+            //      {"detail_task_num":5,"task_num":6,"worker":2,"detail_task_name":"세부업무2","content":"","report_date":"2021/05/27 4:52 PM","id":"2002eunah","name":"장은아","email":"2002eunah@naver.com","profile_img":null,"checklists"::[{"detail_task_num":5,"checklist_num":27,"content":"항목1","completed":"0"},{"detail_task_num":5,"checklist_num":28,"content":"항목2","completed":"0"}]},
+            //      {"detail_task_num":6,"task_num":6,"worker":3,"detail_task_name":"세부업무3","content":"세부업무다ㅏㅏ","report_date":"2021/05/27 4:52 PM","id":"synan0913","name":"이시연","email":"synan0913@naver.com","profile_img":"1622009452254_2(0).jpg","checklists":[]},
+            //      {"detail_task_num":9,"task_num":6,"worker":4,"detail_task_name":"세부업무1","content":"세부업무 설명입니다. ","report_date":"2021/05/27 5:45 PM","id":"seongyeon38","name":"이승연","email":"seong@naver.com","profile_img":"1622010710752_4(1).jpg","checklists":["항목1"]},
+            //      {"detail_task_num":10,"task_num":6,"worker":2,"detail_task_name":"dsdd","content":"fdf","report_date":"2021/05/28 3:16 PM","id":"2002eunah","name":"장은아","email":"2002eunah@naver.com","profile_img":null,"checklists":["항목2"]},
+            //      {"detail_task_num":11,"task_num":6,"worker":4,"detail_task_name":"세부업무1","content":"세부업무 설명입니다. ","report_date":"2021/05/31 1:42 PM","id":"seongyeon38","name":"이승연","email":"seong@naver.com","profile_img":"1622010710752_4(1).jpg","checklists":["항목2"]}
+            // ]
         }).catch(err => {
             console.log("err: " + err);
         });
-
     },
+    watch: {
+        selectChecklistOption: function(val){
+            this.selectDetailTasks(val, this.selectUserOption);
+        },
+        selectUserOption: function(val){
+            this.selectDetailTasks(this.selectChecklistOption, val);
+        }
+    }
 }
 </script>
 
@@ -539,6 +617,9 @@ input[type=checkbox]:checked + label{
     margin-bottom: 10px;
 }
 
+/* .el-select__input {
+    color: red !important;
+} */
 /* 
 .el-checkbox__label {
     font-size: 20px !important;

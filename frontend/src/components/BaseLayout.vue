@@ -2,8 +2,9 @@
     <el-container>
         <el-header style="height: 60px; line-height: 60px; display:flex; align-items: center; justify-content: flex-end;">
             <button type="button" id="home" class="el-icon-s-home" style="color: rgb(94, 94, 94); border: none; padding: 0px; background: none; font-size:1.7em; margin-right: 5px;" @click="goHome"></button>
-            <button type="button" id="home" class="el-icon-s-home" style="color: rgb(94, 94, 94); border: none; padding: 0px; background: none; font-size:1.7em; margin-right: 5px;" @click="goHome"></button>
-            <span style="margin-right: 20px;"></span>
+            <span style="margin-right: 15px;"></span>
+            <!-- <button type="button" id="home" class="el-icon-message-solid" style="color: rgb(94, 94, 94); border: none; padding: 0px; background: none; font-size:1.7em; margin-right: 5px;" @click="goHome"></button>
+            <span style="margin-right: 20px;">{{alert_num}}</span> -->
             <span id="logOutRouter" @click="logOut" style="color: rgb(94, 94, 94); text-decoration: none; cursor: default">Logout</span>
             <span class="text-overflow" style="margin-left: 30px; max-width: 100px">{{user.name}}</span><span style="margin-right: 20px;"> 님</span>
             <el-avatar v-if="user.profile_img" :size="50" style="border: 1px solid #a4a7ad">
@@ -29,7 +30,8 @@
         name: 'base_layout',
         data() {
             return{
-                user: {}
+                user: {},
+                // alert_num: 0
             }
         },
         created(){
@@ -46,6 +48,11 @@
             }).catch(err => {
                 console.log("catch");
             });
+
+            // this.$socket.on('client', (data) => {
+            //     console.log("base: " + data);
+            //     this.alert_num += 1;
+            // })
         },
         // 실행 잘 안됨...?
         mounted() {

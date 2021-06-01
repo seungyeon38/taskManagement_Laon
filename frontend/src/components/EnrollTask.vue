@@ -312,7 +312,12 @@ export default {
                 
             }).catch(err => {
                 console.log("업무 등록 ERROR!!: ", err)
-            })           
+            });
+            
+            // this.$socket.emit('client', {
+            //     manager: this.manager,
+            //     selected_workers_list: this.selected_workers
+            // })
         },
         addChecklist(){
             console.log("before add checklists: " + this.checklists);

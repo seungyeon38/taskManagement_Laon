@@ -8,6 +8,16 @@ import Element from 'element-ui';
 import 'element-ui/lib/theme-chalk/index.css';
 import vueMoment from 'vue-moment';
 // import {store} from './store';
+// vue-material
+// import VueSocketIO from 'vue-socket.io';
+
+
+// import io from 'socket.io-client';
+// const socket = io("http://localhost:3000"); // socket을 vue 인스턴스 변수로 등록하여 컴포넌트에서 사용할 수 잇도록 함 
+
+// Vue.prototype.$socket = socket;
+
+
 
 Vue.prototype.$axios = axios;
 Vue.config.productionTip = false;

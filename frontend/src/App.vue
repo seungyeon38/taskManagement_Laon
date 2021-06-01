@@ -158,4 +158,18 @@ html { overflow-y:scroll; }
   background-color: #f5f5f5 !important;
   color: #646464 !important;
 }
+
+.el-select-dropdown__item.selected{
+  color:#5f6164 !important;
+}
+
+.el-select .el-input.is-focus .el-input__inner{
+  border-color: #8e9197 !important;
+
+}
+
+.el-select .el-input.is-focus .el-input__inner .el-input__inner:focus .el-select-dropdown.is-multiple{
+  color: #444547 !important;
+}
 </style>
+
