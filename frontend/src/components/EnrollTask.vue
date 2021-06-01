@@ -38,7 +38,7 @@
                                 </tr>
                                 <tr>
                                     <td>
-                                        <input v-model="start_date" @change="dateChange" type="datetime-local" placeholder="업무 시작일" style="margin-right: 10px;" required/>
+                                        <input v-model="start_date" type="datetime-local" placeholder="업무 시작일" style="margin-right: 10px;" required/>
                                     </td>
                                     <td>
                                         <input v-model="end_date" type="datetime-local" placeholder="업무 마감일" :min= "start_date" required/>
@@ -139,7 +139,7 @@
 import BaseLayout from './BaseLayout.vue';
 import PersonalRole from './PersonalRole.vue';
 
-// 컴포넌트는 루트 인스턴스가 생성되기 전에 정의해야 한다. 
+
 export default {
     data(){
         return{
@@ -153,7 +153,6 @@ export default {
             manager: '',
             managerRole: '',
             users: [],
-            // users_notManager: [], // manager를 제외한 worker들
             selected_workerNum: [],
             selected_workers: [],
             checklists: [],
@@ -176,32 +175,21 @@ export default {
         }).then(res => {
             console.log("res.data: " + JSON.stringify(res.data));
             this.users = res.data;
-            // for(var i=0; i<res.data.length; i++){
-            //     this.users.push(res.data[i])
-            // };
         }).catch(err => {
-            console.log("EnrollTask_Get all users ERROR!!: ", err)
+            console.log("err: ", err)
         });
     },
     watch: {
         selected_workerNum: function(newVal, oldVal){
-            console.log("watch selected_workerNum: " + this.selected_workerNum);
-            console.log("watch selected_workerNum newVal: " + newVal);
-            console.log("watch selected_workerNum oldVal: " + oldVal);
-            
             this.selectWorkers(newVal, oldVal);
         },
     },
     computed: {
         users_notManager: function(){
-            console.log("computed users_notManager")
             return this.users.filter(this.notManager);
         },
     },
     methods: {
-        dateChange(){
-            console.log("start_date: " + this.start_date);
-        },
         notManager(element){
             if(element.user_num == this.manager){
                 return false;
@@ -214,7 +202,7 @@ export default {
             const selectedManager = this.selected_workerNum.indexOf(this.manager);
             const manager_num = this.manager;
             
-            // 실무담당자 목록에 있는 경우 그 인덱스의 것을 삭제. workers, workerNum에서 모두 삭제. 
+            // 관리자로 선택된 사용자가 실무담당자 목록에 있는 경우에만 그 인덱스의 것을 삭제. workers, workerNum에서 모두 삭제. 
             if(selectedManager >= 0){
                 const findIndex = this.selected_workers.findIndex(function(item){
                     return item.user_num == manager_num;
@@ -222,14 +210,14 @@ export default {
                 this.selected_workers.splice(findIndex, 1);
                 this.selected_workerNum.splice(selectedManager, 1);
             }
-            // 실무담당자 목록에 없는 경우 
-            else if(selectedManager == -1){
+            // 관리자로 선택된 사용자가 실무담당자 목록에 없는 경우 
+            // else if(selectedManager == -1){
                 
-            }
+            // }
         },
         selectWorkers(newVal, oldVal){
             var changedElement; 
-            
+            // 실무담당자가 추가됐을 때 
             if(newVal.length > oldVal.length){
                 changedElement = newVal.filter(function(element){return oldVal.indexOf(element) == -1});
                 for(var i=0; i<this.users.length; i++){
@@ -239,6 +227,7 @@ export default {
                     }
                 }
             }
+            // 실무담당자가 삭제됐을 때 
             else if(newVal.length < oldVal.length){
                 changedElement = oldVal.filter(function(element){return newVal.indexOf(element) == -1});
 
@@ -247,13 +236,11 @@ export default {
                 })
                 this.selected_workers.splice(deletedIndex, 1);
             }
-
         },
         enrollPersonalRole(personalRole){
             const findIndex = this.selected_workers.findIndex(function(item){
                 return item.user_num == personalRole.user_num;
             })
-            console.log(findIndex);
             this.selected_workers[findIndex].personal_role = personalRole.personal_role;
         },
         enrollTask(){
@@ -264,16 +251,10 @@ export default {
 
             this.register_date = this.$moment().format('YYYY-MM-DDTHH:mm');
 
-            // 이 부분 수정할 수 있으면 하기 
             if(!this.manager){
                 alert("관리자를 선택해주세요.")
                 return;
             }
-
-            // if(this.isDuplicate(this.checklists)){
-            //     alert("체크리스트가 중복됩니다. 확인해주세요.")
-            //     return;
-            // }
 
             this.$axios({
                 url: `http://localhost:3000/tasks`,
@@ -302,14 +283,10 @@ export default {
                 if(res.data.result == "duplicate"){
                     alert("해당 업무명을 가진 업무가 존재합니다. 업무명을 변경해주세요.")
                 }
-                // else if(res.data.result == "checklist duplicate"){
-                //     alert("체크리스트가 중복됩니다. 확인해주세요.")
-                // }
                 else if(res.data.result == true){
                     alert("업무가 등록되었습니다.")
                     this.$router.go(-1)
                 }
-                
             }).catch(err => {
                 console.log("업무 등록 ERROR!!: ", err)
             });
@@ -320,26 +297,19 @@ export default {
             // })
         },
         addChecklist(){
-            console.log("before add checklists: " + this.checklists);
-            console.log("before add checklists.length: " + this.checklists.length);
+            console.log("this.checklists: " + JSON.stringify(this.checklists));
             this.checklists.push('');
-            console.log("after add checklists: " + this.checklists);
-            console.log("after add checklists.length: " + this.checklists.length);
         },
         deleteChecklist(i){
-            console.log("before delete checklists: " + this.checklists);
-            console.log("before delete checklists.length: " + this.checklists.length);
             this.checklists.splice(i, 1);
-            console.log("after delete checklists: " + this.checklists);
-            console.log("after delete checklists.length: " + this.checklists.length);
         },
-        isDuplicate(arr)  {
-            const isDup = arr.some(function(x) {
-                return arr.indexOf(x) !== arr.lastIndexOf(x);
-            });
+        // isDuplicate(arr)  {
+        //     const isDup = arr.some(function(x) {
+        //         return arr.indexOf(x) !== arr.lastIndexOf(x);
+        //     });
                                     
-            return isDup;
-        }
+        //     return isDup;
+        // }
     }
 }
 </script>
@@ -461,19 +431,4 @@ export default {
     #content:hover {
         border-color: #C0C4CC;
     }
-/* 
-    #enrollBtn:hover {
-        border-color: #cfcfcf; 
-        background-color: #fafafa;
-        color: #646464; 
-    }
-
-    #enrollBtn:focus {
-        border-color: #cfcfcf; 
-        background-color: #f5f5f5;
-        color: #646464; 
-    } */
-    /* .el-input--suffix{
-        padding-right: 5px;
-    } */
 </style>

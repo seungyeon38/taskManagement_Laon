@@ -13,7 +13,12 @@
 <script>
 export default{
     name: 'personalRole',
-    props: ['user_num', 'worker_name', 'worker_id', 'personal_role'],
+    props: {
+        user_num: Number,
+        worker_name: String, 
+        worker_id: String, 
+        personal_role: String, 
+    },
     data(){
         return{
             content: this.personal_role

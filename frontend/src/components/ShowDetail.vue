@@ -80,7 +80,6 @@
                         <el-select v-else filterable placeholder="Select" style="width: 220px;" disabled>
                         </el-select>
                     </td>
-                    <!-- border:1px dashed #acb2bd; margin-top: 30px; margin-bottom: 35px; height: 1px; -->
                     <td style="width: 80%; padding-top: 20px; text-align: justify;">
                         <div style="text-align: center; font-size: 24px; font-weight: bolder; color: #636b79;">{{taskInfo.task_name}}</div>
                         <hr />
@@ -109,10 +108,8 @@
                 <div class="detail_info" style="margin-bottom: 50px;">{{taskInfo.end_date}}</div>
             </div>
             <div class="label_title">업무 내용</div>
-            <!-- <div class="border"> -->
                 <div v-if="taskInfo.explanation" class="detail_info" style="padding: 10px;">{{taskInfo.explanation}}</div>
                 <div v-else style="padding: 10px;">(업무 내용이 없습니다.)</div>
-            <!-- </div> -->
             <div style="margin-top: 40px;"></div>
             <div v-if="checklists.length">
                 <div class="label_title">업무 체크리스트</div>
@@ -124,17 +121,13 @@
                         <div v-else>
                             <input type="checkbox" name="checklists" :label="checklist.content" @change="checklistCheck(checklist.checklist_num)" style="margin-right: 10px;" checked><label>{{checklist.content}}</label>
                         </div>
-                        <!-- <el-checkbox v-if="checklist.completed == false" :label="checklist.content" @change="checklistCheck(checklist.checklist_num)"></el-checkbox>
-                        <el-checkbox v-else :label="checklist.content" @change="checklistCheck(checklist.checklist_num)" checked></el-checkbox> -->
                     </div>
                 </div>
                 <div v-else class="border detail_info" style="padding: 10px 0px">
                     <div v-for="checklist in checklists" :key="checklist.checklist_num" id="checklists">
                         <li v-if="checklist.completed == false" style="padding: 0px 10px">{{checklist.content}}</li>
                         <li v-else style="padding: 0px 10px; text-decoration: line-through; color: rgb(192, 196, 204);">{{checklist.content}}</li>
-                        <!-- <li v-else style="padding: 0px 10px; text-decoration: line-through; color: #888888;">{{checklist.content}}</li> -->
                     </div>
-                    <!-- <li v-for="checklist in checklists" :key="checklist.checklist_num" id="checklists" style="padding: 0px 10px">{{checklist.content}}</li> -->
                 </div>
             </div>
             <div style="margin-top: 40px;"></div>
@@ -171,7 +164,6 @@ import BaseLayout from './BaseLayout.vue';
 import DetailTask from './DetailTask.vue';
 import DetailTaskUsers from './DetailTaskUsers.vue';
 
-// 컴포넌트는 루트 인스턴스가 생성되기 전에 정의해야 한다. 
 export default {
     components: {
         BaseLayout,
@@ -184,7 +176,6 @@ export default {
             taskInfo: {},
             taskClosed: 0,
             taskNum: null,
-            // complete: '',
             selectChecklistOption: null,
             selectUserOption: 0,
             workers: [],
@@ -216,7 +207,6 @@ export default {
                     url: `http://localhost:3000/tasks/${this.taskNum}/detailTasks`,
                     method: 'post',
                     data: {
-                        // task_num: this.taskNum,
                         detail_task_name: this.form.detailTask_name,
                         content: this.form.detailTask_content,
                         report_date: this.$moment().format('YYYY-MM-DDTHH:mm'),
@@ -263,11 +253,8 @@ export default {
                 this.form.detailTask_name = res.data.detailTask.detail_task_name;
                 this.form.detailTask_content = res.data.detailTask.content;
                 for(var i=0; i<res.data.checklists.length; i++){
-                    console.log(res.data.checklists[i].checklist_num);
                     this.form.detailTask_checklists.push(res.data.checklists[i].checklist_num);
                 }
-
-                // console.log("this.form.detailTask_checklists: " + JSON.stringify(this.form.detailTask_checklists));
             }).catch(err => {
                 console.log("err: ", err)
             })      
@@ -300,7 +287,6 @@ export default {
             })      
         },
         deleteDetailTask(detailTaskNum){
-            console.log("deleteDetailTask: " + detailTaskNum)
             this.deleteDetailTaskNum = detailTaskNum;
             this.deleteDialogVisible = true;
         },
@@ -376,7 +362,6 @@ export default {
                     return true; 
                 });
             }
-
             else {
                 this.selectedDetailTasks = this.detailTasks.filter(function(detailTask){
                     var exist = 0;
@@ -503,53 +488,13 @@ export default {
    padding: 10px;
 }
 
-/* .enroll-task{
-    padding: 0px;
-    float: right; 
-    width: 50px; 
-    height: 50px;
-    background-color: #b0b8c4;
-    border: none;
-}
-
-/* .enroll-task:focus{
-    opacity: 1 !important;
-    background-color: #acb2bd;
-} */
-
-/* .enroll-task:hover{
-    opacity: 1 !important;
-    background-color: #acb2bd;
-} */
-
-/* #enroll-detailTask{
-    padding: 0px;
-    float: right; 
-    width: 50px; 
-    height: 50px;
-}
-
-#enroll-detailTask:focus{
-    opacity: 1 !important;
-    background-color: #909399;
-}
-
-#enroll-detailTask:hover{
-    opacity: 1 !important;
-    background-color: #a6a9ad;
-} */
-
 .label_title{
-    /* font-weight: bold;  */
     font-size: 1.1em; 
     margin-bottom: 20px;
-    /* color: #636b79 */
-    /* color: #585858; */
 }
 
 .border {
     border: 1px solid rgb(192, 196, 204);
-    /* color: rgb(192, 196, 204);  */
     width: 100%; 
     min-height: 100px;
 }
@@ -568,7 +513,6 @@ export default {
 .detail_info {
     color: #585858;
 }
-
 
 hr {
   margin: 1.5em 0;
@@ -597,18 +541,6 @@ hr:after {
   margin: 0 0.4em;
 }
 
-/* .el-checkbox:hover {
-    border-color: #cfcfcf !important; 
-    background-color: #fafafa !important;
-    color: #646464 !important; 
-}
-
-.el-checkbox:focus {
-    border-color: #cfcfcf !important; 
-    background-color: #f5f5f5 !important;
-    color: #646464 !important; 
-} */
-
 input[type=checkbox]:checked + label{
     text-decoration: line-through;
 }
@@ -616,26 +548,4 @@ input[type=checkbox]:checked + label{
 #checklists:not(:last-child) {
     margin-bottom: 10px;
 }
-
-/* .el-select__input {
-    color: red !important;
-} */
-/* 
-.el-checkbox__label {
-    font-size: 20px !important;
-}
-
-.el-checkbox__input.is-checked {
-    color: black !important;
-} */
-
-/* span.el-checkbox__input.is-checked{
-    color: black !important;
-} */
-
-/* .el-checkbox__input.is-checked .el-checkbox__inner, .el-checkbox__input.is-indeterminate .el-checkbox__inner {
-    background-color: red !important;
-    border-color: red !important;
-} */
-
 </style>

@@ -1,6 +1,9 @@
 <template>
     <base-layout>
         <template v-slot:main>
+            <div style="text-align: right;">
+                <button type="button" id="refresh" title="새로고침" class="el-icon-refresh-right" style="color: rgb(94, 94, 94); border: none; padding: 0px; background: none; font-size:2em; margin-right: 5px;" @click="refresh"><div style="font-size: 16px; margin-top: 5px;">새로고침</div></button>
+            </div>
             <el-form @submit.prevent.native="modifyTask" label-width=auto style="text-align: center; margin-top: 30px">
                 <div style="display: inline-block; text-align: center;">
                     <div>
@@ -17,13 +20,8 @@
                         <el-form-item label="업무 체크리스트" for="checklists">
                             <div>
                                 <el-button type="info" size="small" round @click.native="addChecklist">항목 추가</el-button>
-                                <!-- <span style="font-size: 12px;">※ 항목을 삭제 시에 이전에 등록한 세부업무의 체크리스트에서 같이 삭제됩니다.</span> -->
                             </div>
                             <div style="font-size: 12px; color: #ddad94;">※ 체크리스트 항목을 삭제 시, 이전에 등록한 세부업무의 체크리스트에서도 삭제됩니다.</div>
-                            <!-- <div v-for="checklist in checklists" :key="checklist.checklist_num" style="margin-bottom: 5px;">
-                                <el-input v-model="checklist.content" type="text" name="checklists" placeholder="항목을 입력해주세요." maxlength= "20" style="width: 250px; margin-right: 15px;" show-word-limit required/> 
-                                <el-button class="btn" icon="el-icon-close" size="medium" circle @click.native="deleteChecklist(checklist)"></el-button>
-                            </div> -->
                             <div v-for="i in checklists.length" :key="i" style="margin-bottom: 5px;">
                                 <el-input v-model="checklists[i-1].content" type="text" name="checklists" placeholder="항목을 입력해주세요." maxlength= "20" style="width: 250px; margin-right: 15px;" show-word-limit required/> 
                                 <el-button class="btn" icon="el-icon-close" size="medium" circle @click.native="deleteChecklist(i-1)"></el-button>
@@ -88,7 +86,6 @@
                                         <td>
                                             <div style="margin-left: 30px; width: 370px">
                                                 <el-input type="textarea" v-model="task_form.manager_role" id="content" :rows="3" placeholder="해당 관리자의 역할을 적어주세요.(최대 100자)" maxlength= "100" show-word-limit></el-input>
-                                                <!-- <el-input type="textarea" v-model="task_form.manager_role" v-else :rows="3" id="content_disabled" placeholder="우선 관리자를 선택해주세요." disabled></el-input> -->
                                             </div>
                                         </td>
                                     </tr>
@@ -145,7 +142,6 @@ export default {
                 end_date: '',
                 update_date: '',
                 label_color: '#909399',
-                // importance: null,
                 manager: null,
                 manager_role: '',
             },
@@ -157,8 +153,6 @@ export default {
             checklists: [],
             completedChecklists: [],
             before_checklists: []
-            // checklists_num: [],
-            // completedChecklists_num: [],
         }
     },
     components: {
@@ -167,8 +161,6 @@ export default {
     },
     created(){
         this.task_form.task_num = this.$route.params.taskNum;
-
-        console.log("modifyTask taskNum: " + this.task_form.task_num)
         
         this.$axios({
             url: `http://localhost:3000/allUsers`,
@@ -193,15 +185,11 @@ export default {
             },
             credentials: "same-origin"    
         }).then(res => {
-            // console.log("res.data: " + JSON.stringify(res.data));
             this.task_form.task_name = res.data.info.task_name;
             this.task_form.explanation = res.data.info.explanation;
             this.task_form.start_date = this.$moment(res.data.info.start_date).format('YYYY-MM-DDTHH:mm');
             this.task_form.end_date = this.$moment(res.data.info.end_date).format('YYYY-MM-DDTHH:mm');
             this.task_form.label_color = res.data.info.label_color;
-            
-            // this.task_form.importance = res.data.importance;
-
             this.task_form.manager = res.data.manager.manager;
             this.before_manager = res.data.manager.manager;
             this.task_form.manager_role = res.data.manager.manager_role;
@@ -212,41 +200,16 @@ export default {
                 this.before_selected_workerNum.push(res.data.workers[i].user_num);
             };
             
-            console.log("res.data.checklists: " + JSON.stringify(res.data.checklists));
 
             for(var i=0; i<res.data.checklists.length; i++){
                 if(res.data.checklists[i].completed != false){
                     this.completedChecklists.push(res.data.checklists[i]);
-                    // this.completedChecklists_num.push(res.data.checklists[i].checklist_num);
                 }
                 else{
                     this.checklists.push(res.data.checklists[i]);
                     this.before_checklists.push(res.data.checklists[i]);
-                    // this.checklists_num.push(res.data.checklists[i].checklist_num);
                 }
             }
-
-            // console.log("this.checklists: " + JSON.stringify(this.checklists));
-            // console.log("this.completedChecklists: " + JSON.stringify(this.completedChecklists)); 
-            // console.log("this.checklists_num: " + JSON.stringify(this.checklists_num));
-            // console.log("this.completedChecklists_num: " + JSON.stringify(this.completedChecklists_num));
-
-
-            // this.$axios({
-            //     url: `http://localhost:3000/tasks/${this.task_form.task_num}/importance`,
-            //     method: 'get',
-            //     withCredentials: true,
-            //     headers: {
-            //         'Content-Type': 'application/json',
-            //     },
-            //     credentials: "same-origin"    
-            // }).then(res => {
-            //     this.task_form.importance = res.data.importance;
-
-            // }).catch(err => {
-            //     console.log("err: " + err);
-            // })
-
         }).catch(err => {
             console.log("err: " + err);
         });
@@ -277,27 +240,24 @@ export default {
                 return true;
             }       
         },
-        // 원래는 this.selected_workerNum, this.selected_workers 모두 비우기. 원래도 좀 이상한 것 같음. 
-        // 관리자 선택시에 실무담당자의 목록이 바껴서 그런데,,,
-        // 만약에 관리자를 실무담당자로 선택한 사람 중 한 명으로 바꾸게 된다면 리셋된다고 원하지 않으면 실무담당자에서 삭제후 선택해달라는 알림창을 띄우기. 
-
         // 선택된 관리자가 실무담당자에 있을 때만 비우기. (선택된 관리자만 비워야 하지 않을까 -> 알림창 띄우기)
         workerReset(){
             const selectedManager = this.selected_workerNum.indexOf(this.task_form.manager);
             const manager_num = this.task_form.manager;
 
-            // 실무담당자 목록에 있는 경우 그 인덱스의 것을 삭제. workers, workerNum에서 모두 삭제. 
+            // 관리자로 선택된 사용자가 실무담당자 목록에 있는 경우에만 그 인덱스의 것을 삭제. workers, workerNum에서 모두 삭제. 
             if(selectedManager >= 0){
                 const findIndex = this.selected_workers.findIndex(function(item){
                     return item.user_num == manager_num;
                 })
+                alert("선택하신 관리자가 실무담당자에서 제외됩니다.");
                 this.selected_workers.splice(findIndex, 1);
                 this.selected_workerNum.splice(selectedManager, 1);
             }
-            // 실무담당자 목록에 없는 경우 
-            else if(selectedManager == -1){
+            // 관리자로 선택된 사용자가 실무담당자 목록에 없는 경우 
+            // else if(selectedManager == -1){
                 
-            }
+            // }
         },
         selectWorkers(newVal, oldVal){
             var changedElement; 
@@ -329,11 +289,6 @@ export default {
             this.selected_workers[findIndex].personal_role = personalRole.personal_role;
         },
         modifyTask(){
-            // if(this.isDuplicate(this.checklists)){
-            //     alert("체크리스트가 중복됩니다. 확인해주세요.")
-            //     return;
-            // }
-
             if(this.task_form.duration_check == true){
                 this.task_form.start_date = null;
                 this.task_form.end_date = null;
@@ -344,7 +299,6 @@ export default {
             var sameManager = false;
 
             if(this.before_manager === this.task_form.manager){
-                // console.log("this.before_manager === this.task_form.manager")
                 sameManager = true;    
             }
 
@@ -361,27 +315,11 @@ export default {
                 }
             }
 
-            // [{"task_num":7,"checklist_num":19,"content":"d","completed":"0"},{"content":"werwef"},{"content":""}]
-       
-
             const addedChecklists = this.checklists.filter(checklist => typeof checklist.checklist_num === 'undefined');
 
             const deletedChecklists = this.before_checklists.filter(checklist => this.checklists.indexOf(checklist) == -1);
 
             const existedChecklists = this.before_checklists.filter(checklist => deletedChecklists.indexOf(checklist) == -1);
-
-            // console.log("addedChecklists: " + JSON.stringify(addedChecklists));      // [{"content":"1"},{"content":"2"}]
-            // console.log("deletedChecklists: " + JSON.stringify(deletedChecklists));  // [{"task_num":1,"checklist_num":3,"content":"ㅁ","completed":"0"}]
-            // console.log("existedChecklists: " + JSON.stringify(existedChecklists));  // [{"task_num":1,"checklist_num":1,"content":"ㅇ","completed":"0"},{"task_num":1,"checklist_num":2,"content":"ㄴㅇㅀㄴㅇㄹ","completed":"0"}]
-            
-
-            // for(var i=0; i<this.selected_workers.length; i++){
-            //     // 원래 있던 실무담당자                 
-            //     if(addedWorkers_list.filter(worker => worker.user_num == this.selected_workers[i].user_num).length == 0){
-            //         existedWorkers_list.push(this.selected_workers[i]); 
-            //     }
-            // }
-
 
 
             // manager가 바뀌었는지 유무 
@@ -392,7 +330,6 @@ export default {
                 url: `http://localhost:3000/tasks`,
                 method: 'put',
                 data: {
-                    // info: Object.assign(this.task_form),
                     info: this.task_form,
                     addedWorkers_list: addedWorkers_list,
                     existedWorkers_list: existedWorkers_list,
@@ -424,25 +361,20 @@ export default {
             })           
         },
         addChecklist(){
-            console.log("before add checklists: " + JSON.stringify(this.checklists));
-            console.log("before add checklists.length: " + JSON.stringify(this.checklists.length));
             this.checklists.push({'content': ''});
-            console.log("after add checklists: " + JSON.stringify(this.checklists));
-            console.log("after add checklists.length: " + JSON.stringify(this.checklists.length));
         },
         deleteChecklist(i){
-            console.log("before delete checklists: " + JSON.stringify(this.checklists));
-            console.log("before delete checklists.length: " + JSON.stringify(this.checklists.length));
             this.checklists.splice(i, 1);
-            console.log("after delete checklists: " + JSON.stringify(this.checklists));
-            console.log("after delete checklists.length: " + JSON.stringify(this.checklists.length));
         },
-        isDuplicate(arr) {
-            const isDup = arr.some(function(x) {
-                return arr.indexOf(x) !== arr.lastIndexOf(x);
-            });
+        // isDuplicate(arr) {
+        //     const isDup = arr.some(function(x) {
+        //         return arr.indexOf(x) !== arr.lastIndexOf(x);
+        //     });
                                     
-            return isDup;
+        //     return isDup;
+        // },
+        refresh(){
+            this.$router.go()
         }
     }
 }
@@ -511,7 +443,6 @@ export default {
 
     .labelColor:checked{
         border-color: #606266;
-        /* color: #ddad94; */
     }
 
     .labelColor:hover{
@@ -541,32 +472,12 @@ export default {
         vertical-align: top;
         border-radius: 3px;
     }
-/* 
-    #content_disabled{
-        border: 1px solid #DCDFE6;
-        height: 85px;
-        background-color: white; 
-        margin: 0px;
-        width: 100%;
-        padding: 10px;
-        box-sizing : border-box;
-        vertical-align: top;
-        border-radius: 3px;
-    } */
 
     #content:hover {
         border-color: #C0C4CC;
     }
 
-    /* #modifyBtn:hover {
-        border-color: #cfcfcf; 
-        background-color: #fafafa;
-        color: #646464; 
+    #refresh:hover{
+        color: rgb(122, 122, 122) !important;
     }
-
-    #modifyBtn:focus {
-        border-color: #cfcfcf; 
-        background-color: #f5f5f5;
-        color: #646464; 
-    } */
 </style>

@@ -49,7 +49,15 @@
 <script>
 export default{
     name: 'task',
-    props:['task_name', 'task_num', 'manager', 'start_date', 'end_date', 'label_color', 'inProgress'],
+    props: {
+        task_num: Number,
+        task_name: String, 
+        manager: String, 
+        start_date: String, 
+        end_date: String, 
+        label_color: String,
+        // inProgress: Boolean
+    },
     data(){
         return{
             manager_name: '',
@@ -57,7 +65,6 @@ export default{
     },
     methods:{
         clickTask(){
-            console.log("Task this.task_num: " + this.task_num)
             this.$emit('clickTask', this.task_num);
         },
     }

@@ -21,10 +21,13 @@
 <script>
 export default{
     name: 'thisWeekTask',
-    props:['task_num', 'task_name', 'manager', 'start_date', 'end_date', 'label_color'],
-    data(){
-        return{
-        }
+    props: {
+        task_num: Number,
+        task_name: String, 
+        manager: String, 
+        start_date: String, 
+        end_date: String, 
+        label_color: String, 
     },
     methods:{
         clickTask(){
@@ -40,7 +43,6 @@ export default{
         width: 300px;
         height: 90px;
         border: 1px solid #e7e7e7;
-        /* border-bottom: 1px solid #a8a8a8; */
         border-spacing: 0px; 
         background-color: white;
         margin-bottom: 2px;

@@ -148,7 +148,6 @@
 
 <script>
 import Task from './Task.vue'
-// import TaskClosed from './Task_closed.vue'
 import TaskCompleted from './Task_completed.vue'
 import TaskInProgress from './Task_inProgress.vue'
 import TaskManager from './Task_manager.vue'
@@ -183,7 +182,6 @@ export default {
     },
     components: {
         Task,
-        // TaskClosed,
         TaskCompleted,
         TaskInProgress,
         TaskManager,
@@ -201,9 +199,8 @@ export default {
             credentials: "same-origin"
         }).then(res => {
             const now = this.$moment().format();
-            // console.log("http://localhost:3000/tasks res.data: " + JSON.stringify(res.data));
+
             for(var i=0; i<res.data.tasks_worker.length; i++){
-                // complete을 넣을지 complete_date가 null이 아닌 경우를 할지는 고민 
                 if(res.data.tasks_worker[i].completed == true){
                     this.taskCompleted_list.push(res.data.tasks_worker[i])
                 }
@@ -233,37 +230,12 @@ export default {
                     this.taskManagerInProgress_list.push(res.data.tasks_manager[i])
                 }
             };
-            
-            // console.log("taskImportant_list")
-            // console.log(this.taskImportant_list)
-            // console.log("taskManagerImportant_list")
-            // console.log(this.taskManagerImportant_list)
-            // console.log("taskComplete_list")
-            // console.log(this.taskComplete_list)
-            // console.log("taskClosed_list")
-            // console.log(this.taskClosed_list)
-            // console.log("taskInProgress_list")
-            // console.log(this.taskInProgress_list)
-            // console.log("taskManagerInProgress_list")
-            // console.log(this.taskManagerInProgress_list)
-
-            // for(var i=0; i<this.taskManagerImportant_list.length; i++){
-            //     if(this.taskManagerImportant_list[i].end_date < weekAfter){
-            //         this.filteredTasks.push(this.taskManagerImportant_list[i]);
-            //     }
-            // }
-            // for(var i=0; i<this.taskImportant_list.length; i++){
-            //     if(this.taskImportant_list[i].end_date < weekAfter){
-            //         this.filteredTasks.push(this.taskImportant_list[i]);
-            //     }
-            // }
 
             this.thisWeekTasks();
 
         }).catch(err => {
             console.log("err: " + err);
         });
-    //     })
     },
     methods: {
         cancelEnroll(){
@@ -276,10 +248,6 @@ export default {
         },
 
         completeTask(taskNum, taskName){            
-            console.log("parent complete function")
-            console.log("taskNum: " + taskNum)
-            console.log("taskName: " + taskName)
-            
             this.completedTaskName = taskName;
             this.completedTaskNum = taskNum;
 
@@ -345,7 +313,6 @@ export default {
                 console.log("err: " + err);
             });  
         },
-
         date_ascending(a, b) {
             var dateA = new Date(a['end_date']).getTime();
             var dateB = new Date(b['end_date']).getTime();
@@ -414,7 +381,6 @@ export default {
             this.filteredTasks.sort(this.date_ascending);
         },
         setFirstDate(){
-            console.log("setFirstDate")
             this.filteredTasks = [];
             if(this.second_date){
                 for(var i=0; i<this.taskManagerInProgress_list.length; i++){
@@ -445,7 +411,6 @@ export default {
             this.filteredTasks.sort(this.date_ascending);
         },
         setSecondDate(){
-            console.log("setSecondDate")
             this.filteredTasks = [];
 
             if(this.first_date){
@@ -478,7 +443,6 @@ export default {
     },
     watch: {
         taskSelectOption: function(val){
-            console.log("taskSelectOption: " + val);
             this.filteredTasks = [];
             this.first_date = '';
             this.second_date = '';
@@ -502,7 +466,6 @@ export default {
 
 .label{
     font-size: 1.1rem;
-    /* color: #606266; */
     margin-top: 70px;
     margin-bottom: 20px;
 }
@@ -516,14 +479,8 @@ export default {
     border: none;
 }
 
-/* #enroll-task:focus{
-    opacity: 1 !important;
-    background-color: #acb2bd;
-} */
-
 #enroll-task:hover{
     opacity: 1 !important;
-    /* background-color: #a6a9ad; */
     background-color: #acb2bd;
 }
 
@@ -533,25 +490,17 @@ export default {
 }
 
 .label_title{
-    /* font-weight: bold;  */
     font-size: 1.1em; 
     margin-bottom: 30px;
-    /* color: #585858; */
 }
 
 
 hr {
     width: 80%;
-
-    /* border: 0;
-    height: 1px;
-    background-image: linear-gradient(to right, rgba(0, 0, 0, 0), rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0)); */
-
     border: 0;
     height: 1px;
     background: #333;
     background-image: linear-gradient(to right, #ccc, #333, #ccc); 
-    /* border: 1px solid #a8a8a8; */
 }
 
 input[type="date"]{
@@ -567,8 +516,6 @@ input[type="date"]{
     font-size: inherit;
     height: 40px;
     line-height: 40px;
-    /* height: 30px;
-    line-height: 30px; */
     width: 45%;
     outline: 0;
     padding: 0 5px;

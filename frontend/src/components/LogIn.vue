@@ -75,17 +75,4 @@ export default{
         font-size: smaller;
         color: #606266;
     }
-/* 
-    button:hover {
-        border-color: #cfcfcf; 
-        background-color: #fafafa;
-        color: #646464; 
-    }
-
-    button:focus {
-        border-color: #cfcfcf; 
-        background-color: #f5f5f5;
-        color: #646464; 
-    } */
-
 </style>

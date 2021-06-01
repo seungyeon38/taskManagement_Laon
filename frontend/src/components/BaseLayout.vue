@@ -46,7 +46,7 @@
             }).then(res => {
                 this.user = res.data;
             }).catch(err => {
-                console.log("catch");
+                console.log("err: " + err);
             });
 
             // this.$socket.on('client', (data) => {
@@ -56,9 +56,7 @@
         },
         // 실행 잘 안됨...?
         mounted() {
-            console.log("mounted");
             window.scrollTo(0, 0); 
-            console.log("scrollTo");
         },
         methods: {
             logOut(){
@@ -91,19 +89,12 @@
         color: rgb(122, 122, 122) !important;
         text-decoration: underline !important;
     }
-/* 
-    #logOutRouter:active{
-        color: #333 !important;
-    } */
 
     .el-header {
         background-color: #f0f4fa;
         color: #333;
         line-height: 60px;
         border-bottom: 1px solid #e4e8eb;
-        /* box-shadow: 0px 6px 6px -12px black inset; */
-        /* box-shadow: 0 1px 3px 0 rgb(0 0 0 / 12%); */
-        /* box-shadow: 0 1px 3px 0 red; */
     }
 
     .el-main {
@@ -119,12 +110,10 @@
     }
     
     .el-aside {
-        /* background-color: #f7fafd;  */
         background-color: #f4f7fa; 
         text-align: left; 
         padding: 30px; 
         padding-top: 60px;
-        /* color: rgb(94, 94, 94); */
     }
     
     #home:hover{

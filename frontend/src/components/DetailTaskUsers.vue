@@ -19,7 +19,6 @@
                         <el-dropdown-item icon="el-icon-delete" @click.native="deleteDetailTask"> 삭제</el-dropdown-item>
                     </el-dropdown-menu>
                 </el-dropdown>
-                <!-- <button @click="showModifyDialog" id="edit_btn" class="el-icon-setting" style="background: none; border: none; padding: 0px; margin-right: 3px; font-size: 1.9em;"/> -->
             </div>
         </div>
         <div style="text-align: left; margin-bottom: 2%; font-weight: bolder; font-size: 1.1em;">
@@ -31,19 +30,12 @@
         <div v-else style="text-align: left; margin-bottom: 20px; color: rgb(192, 196, 204);">
             (내용 없음)
         </div>
-        <!-- <div style="text-align: right; font-size: 0.9em; color: gray;">
-            {{report_date}}
-        </div> -->
         <div style="height:10px;"></div>
         <div style="display: flex; justify-content: space-between; font-size: 0.9em; color: gray;">
             <div>
                 <span v-for="checklist in checklists" :key="checklist.checklist_num">
                     <span style="background-color: #f4f7fa; border: 1px solid rgb(192, 196, 204); border-radius: 4px; padding:0px 10px; margin-right: 10px;">{{checklist.content}}</span>
                 </span>
-                <!-- <span v-for="checklist in checklists" :key="checklist.checklist_num">
-                    <span v-if="checklist.completed == true" style="background-color: #e9e9e9; border: 1px solid rgb(192, 196, 204); border-radius: 4px; padding:0px 10px; margin-right: 10px;">{{checklist.content}}</span>
-                    <span v-else style="background-color: #f4f7fa; border: 1px solid rgb(192, 196, 204); border-radius: 4px; padding:0px 10px; margin-right: 10px;">{{checklist.content}}</span>
-                </span> -->
             </div>
             <div>{{report_date}}</div>
         </div>
@@ -57,14 +49,20 @@ export default{
         return{
         }
     },
-    props:['detail_task_num', 'workerName', 'detail_task_name', 'content', 'report_date', 'profile_img', 'checklists'],
+    props: {
+        detail_task_num: Number,
+        workerName: String, 
+        detail_task_name: String, 
+        content: String, 
+        report_date: String, 
+        profile_img: String, 
+        checklists: Array,
+    },
     methods: {
         showModifyDialog(){
-            console.log("showModifyDialog");
             this.$emit('showModifyDialog', this.detail_task_num);
         },
         deleteDetailTask(){
-            console.log("deleteDetailTask");
             this.$emit('deleteDetailTask', this.detail_task_num);
         }
     }
@@ -82,23 +80,10 @@ export default{
         background-color: white;
         overflow: hidden;
         box-shadow: 0 2px 12px 0 rgba(0, 0, 0, 0.185);
-
     }
-
-    /* .text-overflow-twoLine{
-        display: -webkit-box;
-        overflow: hidden;
-        line-height: 1.2em;
-        height: 2.4em;
-        text-overflow: ellipsis; 
-        -webkit-line-clamp: 2;
-        -webkit-box-orient: vertical;
-        word-break:break-all;
-    } */
 
     #edit_btn{
         color: #888888; 
-        /* color: #303133 */
     }
 
     #edit_btn:hover{

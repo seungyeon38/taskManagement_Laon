@@ -44,7 +44,15 @@ export default{
     components: {
         Task
     },
-    props:['task_name', 'task_num', 'manager', 'start_date', 'end_date', 'label_color', 'importance'],
+    props: {
+        task_num: Number,
+        task_name: String, 
+        manager: String, 
+        start_date: String, 
+        end_date: String, 
+        label_color: String,
+        importance: Boolean
+    },
     methods: {
         completeTask(){
             this.$emit('completeTask', this.task_num, this.task_name);
@@ -94,9 +102,4 @@ export default{
     #edit_btn:hover{
         color: #646464; 
     }
-
-    /* #star:hover{
-        opacity: 1;
-    } */
-
 </style>

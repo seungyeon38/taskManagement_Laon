@@ -17,7 +17,15 @@ export default{
     components: {
         Task
     },
-    props:['task_name', 'task_num', 'manager', 'start_date', 'end_date', 'completed_date', 'label_color'],
+    props: {
+        task_num: Number,
+        task_name: String, 
+        manager: String, 
+        start_date: String, 
+        end_date: String, 
+        completed_date: String,
+        label_color: String,
+    },
     methods: {
         clickTask(taskNum){
             this.$emit('clickTask', taskNum);
