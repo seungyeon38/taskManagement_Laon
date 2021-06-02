@@ -16,7 +16,7 @@
                                     <el-input type="textarea" v-model="form.detailTask_content" :rows="4" name="explanation" placeholder="선택 사항입니다." maxlength= "100" show-word-limit/> 
                                 </el-form-item>
                                 <el-form-item label="관련 체크리스트" :label-width="formLabelWidth">
-                                    <el-select v-model="form.detailTask_checklists" multiple placeholder="Select">
+                                    <el-select v-if="form.detailTask_checklists.length" v-model="form.detailTask_checklists" multiple placeholder="Select">
                                         <el-option
                                         v-for="checklist in checklists"
                                         :key="checklist.checklist_num"
@@ -24,6 +24,7 @@
                                         :value="checklist.checklist_num">
                                         </el-option>
                                     </el-select>
+                                    <el-select v-else placeholder="존재하지 않습니다." disabled></el-select>
                                 </el-form-item>
                             </el-form>
                             <span slot="footer" class="dialog-footer">
@@ -65,7 +66,7 @@
                         </el-dialog>
                     </td>
                 </tr>
-                <tr> 
+                <tr>
                     <td style="width: 20%; padding-top: 20px;" valign="top">
                         <el-select v-model="selectChecklistOption" v-if="detailTasks.length && checklists.length" filterable placeholder="체크리스트 전체보기" style="width: 220px;" multiple>
                             <el-option v-for="checklist in checklists" :key="checklist.checklist_num" :value="checklist.checklist_num" :label="checklist.content"></el-option>
@@ -228,11 +229,6 @@ export default {
             this.form.detailTask_name = '';
             this.form.detailTask_content = '';
             this.form.detailTask_checklists = [];
-        },
-        date_ascending(a, b){
-            var dateA = new Date(a['report_date']).getTime();
-            var dateB = new Date(b['report_date']).getTime();
-            return dateA > dateB ? 1 : -1;
         },
         showModifyDialog(detailTaskNum){
             this.detailTaskNumtoModify = detailTaskNum;
