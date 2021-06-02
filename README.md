@@ -87,13 +87,9 @@
 (나는 이전 웹 프로젝트에서 Django를 풀스택 프레임워크로 사용했을 때, ORM(Django Model)을 사용해본 경험이 있기 때문에, 
 이번에는 직접 query를 하는 방식으로 진행하였다.)
 
-#### 로그인
-* 비밀번호 암호화
+<br /> 
 
-  + **bcrypt 사용**: 현업에서 많이 사용하고 있는 패스워드 암호화 알고리즘
-
-<br />
-
+#### 로그인, 로그아웃
 * Passport 모듈 (passport-local)
   
   Session을 사용한 로그인. 
@@ -177,7 +173,61 @@
       done(promise.err, promise.data);
   });
   ```
+  
+  <br />
+  
+  + **logout**
     
+  <br />
+  
+  ```javascript
+  app.get("/logout", function(req, res){
+      req.logout();  // request.user(req.user)라는 데이터를 삭제하고, session store에 있는 passport데이터를 삭제한다.
+      req.session.save(function(){
+          res.send({logout: true}); // session을 잃은 후 다시 돌아갈 페이지 redirect
+      })
+  });
+  ```
+
+#### 회원가입 
+* 비밀번호 암호화
+
+  + **bcrypt 사용**: 현업에서 많이 사용하고 있는 패스워드 암호화 알고리즘
+
+<br />
+
+* 이미지 파일 업로드
+
+  + **multer 사용**
+  
+  <br /> 
+  
+  ```javascript
+  var multer  = require('multer');
+  var _storage = multer.diskStorage({
+      // 사용자가 전송한 파일을 어느 디렉토리에 저장할 것인가. 
+      destination: function (req, file, cb) {
+          cb(null, 'uploads/')
+      },
+      // 그 디렉토리에 저장할 파일의 이름을 어떻게 할 것인가. 
+      filename: function (req, file, cb) {
+          cb(null, Date.now() + '_' + file.originalname)
+      }
+  }) // 객체 안의 두가지 property: destination, filename
+  // storage로 지정하면 multer가 동작하면서 (사용자의 업로드와 관련된 작업을 처리하면서) 
+  // multer는 storage가 가리키고 있는 것의 destination이라는 property와 filename이라는 property에 속해있는 함수를 실행시킬 것이다라는 약속이 되어있다.
+  var upload = multer({ storage: _storage });
+  
+  
+  
+  app.post("/users", upload.single('profile_img'), user.addUser);
+  ```
+  
+<br />
+
+
+
+ 
 <br />    
     
 ## 4. 프로젝트 일정
