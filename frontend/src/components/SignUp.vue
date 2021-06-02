@@ -24,11 +24,9 @@
                             <el-input v-model="name" type="text" name="name" required /> 
                         </el-form-item>
                         <el-form-item label="아이디" for="id">
-                            <!-- <el-input v-model="id" type="text" name="id" minlength="8" maxlength="12" placeholder="최소 8자, 최대 12자" required /> -->
                             <el-input v-model="id" type="text" name="id" placeholder="최소 8자, 최대 12자" required />
                         </el-form-item>
-                        <el-form-item label="비밀번호" for="password" style="margin-bottom:0px;">
-                            <!-- <el-input v-model="password" type="password" name="password" minlength="8" maxlength="12" placeholder="최소 8자, 최대 12자" show-password required /> -->
+                        <el-form-item label="비밀번호" for="password" style="margin-bottom: 0px;">
                             <el-input v-model="password" type="password" name="password" placeholder="최소 8자, 최대 12자" show-password required />
                         </el-form-item>
                         <el-form-item label="비밀번호 확인" for="password_re">
@@ -36,10 +34,6 @@
                         </el-form-item>
                         <el-form-item label="이메일" for="email">
                             <el-input v-model="email" name="email" required />
-                            <!-- <span id="email_box">
-                                <el-input v-model="email" name="email" style="width: 50%" required />
-                                <span>@gmail.com</span>
-                            </span> -->
                         </el-form-item>
                         <br>
                         <br>

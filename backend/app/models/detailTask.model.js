@@ -2,7 +2,7 @@ const sql = require("./db.js");
 
 const DetailTask = function(detailTask){
     this.task_num = detailTask.task_num;
-    this.detail_task_name = detailTask.detail_task_name;
+    this.detailtask_name = detailTask.detailtask_name;
     this.worker = detailTask.worker;
     this.content = detailTask.content;
     this.report_date = detailTask.report_date;
@@ -11,7 +11,7 @@ const DetailTask = function(detailTask){
 // insert
 DetailTask.insertDetailTask = (detailTask) => {
     return new Promise(resolve => {
-        sql.query("INSERT INTO detail_task SET ?", detailTask, (err) => {
+        sql.query("INSERT INTO detailtask SET ?", detailTask, (err) => {
             if(err){
                 resolve({err: err});
                 return;
@@ -24,7 +24,7 @@ DetailTask.insertDetailTask = (detailTask) => {
 
 DetailTask.insertDetailTaskChecklist = (taskNum, detailTaskNum, checklistNum) => {
     return new Promise(resolve => { 
-        sql.query(`INSERT INTO detailtask_checklist(task_num, detail_task_num, checklist_num) VALUES(${taskNum}, ${detailTaskNum}, ${checklistNum})`, (err) => {
+        sql.query(`INSERT INTO detailtask_checklist(task_num, detailtask_num, checklist_num) VALUES(${taskNum}, ${detailTaskNum}, ${checklistNum})`, (err) => {
             if(err){
                 resolve({err: err});
                 return;
@@ -38,8 +38,8 @@ DetailTask.insertDetailTaskChecklist = (taskNum, detailTaskNum, checklistNum) =>
 // get
 DetailTask.getDetailTaskbyNum = (detailTaskNum) => {
     return new Promise(resolve => {
-        sql.query(`SELECT * FROM detail_task 
-        WHERE detail_task_num = ${detailTaskNum}`, (err, res) => {
+        sql.query(`SELECT * FROM detailtask 
+        WHERE detailtask_num = ${detailTaskNum}`, (err, res) => {
             if(err){
                 resolve({err: err, data: null});
                 return;
@@ -56,7 +56,7 @@ DetailTask.getDetailTaskbyNum = (detailTaskNum) => {
 
 DetailTask.getRecentDetailTaskNum = (userNum) => {
     return new Promise(resolve => {
-        sql.query(`SELECT MAX(detail_task_num) FROM detail_task
+        sql.query(`SELECT MAX(detailtask_num) FROM detailtask
         WHERE worker = ${userNum}`, (err, res) => {
             if(err){
                 resolve({err: err, data: null});
@@ -93,9 +93,10 @@ DetailTask.getRecentDetailTaskNum = (userNum) => {
 // }
 
 DetailTask.getChecklistNumsbyNum = (detailTaskNum) => {
+    console.log(detailTaskNum)
     return new Promise(resolve => {
         sql.query(`SELECT checklist_num FROM detailtask_checklist
-        WHERE detail_task_num = ${detailTaskNum}`, (err, res) => {
+        WHERE detailtask_num = ${detailTaskNum}`, (err, res) => {
             if(err){
                 resolve({err: err, data: null});
                 return;
@@ -113,11 +114,11 @@ DetailTask.getChecklistNumsbyNum = (detailTaskNum) => {
 // update
 DetailTask.updateDetailTask = (detailTaskNum, detailTaskName, content, updateDate) => {
     return new Promise(resolve => {
-        sql.query(`UPDATE detail_task 
-        SET detail_task_name = '${detailTaskName}', 
+        sql.query(`UPDATE detailtask 
+        SET detailtask_name = '${detailTaskName}', 
             content = '${content}', 
             update_date = '${updateDate}'
-        WHERE detail_task_num = ${detailTaskNum}`, (err) => {
+        WHERE detailtask_num = ${detailTaskNum}`, (err) => {
             if(err){
                 resolve({err: err});
                 return;
@@ -131,8 +132,8 @@ DetailTask.updateDetailTask = (detailTaskNum, detailTaskName, content, updateDat
 // delete
 DetailTask.deleteDetailTask = (detailTaskNum) => {
     return new Promise(resolve => {
-        sql.query(`DELETE FROM detail_task 
-        WHERE detail_task_num = ${detailTaskNum}`, (err) => {
+        sql.query(`DELETE FROM detailtask 
+        WHERE detailtask_num = ${detailTaskNum}`, (err) => {
             if(err){
                 resolve({err: err});
                 return;
@@ -146,7 +147,7 @@ DetailTask.deleteDetailTask = (detailTaskNum) => {
 DetailTask.deleteDetailTaskChecklists = (detailTaskNum) => {
     return new Promise(resolve => {
         sql.query(`DELETE FROM detailtask_checklist 
-        WHERE detail_task_num = ${detailTaskNum}`, (err) => {
+        WHERE detailtask_num = ${detailTaskNum}`, (err) => {
             if(err){
                 resolve({err: err});
                 return;

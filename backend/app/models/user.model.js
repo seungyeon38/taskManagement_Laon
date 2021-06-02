@@ -58,7 +58,6 @@ User.getUserInfo = (userNum) => {
 };
 
 User.getAllUserInfo = () => {
-    console.log("getAllUser")
     return new Promise(resolve => {
         sql.query("SELECT user_num, name, id, email, profile_img FROM user", (err, res) => {
             if(err){
@@ -67,7 +66,6 @@ User.getAllUserInfo = () => {
                 return;
             }
             if(res.length){
-                // console.log("users: ", res);
                 resolve({err: null, data: res});
                 return;
             }

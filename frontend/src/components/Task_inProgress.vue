@@ -41,7 +41,7 @@ export default{
         start_date: String, 
         end_date: String, 
         label_color: String,
-        importance: Boolean
+        importance: Number
     },
     methods: {
         clickTask(taskNum){

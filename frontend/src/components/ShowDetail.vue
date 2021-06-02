@@ -70,14 +70,10 @@
                         <el-select v-model="selectChecklistOption" v-if="detailTasks.length && checklists.length" filterable placeholder="체크리스트 전체보기" style="width: 220px;" multiple>
                             <el-option v-for="checklist in checklists" :key="checklist.checklist_num" :value="checklist.checklist_num" :label="checklist.content"></el-option>
                         </el-select>
-                        <el-select v-else filterable placeholder="Select" style="width: 220px;" disabled>
-                        </el-select>
 
                         <el-select v-model="selectUserOption" v-if="detailTasks.length" filterable placeholder="Select" style="width: 220px;">
                             <el-option :value="0" :label="'전체 사용자 세부업무 보기'"></el-option>
                             <el-option :value="1" :label="'내 세부업무만 보기'"></el-option>
-                        </el-select>
-                        <el-select v-else filterable placeholder="Select" style="width: 220px;" disabled>
                         </el-select>
                     </td>
                     <td style="width: 80%; padding-top: 20px; text-align: justify;">
@@ -85,9 +81,9 @@
                         <hr />
                         <div v-if="selectedDetailTasks.length != 0">
                             <el-timeline>
-                                <el-timeline-item v-for="detailTask in selectedDetailTasks" :key="detailTask.detail_task_num" :timestamp="`${detailTask.report_date}, ${detailTask.name} 님`" placement="top">
-                                    <detail-task-users v-if="detailTask.worker == userNum" v-on:showModifyDialog="showModifyDialog" v-on:deleteDetailTask="deleteDetailTask" :detail_task_num="detailTask.detail_task_num" :workerName="detailTask.name" :detail_task_name="detailTask.detail_task_name" :content="detailTask.content" :report_date="detailTask.report_date" :profile_img="detailTask.profile_img" :checklists="detailTask.checklists"></detail-task-users>
-                                    <detail-task v-else :workerName="detailTask.name" :detail_task_name="detailTask.detail_task_name" :content="detailTask.content" :report_date="detailTask.report_date" :profile_img="detailTask.profile_img" :checklists="detailTask.checklists"></detail-task>
+                                <el-timeline-item v-for="detailTask in selectedDetailTasks" :key="detailTask.detailtask_num" :timestamp="`${detailTask.report_date}, ${detailTask.name} 님`" placement="top">
+                                    <detail-task-users v-if="detailTask.worker == userNum" v-on:showModifyDialog="showModifyDialog" v-on:deleteDetailTask="deleteDetailTask" :detail_task_num="detailTask.detailtask_num" :workerName="detailTask.name" :detail_task_name="detailTask.detailtask_name" :content="detailTask.content" :report_date="detailTask.report_date" :profile_img="detailTask.profile_img" :checklists="detailTask.checklists"></detail-task-users>
+                                    <detail-task v-else :workerName="detailTask.name" :detail_task_name="detailTask.detailtask_name" :content="detailTask.content" :report_date="detailTask.report_date" :profile_img="detailTask.profile_img" :checklists="detailTask.checklists"></detail-task>
                                 </el-timeline-item>
                             </el-timeline>
                         </div>
@@ -250,7 +246,7 @@ export default {
                 },
                 credentials: "same-origin"
             }).then(res => {
-                this.form.detailTask_name = res.data.detailTask.detail_task_name;
+                this.form.detailTask_name = res.data.detailTask.detailtask_name;
                 this.form.detailTask_content = res.data.detailTask.content;
                 for(var i=0; i<res.data.checklists.length; i++){
                     this.form.detailTask_checklists.push(res.data.checklists[i].checklist_num);
@@ -445,12 +441,11 @@ export default {
             // "info": task_num, task_name, explanation, start_date, end_date, register_date, completed_date, label_color, completed
             // "workers": user_num, personal_role, name, id, email, profile_img
             
-        
             // "checklists": [{"detail_task_num":2,"content":"항목1","completed":"1"},{"detail_task_num":1,"content":"항목2","completed":"0"},{"detail_task_num":2,"content":"항목2","completed":"0"}]
             for(var i=0; i< res.data.detailTasks.length; i++){
                 res.data.detailTasks[i].checklists = [];
                 for(var j=0; j< res.data.checklists.length; j++){
-                    if(res.data.checklists[j].detail_task_num == res.data.detailTasks[i].detail_task_num){
+                    if(res.data.checklists[j].detailtask_num == res.data.detailTasks[i].detailtask_num){
                         res.data.detailTasks[i].checklists.push(res.data.checklists[j]);
                     }
                 }

@@ -192,8 +192,8 @@ Task.getTaskWorkerbyTaskNum = (taskNum) => {
 
 Task.getDetailTasksbyTaskNum = (taskNum) => {
     return new Promise(resolve => {
-        sql.query(`SELECT dt.detail_task_num, dt.task_num, dt.worker, dt.detail_task_name, dt.content, dt.report_date, u.id, u.name, u.email, u.profile_img
-        FROM detail_task AS dt
+        sql.query(`SELECT dt.detailtask_num, dt.task_num, dt.worker, dt.detailtask_name, dt.content, dt.report_date, u.id, u.name, u.email, u.profile_img
+        FROM detailtask AS dt
         LEFT JOIN user AS u 
         ON dt.worker = u.user_num
         WHERE dt.task_num = ${taskNum}`, (err, res) => {
@@ -212,10 +212,10 @@ Task.getDetailTasksbyTaskNum = (taskNum) => {
 
 Task.getChecklists = (taskNum) => {
     return new Promise(resolve => {
-        sql.query(`SELECT dc.detail_task_num, c.checklist_num, c.content, c.completed
-        FROM detail_task AS dt
+        sql.query(`SELECT dc.detailtask_num, c.checklist_num, c.content, c.completed
+        FROM detailtask AS dt
         LEFT JOIN detailtask_checklist AS dc 
-        ON dt.detail_task_num = dc.detail_task_num
+        ON dt.detailtask_num = dc.detailtask_num
         RIGHT JOIN checklist AS c
         ON dc.checklist_num = c.checklist_num
         WHERE dt.task_num = ${taskNum}`, (err, res) => {
@@ -311,7 +311,7 @@ Task.deleteTaskWorkerbyTaskNumUserNum = (taskNum, userNum) => {
 
 Task.deleteDetailTasksbyTaskNum = (taskNum) => {
     return new Promise(resolve => {
-        sql.query(`DELETE FROM detail_task 
+        sql.query(`DELETE FROM detailtask 
         WHERE task_num = '${taskNum}'`,  (err) => {
             if(err){
                 resolve({err: err});

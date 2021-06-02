@@ -5,7 +5,7 @@ exports.addDetailTask = async (req, res) => {
     const detailTask = new DetailTask({
         task_num: req.params.taskNum,
         worker: req.user.user_num,
-        detail_task_name: req.body.detail_task_name,
+        detailtask_name: req.body.detail_task_name,
         content: req.body.content,
         report_date: req.body.report_date,
     });
@@ -28,11 +28,11 @@ exports.addDetailTask = async (req, res) => {
         });
     }
 
-    const detail_task_num = promise.data;
+    const detailtask_num = promise.data;
 
 
     for(let detailTask_checklist of req.body.detailTask_checklists){
-        promise = await DetailTask.insertDetailTaskChecklist(req.params.taskNum, detail_task_num, detailTask_checklist);
+        promise = await DetailTask.insertDetailTaskChecklist(req.params.taskNum, detailtask_num, detailTask_checklist);
 
         if(promise.err){
             console.log("err: " + promise.err);
@@ -56,7 +56,6 @@ exports.getDetailTask = async (req, res) => {
     }
 
     const promise2 = await DetailTask.getChecklistNumsbyNum(req.params.detailTaskNum);
-
     if(promise2.err){
         if(promise2.err != "not_found"){
             console.log("err: " + promise2.err);

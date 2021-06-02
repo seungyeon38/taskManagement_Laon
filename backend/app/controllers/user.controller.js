@@ -32,6 +32,7 @@ exports.addUser = async (req, res) => {
         });
     
         const promise = await User.insertUser(user);
+
         if(promise.err){
             res.status(500).send({
                 message:
@@ -85,6 +86,7 @@ exports.getAllUsers = async (req, res) => {
 
 exports.getUserInfo = async (req, res) => {
     const promise = await User.getUserInfo(req.user.user_num);
+
     // 못 찾아도 오류 
     if(promise.err){
         res.status(500).send({
@@ -99,8 +101,7 @@ exports.getUserInfo = async (req, res) => {
 
 exports.loginResult = (req, res) => {
     const fmsg = req.flash();
-    console.log("loginResult req.user: " + JSON.stringify(req.user));
-    console.log("loginResult req.session: " + JSON.stringify(req.session));
+    
     if(fmsg.error){
         res.send({error_msg: fmsg.error[0], user: null});
     }
