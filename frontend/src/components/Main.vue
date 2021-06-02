@@ -45,16 +45,6 @@
                     <td align="left">
                         <div class="label">진행 중인 업무</div>
                     </td>
-                    <!-- <td align="right" valign="bottom">
-                        <el-select v-model="sort" @change.native="sortProgressTask($event)" placeholder="정렬방법" style="width: 200px;">
-                            <el-option :value="1">등록일 오름차순</el-option>
-                            <el-option :value="2">등록일 내림차순</el-option>
-                            <el-option :value="3">시작일 오름차순</el-option>
-                            <el-option :value="4">시작일 내림차순</el-option>
-                            <el-option :value="5">마감일 오름차순</el-option>
-                            <el-option :value="6">마감일 오름차순</el-option>
-                        </el-select>
-                    </td> -->
                 </tr>
                 <tr>
                     <td>
@@ -72,14 +62,6 @@
                     <td align="left">
                         <div class="label">마감된 업무</div>
                     </td>
-                    <!-- <td align="right" valign="bottom">
-                        <el-select v-model="sort" @change.native="sortClosedTask($event)" placeholder="정렬방법" style="width: 200px;">
-                            <el-option :value="1">최근 일주일내</el-option>
-                            <el-option :value="2">최근 한달내</el-option>
-                            <el-option :value="3">완료일 오름차순</el-option>
-                            <el-option :value="4">완료일 내림차순</el-option>
-                        </el-select>
-                    </td> -->
                 </tr>
                 <tr>
                     <td>
@@ -96,14 +78,6 @@
                     <td align="left">
                         <div class="label">완료된 업무</div>
                     </td>
-                    <!-- <td align="right" valign="bottom">
-                        <el-select v-model="sort" @change.native="sortCompletedTask($event)" placeholder="정렬방법" style="width: 200px;">
-                            <el-option :value="1">최근 일주일내</el-option>
-                            <el-option :value="2">최근 한달내</el-option>
-                            <el-option :value="3">완료일 오름차순</el-option>
-                            <el-option :value="4">완료일 내림차순</el-option>
-                        </el-select>
-                    </td> -->
                 </tr>
                 <tr>
                     <td>
