@@ -18,7 +18,6 @@ import vueMoment from 'vue-moment';
 // Vue.prototype.$socket = socket;
 
 
-
 Vue.prototype.$axios = axios;
 Vue.config.productionTip = false;
 

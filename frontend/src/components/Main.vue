@@ -131,10 +131,6 @@
                 <input v-model="second_date" type="date" :min="first_date" @change="setSecondDate" />
             </div>
             <div style="margin-bottom: 20px;"></div>
-            <!-- <div v-else style="margin-bottom: 30px;">
-                <input v-model="first_date" type="date" disabled/>
-                <input v-model="second_date" type="date" :min= "first_date" disabled/>
-            </div> -->
             <div v-if="filteredTasks.length">
                 <filtered-task v-for="task in filteredTasks" :key="task.task_num" v-on:clickTask="clickTask" :task_num="task.task_num" :task_name="task.task_name" :manager="task.name" :start_date="task.start_date" :end_date="task.end_date" :label_color="task.label_color"></filtered-task>
             </div>
@@ -308,7 +304,9 @@ export default {
                 },
                 credentials: "same-origin"
             }).then(res => {
-                this.$router.go();
+                if(res.data.result == true){
+                    this.$router.go();
+                }
             }).catch(err => {
                 console.log("err: " + err);
             });  

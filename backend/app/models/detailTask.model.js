@@ -71,27 +71,6 @@ DetailTask.getRecentDetailTaskNum = (userNum) => {
     })
 }
 
-// DetailTask.getChecklistsbyNum = (detailTaskNum) => {
-//     return new Promise(resolve => {
-//         sql.query(`SELECT c.checklist_num, c.content, c.completed FROM detail_task AS dt 
-//         LEFT JOIN detailtask_checklist AS dc
-//         ON dt.detail_task_num = dc.detail_task_num
-//         LEFT JOIN checklist AS c
-//         ON dc.checklist_num = c.checklist_num
-//         WHERE dc.detail_task_num = ${detailTaskNum}`, (err, res) => {
-//             if(err){
-//                 resolve({err: err, data: null});
-//                 return;
-//             }
-//             if(res.length){
-//                 resolve({err: null, data: res});
-//                 return;
-//             }
-//             resolve({err: "not_found", data: res})
-//         })
-//     })
-// }
-
 DetailTask.getChecklistNumsbyNum = (detailTaskNum) => {
     console.log(detailTaskNum)
     return new Promise(resolve => {
@@ -102,11 +81,10 @@ DetailTask.getChecklistNumsbyNum = (detailTaskNum) => {
                 return;
             }
             if(res.length){
-                // console.log("getChecklistsbyNum " + JSON.stringify(res));
                 resolve({err: null, data: res});
                 return;
             }
-            resolve({err: "not_found", data: res})
+            resolve({err: "not_found", data: res});
         })
     }) 
 }
