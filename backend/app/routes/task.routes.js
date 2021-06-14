@@ -10,23 +10,23 @@ module.exports = app => {
     //     res.redirect('/');
     // };
 
-    app.post("/tasks", task.addTask);
+    app.post("/tasks", task.createTask);
 
     app.delete("/tasks/:taskNum", task.deleteTask);
 
-    app.put("/tasks", task.modifyTask);
+    app.put("/tasks", task.updateTask);
     
     app.get("/tasks", task.getTasksofUser);
 
     app.post("/tasks/:taskNum/complete", task.completeTask);
 
-    app.post("/tasks/:taskNum/importance", task.changeTaskImportance);
+    app.post("/tasks/:taskNum/importance", task.updateTaskImportance);
 
     app.get("/tasks/:taskNum/info", task.getTaskInfo);
 
     app.get("/tasks/:taskNum/detailTasks", task.getDetailTasks);
 
-    app.put("/tasks/:taskNum/checklists/:checklistNum", task.checklistCheck);
+    app.put("/tasks/:taskNum/checklists/:checklistNum", task.checkChecklist);
 
     app.get("/tasks/:taskNum/checklists/allComplete", task.allChecklistIsDone);
 

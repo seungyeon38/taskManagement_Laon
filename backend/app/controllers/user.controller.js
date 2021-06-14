@@ -2,7 +2,7 @@ const User = require("../models/user.model.js");
 const {validationResult} = require('express-validator');
 const bcrypt = require('bcrypt')
 
-exports.addUser = async (req, res) => {
+exports.createUser = async (req, res) => {
     if(!req.body){
         res.status(400).send({
             message: "Content can not empty!"

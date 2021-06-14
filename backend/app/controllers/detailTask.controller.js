@@ -1,7 +1,7 @@
 const DetailTask = require("../models/detailTask.model.js");
 
 
-exports.addDetailTask = async (req, res) => {
+exports.createDetailTask = async (req, res) => {
     const detailTask = new DetailTask({
         task_num: req.params.taskNum,
         worker: req.user.user_num,
@@ -68,7 +68,7 @@ exports.getDetailTask = async (req, res) => {
     res.send({detailTask: promise1.data, checklists: promise2.data});
 }
 
-exports.modifyDetailTask = async (req, res) => {
+exports.updateDetailTask = async (req, res) => {
     var promise = await DetailTask.updateDetailTask(req.params.detailTaskNum, req.body.detail_task_name, req.body.content, req.body.update_date);
     
     if(promise.err){

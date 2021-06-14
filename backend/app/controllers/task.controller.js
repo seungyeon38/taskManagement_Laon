@@ -1,7 +1,7 @@
 const Task = require("../models/task.model.js");
 
 
-exports.addTask = async (req, res) => {
+exports.createTask = async (req, res) => {
     if(!req.body){
         res.status(400).send({
             message: "Content can not empty!"
@@ -142,7 +142,7 @@ exports.deleteTask = async (req, res) => {
     res.send({result: true});
 }
 
-exports.modifyTask = async (req, res) => {
+exports.updateTask = async (req, res) => {
     var promise = await Task.getTaskNumbyTaskName(req.body.info.task_name);
     
     if(promise.err != "not_found" && promise.data != req.body.info.task_num){
@@ -302,7 +302,7 @@ exports.completeTask = async (req, res) => {
     res.send({result: true});
 }
 
-exports.changeTaskImportance = async (req, res) => {
+exports.updateTaskImportance = async (req, res) => {
     var promise = await Task.getImportancebyTaskNumUserNum(req.params.taskNum, req.user.user_num);
 
     if(promise.err){
@@ -436,7 +436,7 @@ exports.getDetailTasks = async (req, res) => {
     res.send({detailTasks: promise1.data, checklists: promise2.data});
 }
 
-exports.checklistCheck = async (req, res) => {
+exports.checkChecklist = async (req, res) => {
     var promise = await Task.getChecklistCompleted(req.params.taskNum, req.params.checklistNum);
 
     if(promise.err){
